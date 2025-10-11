@@ -298,19 +298,7 @@ export function Team() {
         </TabsContent>
       </Tabs>
 
-      {/* Volunteers Section */}
-      <Card className="mt-12">
-        <CardContent className="p-8 text-center">
-          <h2 className="mb-4">Join Our Volunteer Team</h2>
-          <p className="mb-6 text-muted-foreground">
-            Want to be part of E-Summit 2025? We're looking for enthusiastic volunteers!
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button>Apply as Volunteer</Button>
-            <Button variant="outline">Learn More</Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Volunteers section removed */}
 
       {/* Contact Section */}
       <div className="mt-12 grid gap-6 md:grid-cols-3">

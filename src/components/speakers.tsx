@@ -264,28 +264,7 @@ export function Speakers() {
         ))}
       </div>
 
-      {/* Q&A Section */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="mt-12"
-      >
-        <ShineBorder color="#dc2626">
-          <Card className="border-0">
-            <CardContent className="p-8 text-center">
-              <h2 className="mb-4">Q&A Opportunities</h2>
-              <p className="mb-6 text-muted-foreground">
-                Get your questions answered during dedicated Q&A sessions after each keynote
-              </p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button>Submit Your Question</Button>
-              </motion.div>
-            </CardContent>
-          </Card>
-        </ShineBorder>
-      </motion.div>
+      {/* Q&A section removed */}
     </div>
   );
 }
