@@ -33,7 +33,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
   });
   const [currentSpeaker, setCurrentSpeaker] = useState(0);
 
-  // Event date: March 15-16, 2026
+  // Event date: January 23-24, 2026
   const eventDate = new Date("2026-03-15T00:00:00");
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
             <TextReveal>
               <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-                March 15-16, 2026
+                January 23-24, 2026
               </Badge>
             </TextReveal>
 

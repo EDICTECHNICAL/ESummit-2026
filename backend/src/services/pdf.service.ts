@@ -434,7 +434,7 @@ export class PDFService {
     doc.fontSize(10)
        .fillColor('#1e293b')
        .font('Helvetica-Bold')
-       .text('Dates: March 15-16, 2026', 50, footerY + 20);
+       .text('Dates: January 23-24, 2026', 50, footerY + 20);
     
     doc.fontSize(9)
        .fillColor('#64748b')

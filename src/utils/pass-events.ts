@@ -298,8 +298,8 @@ export function formatEventWithDate(event: Event, day: number): {
   speaker: string | null;
   description: string;
 } {
-  // E-Summit dates: March 15-16, 2026
-  const eventDate = day === 1 ? "March 15, 2026" : "March 16, 2026";
+  // E-Summit dates: January 23-24, 2026
+  const eventDate = day === 1 ? "January 15, 2026" : "January 16, 2026";
   const dayLabel = day === 1 ? "Day 1" : "Day 2";
   
   return {

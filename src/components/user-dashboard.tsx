@@ -32,7 +32,7 @@ interface Pass {
   hasWorkshopAccess: boolean;
   qrCodeUrl?: string;
   transaction?: {
-    id: number;
+    id: string;  // UUID string, not number
     amount: number;
     status: string;
     razorpayPaymentId?: string;
@@ -56,6 +56,8 @@ export function UserDashboard({
   const [isCheckingProfile, setIsCheckingProfile] = useState(true);
   const [myPasses, setMyPasses] = useState<Pass[]>([]);
   const [isLoadingPasses, setIsLoadingPasses] = useState(true);
+  const [downloadingPassId, setDownloadingPassId] = useState<string | null>(null);
+  const [downloadingInvoiceId, setDownloadingInvoiceId] = useState<string | null>(null);
 
   const mockUser = {
     name: user?.fullName || userData?.name || "User",
@@ -144,12 +146,14 @@ export function UserDashboard({
   // Download pass PDF
   const downloadPassPDF = async (passId: string) => {
     try {
+      setDownloadingPassId(passId);
       const response = await fetch(
         `http://localhost:5000/api/v1/pdf/pass/${passId}`
       );
       
       if (!response.ok) {
-        throw new Error('Failed to download pass PDF');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to download pass PDF');
       }
 
       const blob = await response.blob();
@@ -163,19 +167,23 @@ export function UserDashboard({
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading pass PDF:', error);
-      alert('Failed to download pass PDF. Please try again.');
+      alert(error instanceof Error ? error.message : 'Failed to download pass PDF. Please try again.');
+    } finally {
+      setDownloadingPassId(null);
     }
   };
 
   // Download invoice PDF
   const downloadInvoicePDF = async (transactionId: string) => {
     try {
+      setDownloadingInvoiceId(transactionId);
       const response = await fetch(
         `http://localhost:5000/api/v1/pdf/invoice/${transactionId}`
       );
       
       if (!response.ok) {
-        throw new Error('Failed to download invoice PDF');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to download invoice PDF');
       }
 
       const blob = await response.blob();
@@ -189,7 +197,9 @@ export function UserDashboard({
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading invoice PDF:', error);
-      alert('Failed to download invoice PDF. Please try again.');
+      alert(error instanceof Error ? error.message : 'Failed to download invoice PDF. Please try again.');
+    } finally {
+      setDownloadingInvoiceId(null);
     }
   };
 
@@ -302,18 +312,37 @@ export function UserDashboard({
                         <Button 
                           className="flex-1"
                           onClick={() => downloadPassPDF(pass.passId)}
+                          disabled={downloadingPassId === pass.passId}
                         >
-                          <Download className="mr-2 h-4 w-4" />
-                          Download Pass
+                          {downloadingPassId === pass.passId ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Downloading...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download Pass
+                            </>
+                          )}
                         </Button>
                         <Button
                           variant="outline"
                           className="flex-1"
-                          onClick={() => pass.transaction && downloadInvoicePDF(pass.transaction.id.toString())}
-                          disabled={!pass.transaction}
+                          onClick={() => pass.transaction && downloadInvoicePDF(pass.transaction.id)}
+                          disabled={!pass.transaction || downloadingInvoiceId === pass.transaction?.id}
                         >
-                          <FileText className="mr-2 h-4 w-4" />
-                          Invoice
+                          {downloadingInvoiceId === pass.transaction?.id ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Downloading...
+                            </>
+                          ) : (
+                            <>
+                              <FileText className="mr-2 h-4 w-4" />
+                              Invoice
+                            </>
+                          )}
                         </Button>
                       </div>
                     </CardContent>

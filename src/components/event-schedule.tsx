@@ -346,8 +346,8 @@ END:VCALENDAR`;
 
       <Tabs defaultValue="day1" className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="day1">Day 1 - March 15</TabsTrigger>
-          <TabsTrigger value="day2">Day 2 - March 16</TabsTrigger>
+          <TabsTrigger value="day1">Day 1 - January 15</TabsTrigger>
+          <TabsTrigger value="day2">Day 2 - January 16</TabsTrigger>
         </TabsList>
 
         <TabsContent value="day1" className="mt-6">
