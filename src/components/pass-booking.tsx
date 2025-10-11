@@ -40,7 +40,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { motion } from "motion/react";
 import { GlowCard } from "./accentricity/glow-card";
 import { ShimmerButton } from "./accentricity/shimmer-button";
@@ -93,6 +93,21 @@ export function PassBooking({
       }));
     }
   }, [isAuthenticated, userData]);
+
+  // Auto-redirect to dashboard after booking completion
+  useEffect(() => {
+    if (step === 4) {
+      // Show success message for 5 seconds, then redirect to dashboard
+      const timer = setTimeout(() => {
+        toast.success("Redirecting to your dashboard...");
+        setTimeout(() => {
+          onNavigate("dashboard");
+        }, 1000);
+      }, 5000); // Wait 5 seconds before redirecting
+
+      return () => clearTimeout(timer);
+    }
+  }, [step, onNavigate]);
 
   const passes = [
     {
@@ -634,7 +649,7 @@ export function PassBooking({
                         </Label>
                         <Select
                           value={formData.year}
-                          onValueChange={(value) =>
+                          onValueChange={(value: string) =>
                             setFormData({
                               ...formData,
                               year: value,
@@ -702,7 +717,7 @@ export function PassBooking({
                                     addon.id as keyof typeof formData
                                   ] as boolean
                                 }
-                                onCheckedChange={(checked) =>
+                                onCheckedChange={(checked: boolean) =>
                                   setFormData({
                                     ...formData,
                                     [addon.id]: checked,
@@ -1000,7 +1015,16 @@ export function PassBooking({
               </div>
 
               <div className="flex flex-col gap-2">
-                <Button className="w-full">
+                <Button 
+                  className="w-full"
+                  onClick={() => onNavigate("dashboard")}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                >
                   Download Digital Pass
                 </Button>
                 <Button variant="outline" className="w-full">

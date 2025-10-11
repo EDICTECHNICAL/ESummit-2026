@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { Navigation } from "./components/navigation";
 import { HomePage } from "./components/homepage";
 import { PassBooking } from "./components/pass-booking";
@@ -19,14 +20,15 @@ import { Footer } from "./components/footer";
 import { Toaster } from "./components/ui/sonner";
 
 export default function App() {
+  const { user, isSignedIn } = useUser();
   const [currentPage, setCurrentPage] = useState("home");
   const [isDark, setIsDark] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminRole, setAdminRole] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
-  const [userData, setUserData] = useState<{ name: string; email: string } | null>(null);
-  const [redirectAfterAuth, setRedirectAfterAuth] = useState<string | null>(null);
+
+  // Check if user is admin from Clerk metadata
+  const isAdmin = user?.publicMetadata?.role === "admin";
 
   useEffect(() => {
     // Check for saved theme preference or use system preference
@@ -36,14 +38,6 @@ export default function App() {
     if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
       setIsDark(true);
       document.documentElement.classList.add("dark");
-    }
-
-    // Check for saved user authentication
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      setIsUserAuthenticated(true);
-      setUserData(user);
     }
   }, []);
 
@@ -81,24 +75,8 @@ export default function App() {
     setCurrentPage("home");
   };
 
-  const handleUserLogin = (user: { name: string; email: string }) => {
-    setIsUserAuthenticated(true);
-    setUserData(user);
-    localStorage.setItem("user", JSON.stringify(user));
-    
-    // Redirect to booking if that was the intent
-    if (redirectAfterAuth === "booking") {
-      setCurrentPage("booking");
-      setRedirectAfterAuth(null);
-    } else {
-      setCurrentPage("dashboard");
-    }
-  };
-
   const handleUserLogout = () => {
-    setIsUserAuthenticated(false);
-    setUserData(null);
-    localStorage.removeItem("user");
+    // User logout is now handled by Clerk's SignOutButton
     setCurrentPage("home");
   };
 
@@ -109,11 +87,13 @@ export default function App() {
       case "booking":
         return (
           <PassBooking 
-            isAuthenticated={isUserAuthenticated}
-            userData={userData}
+            isAuthenticated={!!isSignedIn}
+            userData={user ? {
+              name: user.fullName || user.firstName || "User",
+              email: user.primaryEmailAddress?.emailAddress || ""
+            } : null}
             onNavigate={handleNavigate}
             onRequestAuth={() => {
-              setRedirectAfterAuth("booking");
               setCurrentPage("auth");
             }}
           />
@@ -131,12 +111,17 @@ export default function App() {
       case "team":
         return <Team />;
       case "dashboard":
-        return (
+        return isSignedIn ? (
           <UserDashboard 
             onNavigate={handleNavigate}
-            userData={userData}
+            userData={user ? {
+              name: user.fullName || user.firstName || "User",
+              email: user.primaryEmailAddress?.emailAddress || ""
+            } : null}
             onLogout={handleUserLogout}
           />
+        ) : (
+          <AuthModal onNavigate={handleNavigate} />
         );
       case "admin":
         return <AdminLogin onLogin={handleAdminLogin} onCancel={handleAdminCancel} />;
@@ -152,12 +137,7 @@ export default function App() {
           <AdminLogin onLogin={handleAdminLogin} onCancel={handleAdminCancel} />
         );
       case "auth":
-        return (
-          <AuthModal 
-            onNavigate={handleNavigate}
-            onLogin={handleUserLogin}
-          />
-        );
+        return <AuthModal onNavigate={handleNavigate} />;
       case "privacy-policy":
         return <PrivacyPolicy />;
       case "terms-of-service":
@@ -180,8 +160,11 @@ export default function App() {
           onNavigate={handleNavigate}
           isDark={isDark}
           toggleDark={toggleDark}
-          isUserAuthenticated={isUserAuthenticated}
-          userData={userData}
+          isUserAuthenticated={!!isSignedIn}
+          userData={user ? {
+            name: user.fullName || user.firstName || "User",
+            email: user.primaryEmailAddress?.emailAddress || ""
+          } : null}
           onLogout={handleUserLogout}
         />
       )}

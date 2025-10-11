@@ -1,19 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import {
   Download,
   Calendar,
   Ticket,
   FileText,
-  User,
-  Settings,
-  LogOut,
-  Bell,
-  Lock,
-  Eye,
-  EyeOff,
-  Mail,
-  Phone,
-  Building,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
@@ -25,14 +16,11 @@ import {
   TabsTrigger,
 } from "./ui/tabs";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
-import { Separator } from "./ui/separator";
 import {
   getPurchasedPasses,
   getFormattedEventsForPass,
 } from "../utils/pass-events";
+import { ProfileCompletionModal } from "./profile-completion-modal";
 
 interface UserDashboardProps {
   onNavigate: (page: string) => void;
@@ -45,23 +33,45 @@ export function UserDashboard({
   userData,
   onLogout,
 }: UserDashboardProps) {
-  const [showPassword, setShowPassword] = useState(false);
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState("passes");
-
-  const [settings, setSettings] = useState({
-    emailNotifications: true,
-    smsNotifications: false,
-    eventReminders: true,
-    marketingEmails: false,
-    twoFactorAuth: false,
-  });
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 
   const mockUser = {
-    name: userData?.name || "User",
-    email: userData?.email || "user@example.com",
-    phone: "+91 98765 43210",
-    college: "Premier Institute of Technology",
-    year: "3rd Year",
+    name: user?.fullName || userData?.name || "User",
+    email: user?.primaryEmailAddress?.emailAddress || userData?.email || "user@example.com",
+  };
+
+  // Check if user profile is complete
+  useEffect(() => {
+    const checkProfile = async () => {
+      if (!user?.id) {
+        setIsCheckingProfile(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/v1/users/check-profile/${user.id}`
+        );
+        const data = await response.json();
+
+        if (data.success && !data.data.isComplete) {
+          setShowProfileModal(true);
+        }
+      } catch (error) {
+        console.error("Error checking profile:", error);
+      } finally {
+        setIsCheckingProfile(false);
+      }
+    };
+
+    checkProfile();
+  }, [user?.id]);
+
+  const handleProfileComplete = () => {
+    setShowProfileModal(false);
   };
 
   // Get purchased passes from localStorage
@@ -99,28 +109,6 @@ export function UserDashboard({
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab("settings")}
-          >
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (onLogout) {
-                onLogout();
-              } else {
-                onNavigate("home");
-              }
-            }}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
-        </div>
       </div>
 
       <Tabs
@@ -133,8 +121,6 @@ export function UserDashboard({
           <TabsTrigger value="schedule">
             My Schedule
           </TabsTrigger>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="passes">
@@ -305,262 +291,13 @@ export function UserDashboard({
             )}
           </div>
         </TabsContent>
-
-        <TabsContent value="profile">
-          <Card>
-            <CardHeader>
-              <h3>Profile Information</h3>
-              <p className="text-sm text-muted-foreground">
-                View and edit your personal information
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input
-                    id="name"
-                    defaultValue={mockUser.name}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      className="pl-10"
-                      defaultValue={mockUser.email}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      className="pl-10"
-                      defaultValue={mockUser.phone}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="college">
-                    College/Institution
-                  </Label>
-                  <div className="relative">
-                    <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="college"
-                      className="pl-10"
-                      defaultValue={mockUser.college}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="year">Year of Study</Label>
-                  <Input
-                    id="year"
-                    defaultValue={mockUser.year}
-                  />
-                </div>
-              </div>
-              <Separator />
-              <div className="flex gap-2">
-                <Button>
-                  <User className="mr-2 h-4 w-4" />
-                  Save Changes
-                </Button>
-                <Button variant="outline">Cancel</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <div className="space-y-6">
-            {/* Notification Settings */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
-                  <h3>Notification Preferences</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Manage how you receive updates and
-                  notifications
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive event updates via email
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.emailNotifications}
-                    onCheckedChange={(checked) =>
-                      setSettings({
-                        ...settings,
-                        emailNotifications: checked,
-                      })
-                    }
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>SMS Notifications</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Get important alerts via SMS
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.smsNotifications}
-                    onCheckedChange={(checked) =>
-                      setSettings({
-                        ...settings,
-                        smsNotifications: checked,
-                      })
-                    }
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Event Reminders</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Reminders before scheduled events
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.eventReminders}
-                    onCheckedChange={(checked) =>
-                      setSettings({
-                        ...settings,
-                        eventReminders: checked,
-                      })
-                    }
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Marketing Emails</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Receive updates about future events
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.marketingEmails}
-                    onCheckedChange={(checked) =>
-                      setSettings({
-                        ...settings,
-                        marketingEmails: checked,
-                      })
-                    }
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Security Settings */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Lock className="h-5 w-5 text-primary" />
-                  <h3>Security Settings</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Manage your account security and password
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Two-Factor Authentication</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Add an extra layer of security
-                    </p>
-                  </div>
-                  <Switch
-                    checked={settings.twoFactorAuth}
-                    onCheckedChange={(checked) =>
-                      setSettings({
-                        ...settings,
-                        twoFactorAuth: checked,
-                      })
-                    }
-                  />
-                </div>
-                <Separator />
-                <div className="space-y-3">
-                  <Label>Change Password</Label>
-                  <div className="space-y-2">
-                    <Input
-                      type="password"
-                      placeholder="Current Password"
-                    />
-                    <div className="relative">
-                      <Input
-                        type={
-                          showPassword ? "text" : "password"
-                        }
-                        placeholder="New Password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowPassword(!showPassword)
-                        }
-                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    <Input
-                      type="password"
-                      placeholder="Confirm New Password"
-                    />
-                  </div>
-                  <Button>Update Password</Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Account Actions */}
-            <Card className="border-destructive/50">
-              <CardHeader>
-                <h3>Danger Zone</h3>
-                <p className="text-sm text-muted-foreground">
-                  Irreversible account actions
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                >
-                  Delete Account
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">
-                  This action cannot be undone. All your data
-                  will be permanently deleted.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
       </Tabs>
+
+      {/* Profile Completion Modal */}
+      <ProfileCompletionModal
+        isOpen={showProfileModal}
+        onComplete={handleProfileComplete}
+      />
     </div>
   );
 }
