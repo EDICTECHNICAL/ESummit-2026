@@ -246,7 +246,7 @@ Core tables:
 
 - **Name**: E-Summit 2026
 - **Venue**: Thakur College of Engineering and Technology, Kandivali East, Mumbai - 400101
-- **Dates**: March 15-16, 2026 (2 Days)
+- **Dates**: January 23-24, 2026 (2 Days)
 - **Expected Attendance**: 5,000+ participants
 
 ## 📖 Documentation

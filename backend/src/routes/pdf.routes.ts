@@ -97,9 +97,9 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response) => {
       });
     }
 
-    // Fetch pass data
+    // Fetch pass data using the pass UUID (not passId field)
     const pass = await prisma.pass.findUnique({
-      where: { passId: transaction.passId }
+      where: { id: transaction.passId }  // transaction.passId is the Pass.id (UUID)
     });
 
     if (!pass) {
