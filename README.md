@@ -5,6 +5,7 @@ A complete event management platform for E-Summit 2025 at Thakur College of Engi
 ## 🎯 Project Overview
 
 This platform handles the complete lifecycle of E-Summit 2025:
+
 - **Pass Booking**: Multiple pass types (Gold, Silver, Platinum, Group) with Razorpay payment integration
 - **QR Code System**: Unique, encrypted QR codes for each booking with secure check-in
 - **Event Management**: Competitions, workshops, keynote sessions, and networking events
@@ -24,8 +25,19 @@ ESummit-2025/
 │   │   └── ...
 │   └── utils/                    # Utilities
 │
-├── backend/                      # Backend (to be implemented)
-│   └── See BACKEND_ARCHITECTURE.md
+├── backend/                      # Backend (Node.js + Express + TypeScript + Prisma)
+│   ├── src/                      # Source code
+│   │   ├── config/               # Configuration
+│   │   ├── controllers/          # Route controllers
+│   │   ├── services/             # Business logic
+│   │   ├── middleware/           # Express middleware
+│   │   ├── routes/               # API routes
+│   │   ├── validators/           # Zod schemas
+│   │   ├── utils/                # Utilities
+│   │   └── types/                # TypeScript types
+│   ├── prisma/                   # Database schema
+│   ├── package.json
+│   └── README.md                 # Backend documentation
 │
 ├── docs/                         # Documentation
 │   ├── BACKEND_ARCHITECTURE.md   # Complete backend plan
@@ -56,12 +68,37 @@ npm run preview
 
 The frontend will be available at `http://localhost:5173`
 
-### Backend (To Be Implemented)
+### Backend (Phase 1 ✓ - Auth System Complete)
 
-See the comprehensive documentation:
-- **[BACKEND_ARCHITECTURE.md](./BACKEND_ARCHITECTURE.md)** - Complete backend architecture and database schema
-- **[QR_CODE_SYSTEM.md](./QR_CODE_SYSTEM.md)** - QR code generation and scanning implementation
-- **[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)** - Week-by-week implementation plan
+```bash
+# Navigate to backend
+cd backend
+
+# Install dependencies
+npm install
+
+# Set up environment
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
+
+# Run Prisma migrations
+npm run prisma:generate
+npm run prisma:migrate
+
+# Start development server
+npm run dev
+```
+
+The backend API will be available at `http://localhost:5000`
+
+**Quick Setup Guide**: See [BACKEND_SETUP.md](./BACKEND_SETUP.md)
+
+**Full Documentation**:
+
+- **[backend/README.md](./backend/README.md)** - Backend documentation and API reference
+- **[BACKEND_ARCHITECTURE.md](./BACKEND_ARCHITECTURE.md)** - Complete backend architecture
+- **[QR_CODE_SYSTEM.md](./QR_CODE_SYSTEM.md)** - QR code implementation guide
+- **[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)** - Development roadmap
 
 ## 📱 QR Code System
 
@@ -71,6 +108,7 @@ See the comprehensive documentation:
 2. **At Event**: User shows QR code → Admin scans with mobile app → System validates → Entry granted
 
 ### Key Features
+
 - ✅ **AES-256-GCM encryption** - Military-grade security
 - ✅ **SHA-256 checksum** - Tamper detection
 - ✅ **Time-bound validity** - Only valid during event dates
@@ -88,6 +126,7 @@ See the comprehensive documentation:
 ## 🗄️ Database Schema
 
 Core tables:
+
 - `users` - User accounts
 - `passes` - Purchased passes with QR codes
 - `transactions` - Payment records
@@ -112,6 +151,7 @@ Core tables:
 ## 📊 Key Features
 
 ### For Attendees
+
 - Browse events and speakers
 - Book passes (multiple types)
 - Register for events
@@ -120,6 +160,7 @@ Core tables:
 - Download event schedule
 
 ### For Admins
+
 - Real-time dashboard
 - Participant management
 - QR code scanner (PWA)
@@ -131,6 +172,7 @@ Core tables:
 ## 🛠️ Tech Stack
 
 ### Frontend ✓
+
 - React 18
 - TypeScript
 - Vite
@@ -140,6 +182,7 @@ Core tables:
 - Razorpay SDK
 
 ### Backend (Planned)
+
 - Node.js + Express
 - TypeScript
 - PostgreSQL + Prisma
@@ -179,43 +222,57 @@ Core tables:
 
 ## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
+| Document                                          | Description                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------- |
 | [BACKEND_ARCHITECTURE.md](./BACKEND_ARCHITECTURE.md) | Complete backend architecture, API endpoints, database schema |
-| [QR_CODE_SYSTEM.md](./QR_CODE_SYSTEM.md) | QR code generation & scanning implementation |
-| [QR_FLOW_DIAGRAM.md](./QR_FLOW_DIAGRAM.md) | Visual flow from booking to entry |
-| [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) | Week-by-week development roadmap |
+| [QR_CODE_SYSTEM.md](./QR_CODE_SYSTEM.md)             | QR code generation & scanning implementation                  |
+| [QR_FLOW_DIAGRAM.md](./QR_FLOW_DIAGRAM.md)           | Visual flow from booking to entry                             |
+| [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) | Week-by-week development roadmap                              |
 
 ## 🚦 Development Roadmap
 
 ### ✅ Phase 1: Frontend (Completed)
-- [x] Homepage with hero section
-- [x] Events listing and schedule
-- [x] Speakers showcase
-- [x] Team page
-- [x] Venue information
-- [x] Pass booking UI
-- [x] Admin panel UI
-- [x] User dashboard UI
 
-### 🔄 Phase 2: Backend (In Progress)
-- [ ] Database setup (PostgreSQL + Prisma)
-- [ ] Authentication system (JWT)
-- [ ] Razorpay integration
+- [X] Homepage with hero section
+- [X] Events listing and schedule
+- [X] Speakers showcase
+- [X] Team page
+- [X] Venue information
+- [X] Pass booking UI
+- [X] Admin panel UI
+- [X] User dashboard UI
+
+### ✅ Phase 2: Backend Foundation (Completed)
+
+- [X] Database setup (PostgreSQL + Prisma)
+- [X] 10-table schema with relationships
+- [X] Authentication system (JWT access & refresh tokens)
+- [X] User registration & login
+- [X] Password hashing (bcrypt)
+- [X] Request validation (Zod)
+- [X] Error handling & logging
+- [X] Security middleware (helmet, CORS, rate limiting)
+
+### 🔄 Phase 3: Payment & QR System (Next)
+
+- [ ] Razorpay payment integration
+- [ ] Pass booking APIs
 - [ ] QR code generation system
 - [ ] Email notifications
 - [ ] Event management APIs
-- [ ] Admin APIs
+- [ ] Admin panel APIs
 - [ ] Check-in system
 
-### 📅 Phase 3: Integration (Planned)
+### 📅 Phase 4: Integration (Planned)
+
 - [ ] Connect frontend to backend
 - [ ] Build QR scanner PWA
 - [ ] End-to-end testing
 - [ ] Performance optimization
 - [ ] Security audit
 
-### 🚀 Phase 4: Deployment (Planned)
+### 🚀 Phase 5: Deployment (Planned)
+
 - [ ] Deploy backend (DigitalOcean/AWS)
 - [ ] Deploy frontend (Vercel/Netlify)
 - [ ] Configure domain & SSL
@@ -263,40 +320,6 @@ cd backend
 npm run test        # Run all tests
 npm run test:watch  # Watch mode
 ```
-
-## 📈 Performance
-
-- **Frontend Build**: Optimized with Vite
-- **API Response**: <200ms target
-- **QR Generation**: ~200ms per code
-- **Check-in Speed**: <5 seconds from scan to entry
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📄 License
-
-This project is part of E-Summit 2025 at Thakur College of Engineering and Technology.
-
-## 📞 Support
-
-- **Email**: support@esummit2025.com
-- **Website**: [esummit2025.com](https://esummit2025.com)
-- **College**: Thakur College of Engineering and Technology
-
-## 🙏 Acknowledgments
-
-- Original Figma design: [Event Management Platform](https://www.figma.com/design/4mfHusc92cCL0SmJub6qBJ/Event-Management-Platform)
-- Shadcn UI components
-- Radix UI primitives
-- Tailwind CSS team
-
----
 
 **Built with ❤️ for E-Summit 2025**
 

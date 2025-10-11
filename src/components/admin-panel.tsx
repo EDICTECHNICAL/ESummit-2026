@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { 
   Users, 
   Ticket, 
@@ -20,7 +21,7 @@ import {
   Shield,
   Lock
 } from "lucide-react";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -74,6 +75,35 @@ const ROLE_PERMISSIONS = {
 };
 
 export function AdminPanel({ onNavigate, adminRole, adminEmail, onLogout }: AdminPanelProps) {
+  const { user } = useUser();
+  
+  // Check if user is admin
+  const isAdmin = user?.publicMetadata?.role === "admin";
+  
+  // If not admin, redirect to home
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <div className="flex items-center gap-2 text-destructive">
+              <Lock className="h-6 w-6" />
+              <h2 className="text-2xl font-bold">Access Denied</h2>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4 text-muted-foreground">
+              You do not have permission to access the admin panel.
+            </p>
+            <Button onClick={() => onNavigate("home")} className="w-full">
+              Return to Home
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const permissions = ROLE_PERMISSIONS[adminRole as keyof typeof ROLE_PERMISSIONS] || ROLE_PERMISSIONS["Scanner Operator"];
   const [searchTerm, setSearchTerm] = useState("");
   const [filterPassType, setFilterPassType] = useState("all");

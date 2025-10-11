@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, Calendar, Users, MapPin, Trophy, Ticket, LogIn, Moon, Sun, User, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "./ui/sheet";
+import { UserButton, useUser } from "@clerk/clerk-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,7 @@ export function Navigation({
 }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { isSignedIn } = useUser();
 
   const getUserInitials = (name: string) => {
     return name
@@ -53,7 +55,8 @@ export function Navigation({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = [
+  // Base nav items always visible
+  const baseNavItems = [
     { id: "home", label: "Home", icon: null },
     { id: "events", label: "Events", icon: Trophy },
     { id: "schedule", label: "Schedule", icon: Calendar },
@@ -62,6 +65,14 @@ export function Navigation({
     { id: "sponsors", label: "Sponsors", icon: null },
     { id: "team", label: "Team", icon: null },
   ];
+
+  // Add Dashboard to nav items if user is signed in
+  const navItems = isSignedIn 
+    ? [
+        ...baseNavItems,
+        { id: "dashboard", label: "Dashboard", icon: User },
+      ]
+    : baseNavItems;
 
   return (
     <motion.nav
@@ -173,7 +184,19 @@ export function Navigation({
                 </Button>
               </motion.div>
 
-              {isUserAuthenticated && userData ? (
+              {/* Use Clerk UserButton if signed in with Clerk, otherwise use custom auth */}
+              {isSignedIn ? (
+                <div className="hidden sm:block">
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-8 w-8",
+                      },
+                    }}
+                  />
+                </div>
+              ) : isUserAuthenticated && userData ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild className="hidden sm:block">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -277,8 +300,27 @@ export function Navigation({
                       </Button>
                     </div>
 
-                    {/* User Profile Section (if authenticated) */}
-                    {isUserAuthenticated && userData && (
+                    {/* User Profile Section - Show Clerk or custom auth */}
+                    {isSignedIn ? (
+                      <div className="border-b px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          <UserButton
+                            afterSignOutUrl="/"
+                            appearance={{
+                              elements: {
+                                avatarBox: "h-10 w-10",
+                              },
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium">Clerk Account</p>
+                            <p className="text-xs text-muted-foreground">
+                              Signed in with Clerk
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : isUserAuthenticated && userData && (
                       <div className="border-b px-4 py-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-10 w-10">

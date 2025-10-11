@@ -1,11 +1,14 @@
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "./ui/button";
+import { useUser } from "@clerk/clerk-react";
 
 interface FooterProps {
   onNavigate: (page: string) => void;
 }
 
 export function Footer({ onNavigate }: FooterProps) {
+  const { isSignedIn } = useUser();
+  
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12">
@@ -107,6 +110,16 @@ export function Footer({ onNavigate }: FooterProps) {
                   Book Pass
                 </button>
               </li>
+              {isSignedIn && (
+                <li>
+                  <button
+                    onClick={() => onNavigate("dashboard")}
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Dashboard
+                  </button>
+                </li>
+              )}
               <li>
                 <button
                   onClick={() => onNavigate("venue")}
