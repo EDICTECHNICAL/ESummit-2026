@@ -14,9 +14,62 @@ interface Config {
     refreshExpiresIn: string;
   };
   cors: {
-    origin: string;
+    origin: string | ((origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void);
   };
 }
+
+// Dynamic CORS origin validator
+const getCorsOrigin = () => {
+  const nodeEnv = process.env.NODE_ENV;
+
+  // In production, use dynamic validation
+  if (nodeEnv === 'production') {
+    return (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      // Allow requests with no origin (mobile apps, curl, postman)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Allow all Vercel deployments (*.vercel.app)
+      if (origin.endsWith('.vercel.app')) {
+        console.log(`✅ CORS: Allowed Vercel deployment - ${origin}`);
+        return callback(null, true);
+      }
+
+      // Allow explicit frontend URL from env
+      const frontendUrl = process.env.FRONTEND_URL;
+      if (frontendUrl && origin === frontendUrl) {
+        console.log(`✅ CORS: Allowed explicit frontend - ${origin}`);
+        return callback(null, true);
+      }
+
+      // Reject other origins
+      console.warn(`⚠️ CORS: Blocked origin - ${origin}`);
+      return callback(new Error('Not allowed by CORS'), false);
+    };
+  }
+
+  // In development, allow localhost and Vercel
+  if (nodeEnv === 'development') {
+    return (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      const devOrigins = [
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:3000',
+        'http://localhost:5000',
+      ];
+
+      if (!origin || devOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
+    };
+  }
+
+  // Fallback to wildcard (not recommended for production)
+  return '*';
+};
 
 const config: Config = {
   env: process.env.NODE_ENV || 'development',
@@ -29,7 +82,7 @@ const config: Config = {
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
   cors: {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: getCorsOrigin(),
   },
 };
 
