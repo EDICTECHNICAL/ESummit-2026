@@ -10,7 +10,9 @@ import { generalLimiter } from './middleware/rateLimit.middleware';
 const app: Application = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for API
+}));
 
 // CORS
 app.use(
