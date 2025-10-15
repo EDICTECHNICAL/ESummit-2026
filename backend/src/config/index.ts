@@ -23,14 +23,27 @@ const config: Config = {
   port: parseInt(process.env.PORT || '5000', 10),
   databaseUrl: process.env.DATABASE_URL || '',
   jwt: {
-    secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-change-in-production',
-    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+    secret: process.env.JWT_SECRET || 'default-jwt-secret-please-change',
+    refreshSecret: process.env.JWT_REFRESH_SECRET || 'default-refresh-secret-please-change',
+    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || '*',
   },
 };
+
+// Warn about missing critical env vars in production
+if (config.env === 'production') {
+  if (!process.env.DATABASE_URL) {
+    console.warn('⚠️  WARNING: DATABASE_URL not set');
+  }
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.includes('default')) {
+    console.warn('⚠️  WARNING: JWT_SECRET not set or using default');
+  }
+  if (!process.env.FRONTEND_URL) {
+    console.warn('⚠️  WARNING: FRONTEND_URL not set, using wildcard CORS');
+  }
+}
 
 export default config;
