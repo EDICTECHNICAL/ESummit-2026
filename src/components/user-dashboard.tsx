@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { getFormattedEventsForPass } from "../utils/pass-events";
 import { ProfileCompletionModal } from "./profile-completion-modal";
 import { API_BASE_URL } from "../lib/api";
+import { AuroraText } from "./magicui/aurora-text";
 
 interface Pass {
   id: number;

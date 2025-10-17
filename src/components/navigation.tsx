@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { motion, AnimatePresence } from "motion/react";
 import { GradientText } from "./magicui/gradient-text";
+import { AuroraText } from "./magicui/aurora-text";
 import { Logo } from "./ui/logo";
 import { AnimatedThemeToggler } from "./magicui/animated-theme-toggler";
 
@@ -25,6 +26,7 @@ interface NavigationProps {
   isUserAuthenticated?: boolean;
   userData?: { name: string; email: string } | null;
   onLogout?: () => void;
+  userHasPass?: boolean;
 }
 
 export function Navigation({ 
@@ -35,6 +37,7 @@ export function Navigation({
   isUserAuthenticated = false,
   userData = null,
   onLogout = () => {},
+  userHasPass = false,
 }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -137,7 +140,19 @@ export function Navigation({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span className="relative z-10">{item.label}</span>
+                  {item.id === "dashboard" ? (
+                    <span className="relative z-10">
+                      <AuroraText 
+                        size="sm" 
+                        className="text-sm md:text-base font-semibold"
+                        colors={["#a855f7", "#ec4899", "#3b82f6", "#8b5cf6", "#d946ef"]}
+                      >
+                        {item.label}
+                      </AuroraText>
+                    </span>
+                  ) : (
+                    <span className="relative z-10">{item.label}</span>
+                  )}
                   <AnimatePresence>
                     {currentPage === item.id && (
                       <motion.div
@@ -204,10 +219,12 @@ export function Navigation({
                       <User className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onNavigate("booking")}>
-                      <Ticket className="mr-2 h-4 w-4" />
-                      <span>Book Pass</span>
-                    </DropdownMenuItem>
+                    {!userHasPass && (
+                      <DropdownMenuItem onClick={() => onNavigate("booking")}>
+                        <Ticket className="mr-2 h-4 w-4" />
+                        <span>Book Pass</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={onLogout} className="text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -233,20 +250,22 @@ export function Navigation({
                 </motion.div>
               )}
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden sm:block"
-              >
-                <Button
-                  size="sm"
-                  onClick={() => onNavigate("booking")}
-                  className="rounded-full bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
+              {!userHasPass && (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="hidden sm:block"
                 >
-                  <Ticket className="mr-2 h-4 w-4" />
-                  Book Pass
-                </Button>
-              </motion.div>
+                  <Button
+                    size="sm"
+                    onClick={() => onNavigate("booking")}
+                    className="rounded-full bg-gradient-to-r from-primary to-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow"
+                  >
+                    <Ticket className="mr-2 h-4 w-4" />
+                    Book Pass
+                  </Button>
+                </motion.div>
+              )}
 
               {/* Mobile menu */}
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -321,7 +340,17 @@ export function Navigation({
                               setIsOpen(false);
                             }}
                           >
-                            <span>{item.label}</span>
+                            {item.id === "dashboard" ? (
+                              <AuroraText 
+                                size="sm" 
+                                className="text-sm font-semibold"
+                                colors={["#a855f7", "#ec4899", "#3b82f6", "#8b5cf6", "#d946ef"]}
+                              >
+                                {item.label}
+                              </AuroraText>
+                            ) : (
+                              <span>{item.label}</span>
+                            )}
                           </Button>
                         ))}
                       </div>
@@ -341,15 +370,17 @@ export function Navigation({
                           >
                             <span>Dashboard</span>
                           </Button>
-                          <Button
-                            className="w-full rounded-full h-11 bg-gradient-to-r from-primary to-primary/90"
-                            onClick={() => {
-                              onNavigate("booking");
-                              setIsOpen(false);
-                            }}
-                          >
-                            <span>Book Pass</span>
-                          </Button>
+                          {!userHasPass && (
+                            <Button
+                              className="w-full rounded-full h-11 bg-gradient-to-r from-primary to-primary/90"
+                              onClick={() => {
+                                onNavigate("booking");
+                                setIsOpen(false);
+                              }}
+                            >
+                              <span>Book Pass</span>
+                            </Button>
+                          )}
                         </>
                       ) : (
                         <>
@@ -363,15 +394,17 @@ export function Navigation({
                           >
                             <span>Login</span>
                           </Button>
-                          <Button
-                            className="w-full rounded-full h-11 bg-gradient-to-r from-primary to-primary/90"
-                            onClick={() => {
-                              onNavigate("booking");
-                              setIsOpen(false);
-                            }}
-                          >
-                            <span>Book Pass</span>
-                          </Button>
+                          {!userHasPass && (
+                            <Button
+                              className="w-full rounded-full h-11 bg-gradient-to-r from-primary to-primary/90"
+                              onClick={() => {
+                                onNavigate("booking");
+                                setIsOpen(false);
+                              }}
+                            >
+                              <span>Book Pass</span>
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>
