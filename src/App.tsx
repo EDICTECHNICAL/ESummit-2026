@@ -17,11 +17,13 @@ import { TermsOfService } from "./components/terms-of-service";
 import { CookiePolicy } from "./components/cookie-policy";
 import { Footer } from "./components/footer";
 import { Toaster } from "./components/ui/sonner";
+import { API_BASE_URL } from "./lib/api";
 
 export default function App() {
   const { user, isSignedIn } = useUser();
   const [currentPage, setCurrentPage] = useState("home");
   const [isDark, setIsDark] = useState(false);
+  const [userHasPass, setUserHasPass] = useState(false);
 
   // Check if user has any valid admin role (Core, JC, or OC)
   const VALID_ADMIN_ROLES = ['Core', 'JC', 'OC'];
@@ -38,6 +40,24 @@ export default function App() {
       document.documentElement.classList.add("dark");
     }
   }, []);
+
+  // Fetch user's pass status
+  useEffect(() => {
+    if (isSignedIn && user?.id) {
+      fetch(`${API_BASE_URL}/passes/user/${user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data?.passes) {
+            setUserHasPass(data.data.passes.length > 0);
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching user passes:", err);
+        });
+    } else {
+      setUserHasPass(false);
+    }
+  }, [isSignedIn, user?.id]);
 
   const toggleDark = () => {
     setIsDark(!isDark);
@@ -152,6 +172,7 @@ export default function App() {
             email: user.primaryEmailAddress?.emailAddress || ""
           } : null}
           onLogout={handleUserLogout}
+          userHasPass={userHasPass}
         />
       )}
       <main className={showNavAndFooter ? "pt-24" : ""}>{renderPage()}</main>
