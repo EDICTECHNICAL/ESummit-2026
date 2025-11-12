@@ -27,24 +27,31 @@ const getCorsOrigin = () => {
     return (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       // Allow requests with no origin (mobile apps, curl, postman)
       if (!origin) {
+        console.log(`✅ CORS (prod): No origin header - allowing`);
         return callback(null, true);
       }
 
       // Allow all Vercel deployments (*.vercel.app)
       if (origin.endsWith('.vercel.app')) {
-        console.log(`✅ CORS: Allowed Vercel deployment - ${origin}`);
+        console.log(`✅ CORS (prod): Allowed Vercel deployment - ${origin}`);
         return callback(null, true);
       }
 
       // Allow explicit frontend URL from env
       const frontendUrl = process.env.FRONTEND_URL;
       if (frontendUrl && origin === frontendUrl) {
-        console.log(`✅ CORS: Allowed explicit frontend - ${origin}`);
+        console.log(`✅ CORS (prod): Allowed explicit frontend - ${origin}`);
+        return callback(null, true);
+      }
+
+      // Allow localhost in production (for testing)
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        console.log(`✅ CORS (prod): Allowed localhost - ${origin}`);
         return callback(null, true);
       }
 
       // Reject other origins
-      console.warn(`⚠️ CORS: Blocked origin - ${origin}`);
+      console.warn(`⚠️ CORS (prod): Blocked origin - ${origin}`);
       return callback(new Error('Not allowed by CORS'), false);
     };
   }
@@ -57,13 +64,38 @@ const getCorsOrigin = () => {
         'http://localhost:5174',
         'http://localhost:3000',
         'http://localhost:5000',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5000',
       ];
 
-      if (!origin || devOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      // Allow requests with no origin (Postman, curl, mobile apps)
+      if (!origin) {
         return callback(null, true);
       }
 
-      return callback(null, false);
+      // Allow any localhost/127.0.0.1 port
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        console.log(`✅ CORS (dev): Allowed localhost - ${origin}`);
+        return callback(null, true);
+      }
+
+      // Allow Vercel deployments
+      if (origin.endsWith('.vercel.app')) {
+        console.log(`✅ CORS (dev): Allowed Vercel - ${origin}`);
+        return callback(null, true);
+      }
+
+      // Allow if matches explicit origin
+      if (devOrigins.includes(origin)) {
+        console.log(`✅ CORS (dev): Allowed explicit - ${origin}`);
+        return callback(null, true);
+      }
+
+      // In development, log but still allow
+      console.warn(`⚠️ CORS (dev): Unknown origin, but allowing - ${origin}`);
+      return callback(null, true);
     };
   }
 

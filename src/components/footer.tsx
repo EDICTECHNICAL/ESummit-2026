@@ -28,21 +28,31 @@ export function Footer({ onNavigate }: FooterProps) {
               India's premier entrepreneurship summit bringing together students, entrepreneurs, and investors.
             </p>
             <div className="flex gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              {/* <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Facebook className="h-4 w-4" />
               </Button>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Twitter className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              </Button> */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => window.open('https://www.instagram.com/tcet_axios_ecell/', '_blank')}
+              >
                 <Instagram className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={() => window.open('https://www.linkedin.com/company/axios-edic-tcet-mumbai/', '_blank')}
+              >
                 <Linkedin className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              {/* <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Youtube className="h-4 w-4" />
-              </Button>
+              </Button> */}
             </div>
           </div>
 
