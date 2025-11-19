@@ -1,16 +1,33 @@
-# E-Summit 2026
+# E-Summit 2026 - The Beginning of Legacy
 
-A full-stack event management platform for E-Summit 2026 at Thakur College of Engineering and Technology. Features include pass booking, QR-based check-in, event management, and comprehensive admin dashboard.
+A full-stack event management platform for E-Summit 2026, TCET Mumbai's historic first-ever Entrepreneurship Summit coinciding with the 25th Anniversary of the institution. This platform manages pass booking, QR-based check-in, event management, and comprehensive admin dashboard for a two-day celebration uniting visionaries, investors, startup founders, and students.
 
 ## Project Overview
 
-This platform manages the complete event lifecycle:
+E-Summit 2026 marks a historic milestone as the first-ever Entrepreneurship Summit of Thakur College of Engineering and Technology, organized by Axios EDIC. Drawing inspiration from IIT Bombay's E-Summit, this initiative aims to nurture an end-to-end innovation pipeline from ideation to funding.
 
-- **Pass Booking**: Multiple pass types (Gold, Silver, Platinum, Group) with Razorpay payment integration
-- **QR Code System**: AES-256-GCM encrypted QR codes for secure check-in
-- **Event Management**: Competitions, workshops, keynotes, and networking events
-- **Admin Dashboard**: Real-time analytics, participant management, QR scanning, and reporting
-- **User Dashboard**: Pass viewing, event registration, and schedule access
+### Core Objectives
+
+- Foster an entrepreneurial ecosystem within TCET
+- Bridge academia with industry, investors & incubators  
+- Empower students through real-world exposure
+- Enable startup funding & incubation opportunities
+- Build talent and career opportunities in startups
+- Establish E-Summit as a TCET annual legacy
+
+### Expected Outcomes
+
+- **50+ startups pitched** | 10+ incubator offers | 5+ funding commitments
+- **30+ workshops & competitions** conducted
+- **2000+ attendees** including investors, founders, mentors, and students
+- **100+ internship and job offers** generated
+
+## Event Details
+
+- **Name**: E-Summit 2026
+- **Venue**: Thakur College of Engineering and Technology, Kandivali East, Mumbai - 400101
+- **Dates**: January 23-24, 2026 (2 Days)
+- **Expected Attendance**: 5,000+ participants
 
 ## Project Structure
 
