@@ -1,4 +1,4 @@
-import { MapPin, Phone, Navigation, Car, Utensils, AlertCircle, Building2, Train, Plane } from "lucide-react";
+import { MapPin, Phone, Navigation, Car, Utensils, AlertCircle, Building2, Train, Plane, Wifi } from "lucide-react";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -13,68 +13,109 @@ import React from "react";
 export function Venue() {
   const venues = [
     {
-      name: "Main Auditorium",
-      capacity: "2000 seats",
-      events: ["Keynotes", "Panel Discussions", "Competition Finals"],
-      features: ["Air-conditioned", "Premium sound system", "LED screens", "Live streaming"],
-      floor: "Ground Floor",
+      name: "SH-4",
+      capacity: "Main Hall",
+      events: ["The Ten Minute Million (Day 1 & 2)"],
+      features: ["Premium audio-visual setup", "VC panel seating", "Pitch stage"],
+      floor: "Seminar Hall 4",
     },
     {
-      name: "Conference Hall B",
-      capacity: "500 seats",
-      events: ["B-Plan Competition", "Case Studies"],
-      features: ["Projector", "Whiteboard", "Video conferencing"],
-      floor: "First Floor",
+      name: "530, 531",
+      capacity: "Conference Rooms",
+      events: ["Angel Investors Roundtable (Day 2)"],
+      features: ["Boardroom setup", "Presentation screens", "Networking space"],
+      floor: "5th Floor",
     },
     {
-      name: "Conference Hall C",
-      capacity: "300 seats",
-      events: ["Workshops", "Breakout Sessions"],
-      features: ["Interactive displays", "Group seating"],
-      floor: "First Floor",
+      name: "SH-3, 532, 533, 504",
+      capacity: "Multiple Rooms",
+      events: ["Pitch Arena - Idea to Reality (Day 1)"],
+      features: ["Mentor feedback zones", "Pitch presentation areas"],
+      floor: "Seminar Halls & 5th Floor",
     },
     {
-      name: "Workshop Hall A",
-      capacity: "150 seats",
-      events: ["Technical Workshops", "Design Sessions"],
-      features: ["Power outlets", "High-speed WiFi", "Collaborative spaces"],
-      floor: "Second Floor",
+      name: "Multipurpose Hall 1st Floor",
+      capacity: "Large Hall",
+      events: ["Incubator Summit (Day 1 & 2)"],
+      features: ["Incubation center booths", "Meeting areas", "Networking zones"],
+      floor: "1st Floor",
     },
     {
-      name: "Workshop Hall B",
-      capacity: "150 seats",
-      events: ["Marketing Workshops", "Growth Sessions"],
-      features: ["Power outlets", "High-speed WiFi", "Presentation equipment"],
-      floor: "Second Floor",
-    },
-    {
-      name: "Tech Lab",
-      capacity: "200 workstations",
-      events: ["Hackathon", "Coding Competitions"],
-      features: ["High-performance computers", "Multiple monitors", "24/7 access"],
-      floor: "Third Floor",
-    },
-    {
-      name: "Exhibition Area",
-      capacity: "Open space",
-      events: ["Startup Showcase", "Networking", "Sponsor Booths"],
-      features: ["Modular booths", "Demo spaces", "Networking zones"],
-      floor: "Ground Floor",
-    },
-    {
-      name: "Food Court",
+      name: "Convocation Hall",
       capacity: "800 people",
-      events: ["Meals", "Casual Networking"],
-      features: ["Multiple cuisines", "Vegetarian options", "Quick service"],
+      events: ["Internship & Job Fair (Day 1 & 2)"],
+      features: ["Startup presentation stage", "Recruitment booths", "Open seating"],
       floor: "Ground Floor",
     },
     {
-      name: "VIP Lounge",
-      capacity: "100 people",
-      events: ["Exclusive Networking"],
-      features: ["Premium seating", "Complimentary refreshments", "Private meeting spaces"],
-      floor: "First Floor",
-      vipOnly: true,
+      name: "Multipurpose Hall 2nd Floor & Architecture Ground Floor",
+      capacity: "Open spaces",
+      events: ["Networking Arena (Lunch Hours)"],
+      features: ["Informal seating", "Refreshment areas", "Networking zones"],
+      floor: "2nd Floor & Ground Floor",
+    },
+    {
+      name: "Lobby Area",
+      capacity: "Exhibition space",
+      events: ["Startup Expo (Day 1 & 2, 9:30 AM - 4:30 PM)"],
+      features: ["Display booths", "Demo zones", "Visitor walkways"],
+      floor: "Main Lobby",
+    },
+    {
+      name: "505, 506",
+      capacity: "Classrooms",
+      events: ["Competition - IPL Auction (Day 1 & 2)"],
+      features: ["Interactive screens", "Team seating", "Bidding setup"],
+      floor: "5th Floor",
+    },
+    {
+      name: "Lab 520 & 521",
+      capacity: "Computer Labs",
+      events: ["Competition - Biz Arena Startup League (Day 1 & 2)"],
+      features: ["Computer workstations", "Simulation software", "Team zones"],
+      floor: "5th Floor",
+    },
+    {
+      name: "216, 217",
+      capacity: "Labs",
+      events: ["Competition - AI Build-A-Thon (Day 1 & 2)"],
+      features: ["High-performance systems", "AI development tools", "Collaboration spaces"],
+      floor: "2nd Floor",
+    },
+    {
+      name: "Lab 522 & 523",
+      capacity: "Workshop Labs",
+      events: ["Workshop - Design Thinking & Innovation Strategy (Day 1 & 2)"],
+      features: ["Whiteboard walls", "Collaborative furniture", "Design tools"],
+      floor: "5th Floor",
+    },
+    {
+      name: "Lab 524 & 525",
+      capacity: "Workshop Labs",
+      events: ["Workshop - Finance & Marketing (Day 1 & 2)"],
+      features: ["Presentation equipment", "Case study materials", "Group seating"],
+      floor: "5th Floor",
+    },
+    {
+      name: "Lab 526 & 527",
+      capacity: "Data Labs",
+      events: ["Workshop - Data Analytics & BDM (Day 1 & 2)"],
+      features: ["Analytics software", "Data visualization tools", "Computing resources"],
+      floor: "5th Floor",
+    },
+    {
+      name: "SH-1",
+      capacity: "Seminar Hall",
+      events: ["Startup Youth Conclave (Day 1, 10:00 AM - 1:00 PM)"],
+      features: ["Panel seating", "Presentation stage", "E-Cell networking area"],
+      floor: "Seminar Hall 1",
+    },
+    {
+      name: "Auditorium",
+      capacity: "1000+ seats",
+      events: ["Panel Discussion & Valedictory (Day 1, Post Lunch)"],
+      features: ["Premium sound system", "LED screens", "VIP seating", "Live streaming"],
+      floor: "Main Auditorium",
     },
   ];
 
@@ -82,14 +123,20 @@ export function Venue() {
     {
       icon: Car,
       title: "Parking",
-      description: "2000+ parking spots available",
-      details: "Free parking for all pass holders",
+      description: "Ample parking space available",
+      details: "Secure parking for participants",
     },
     {
       icon: Utensils,
       title: "Food & Beverages",
       description: "Multiple food courts and cafes",
       details: "Vegetarian, vegan, and international options",
+    },
+    {
+      icon: Wifi,
+      title: "High-speed WiFi",
+      description: "Wireless internet across campus",
+      details: "Free WiFi available in all venues",
     },
     {
       icon: AlertCircle,
@@ -102,6 +149,24 @@ export function Venue() {
       title: "Accessibility",
       description: "Wheelchair accessible",
       details: "Elevators and ramps throughout venue",
+    },
+    {
+      icon: Phone,
+      title: "Complete Event Support",
+      description: "Round-the-clock event assistance",
+      details: "Dedicated helpdesk for all queries",
+    },
+    {
+      icon: MapPin,
+      title: "Navigation",
+      description: "Easy campus navigation",
+      details: "Signages and volunteers throughout campus",
+    },
+    {
+      icon: Train,
+      title: "Transport Access",
+      description: "Well-connected location",
+      details: "Metro, rail, and bus connectivity nearby",
     },
   ];
 
@@ -151,7 +216,7 @@ export function Venue() {
         >
           <h1 className="mb-4">Venue Information</h1>
           <p className="text-muted-foreground">
-            Thakur College of Engineering and Technology Campus - Hosting E-Summit 2026
+            Thakur College of Engineering and Technology Campus - Hosting E-Summit 2026 (January 23-24, 2026)
           </p>
         </motion.div>
       </div>
@@ -238,9 +303,6 @@ export function Venue() {
                         <h3>{venue.name}</h3>
                         <p className="text-sm text-muted-foreground">{venue.floor}</p>
                       </div>
-                      {venue.vipOnly && (
-                        <Badge variant="default">VIP Only</Badge>
-                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -336,6 +398,9 @@ export function Venue() {
       <Card>
         <CardHeader>
           <h2>Emergency Contacts</h2>
+          <p className="text-sm text-muted-foreground">
+            Dedicated event support team available online and offline at R&D Cell, 4th Floor
+          </p>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div>

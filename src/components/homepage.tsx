@@ -83,27 +83,27 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
   const stats = [
     { label: "Events", value: "16+", icon: Trophy },
-    { label: "Speakers", value: "50+", icon: Users },
-    { label: "Attendees", value: "5000+", icon: Users },
-    { label: "Colleges", value: "100+", icon: Building2 },
+    { label: "Judges & Speakers", value: "50+", icon: Users },
+    { label: "Expected Attendees", value: "2000+", icon: Users },
+    { label: "Startup Pitches", value: "50+", icon: Building2 },
   ];
 
   const highlights = [
     {
-      title: "Startup Competitions",
-      description: "Compete in exciting events like IPL Auction, AI Build-A-Thon, and Startup League with total prizes worth ₹5L+ and opportunities for seed funding.",
+      title: "Funding & Investment Events",
+      description: "Connect with VCs and Angel Investors at The Ten Minute Million (TTMM) and Angel Investors Roundtable for real fundraising opportunities. TRL 5+ startups pitch for equity and seed funding.",
     },
     {
-      title: "Expert Workshops",
-      description: "Participate in hands-on workshops covering Design Thinking, Finance & Marketing, Data Analytics & BDM, and AI for Early Stage Startups led by industry experts.",
+      title: "Incubation & Mentorship",
+      description: "Present at Pitch Arena (idea stage) and Incubator Summit to receive mentorship, incubation offers, and acceleration support from top Mumbai and Pune incubation centers.",
     },
     {
-      title: "Pitching Opportunities",
-      description: "Present your startup at The Ten Minute Million, Angel Investors Roundtable, Pitch Arena, and Incubator Summit to secure funding and incubation support.",
+      title: "Skill-Building Workshops",
+      description: "3-hour hands-on workshops in Design Thinking & Innovation Strategy, Finance & Marketing, and Data Analytics & Business Development for future-ready entrepreneurs.",
     },
     {
-      title: "Networking Events",
-      description: "Connect with investors, mentors, and fellow entrepreneurs at Startup Expo, Panel Discussions, Networking Arena, and the exclusive Startup Youth Conclave.",
+      title: "Competitions & Networking",
+      description: "Compete in IPL Auction, Startup League, and AI Build-A-Thon. Network at Startup Expo, Internship & Job Fair, Networking Arena, and Startup Youth Conclave with E-Cells from other colleges.",
     },
   ];
 
@@ -148,18 +148,15 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </motion.h1>
 
             <WordReveal
-              text="TCET's First-Ever Entrepreneurship Summit"
+              text="The Beginning of Legacy"
               className="mb-4 text-xl text-muted-foreground"
             />
 
             <TextReveal>
               <p className="mb-8 text-muted-foreground">
-                Be part of history as Thakur College launches
-                Mumbai's most ambitious student entrepreneurship
-                initiative. Join 5000+ students, entrepreneurs,
-                and investors for two groundbreaking days of
-                inspiration, innovation, and limitless
-                possibilities.
+                TCET Mumbai's historic first-ever Entrepreneurship Summit coinciding with the 25th Anniversary. 
+                A two-day celebration uniting visionaries, investors, startup founders, and students to ignite 
+                a lasting culture of entrepreneurship and innovation-driven excellence.
               </p>
             </TextReveal>
 
