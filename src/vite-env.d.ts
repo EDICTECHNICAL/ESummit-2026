@@ -1,8 +1,11 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly MODE: string;
   readonly VITE_CLERK_PUBLISHABLE_KEY: string;
+  readonly VITE_API_URL: string;
+  readonly VITE_RAZORPAY_KEY_ID: string;
+  readonly VITE_APP_NAME: string;
+  readonly VITE_EVENT_DATE: string;
 }
 
 interface ImportMeta {
