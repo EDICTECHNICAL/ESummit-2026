@@ -54,7 +54,7 @@ router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
             id: true,
             amount: true,
             status: true,
-            razorpayPaymentId: true,
+            konfhubPaymentId: true,
           },
         },
       },
@@ -121,6 +121,7 @@ router.post('/create', async (req: Request, res: Response) => {
       hasMeals = false,
       hasMerchandise = false,
       hasWorkshopAccess = false,
+      konfhubData,
     } = req.body;
 
     // Validate required fields
@@ -196,7 +197,7 @@ router.post('/create', async (req: Request, res: Response) => {
       },
     });
 
-    // Create a transaction record (marked as manual/test)
+    // Create a transaction record
     const transaction = await prisma.transaction.create({
       data: {
         userId: user.id,
@@ -208,10 +209,14 @@ router.post('/create', async (req: Request, res: Response) => {
         amount: price,
         currency: 'INR',
         status: 'completed',
-        paymentMethod: 'manual',
+        paymentMethod: konfhubData ? 'konfhub' : 'manual',
+        konfhubOrderId: konfhubData?.orderId || null,
+        konfhubTicketId: konfhubData?.ticketId || null,
+        konfhubPaymentId: konfhubData?.paymentId || null,
         metadata: {
-          note: 'Manually created pass (test/demo)',
-          createdVia: 'direct_api_call',
+          note: konfhubData ? 'Pass purchased via KonfHub' : 'Manually created pass (test/demo)',
+          createdVia: konfhubData ? 'konfhub_widget' : 'direct_api_call',
+          konfhubData: konfhubData || null,
         },
       },
     });
@@ -338,6 +343,7 @@ router.get('/:passId/upgrade/history', async (req: Request, res: Response) => {
  * Initiate pass upgrade (create upgrade order)
  * POST /api/v1/passes/:passId/upgrade/initiate
  * Body: { newPassType: string }
+ * @deprecated This route uses legacy Razorpay integration. KonfHub now handles all pass purchases and upgrades.
  */
 router.post('/:passId/upgrade/initiate', async (req: Request, res: Response) => {
   try {
@@ -400,7 +406,7 @@ router.post('/:passId/upgrade/initiate', async (req: Request, res: Response) => 
       data: {
         userId: currentPass.userId,
         passId: currentPass.id,
-        razorpayOrderId: razorpayOrder.id,
+        konfhubOrderId: razorpayOrder.id,
         amount: upgradeFee,
         currency: 'INR',
         status: 'pending',
@@ -438,6 +444,7 @@ router.post('/:passId/upgrade/initiate', async (req: Request, res: Response) => 
  * Complete pass upgrade after payment
  * POST /api/v1/passes/:passId/upgrade/complete
  * Body: { transactionId, razorpayPaymentId, razorpaySignature, newPassType }
+ * @deprecated This route uses legacy Razorpay integration. KonfHub now handles all pass purchases and upgrades.
  */
 router.post('/:passId/upgrade/complete', async (req: Request, res: Response) => {
   try {
@@ -467,32 +474,13 @@ router.post('/:passId/upgrade/complete', async (req: Request, res: Response) => 
       return;
     }
 
-    // Verify Razorpay signature
-    const crypto = require('crypto');
-    const generated_signature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
-      .update(`${transaction.razorpayOrderId}|${razorpayPaymentId}`)
-      .digest('hex');
-
-    if (generated_signature !== razorpaySignature) {
-      // Update transaction as failed
-      await prisma.transaction.update({
-        where: { id: transactionId },
-        data: { status: 'failed' },
-      });
-
-      sendError(res, 'Payment verification failed', 400);
-      return;
-    }
-
     // Update transaction
     await prisma.transaction.update({
       where: { id: transactionId },
       data: {
-        razorpayPaymentId,
-        razorpaySignature,
+        konfhubPaymentId: razorpayPaymentId,
         status: 'completed',
-        paymentMethod: 'razorpay',
+        paymentMethod: 'konfhub',
       },
     });
 

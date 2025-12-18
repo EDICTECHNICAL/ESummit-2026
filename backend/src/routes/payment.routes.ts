@@ -5,22 +5,15 @@ import logger from '../utils/logger.util';
 import { generateQRCode } from '../services/qrcode.service';
 import { generateUniqueIdentifiers } from '../utils/identifier.util';
 import { paymentLimiter } from '../middleware/rateLimit.middleware';
-import Razorpay from 'razorpay';
-import crypto from 'crypto';
+import { konfhubService } from '../services/konfhub.service';
 
 const router = Router();
 
 // Apply payment rate limiter to all payment routes
 router.use(paymentLimiter);
 
-// Initialize Razorpay (ensure env variables are set)
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'YOUR_RAZORPAY_KEY_ID',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'YOUR_RAZORPAY_KEY_SECRET',
-});
-
 /**
- * Create Razorpay Order
+ * Create KonfHub Order for Pass Purchase
  * POST /api/v1/payment/create-order
  */
 router.post('/create-order', async (req: Request, res: Response) => {
@@ -49,7 +42,7 @@ router.post('/create-order', async (req: Request, res: Response) => {
     // Find user by Clerk ID
     const user = await prisma.user.findUnique({
       where: { clerkUserId },
-      select: { id: true, email: true, fullName: true },
+      select: { id: true, email: true, fullName: true, phone: true },
     });
 
     if (!user) {
@@ -71,25 +64,25 @@ router.post('/create-order', async (req: Request, res: Response) => {
       return;
     }
 
-    // Convert price to paise (Razorpay expects amount in smallest currency unit)
-    const amountInPaise = Math.round(price * 100);
-
     // Generate unique identifiers
     const { invoiceNumber, transactionNumber } = generateUniqueIdentifiers();
 
-    // Create Razorpay order
-    const razorpayOrder = await razorpay.orders.create({
-      amount: amountInPaise,
-      currency: 'INR',
-      receipt: `receipt_${Date.now()}`,
-      notes: {
+    // Create KonfHub order
+    const konfhubOrder = await konfhubService.createOrder({
+      quantity: 1,
+      customerInfo: {
+        name: user.fullName || 'Guest',
+        email: user.email || '',
+        phone: user.phone || undefined,
+      },
+      metadata: {
         clerkUserId,
         passType,
-        hasMeals: String(hasMeals),
-        hasMerchandise: String(hasMerchandise),
-        hasWorkshopAccess: String(hasWorkshopAccess),
-        email: user.email || '',
-        name: user.fullName || '',
+        hasMeals,
+        hasMerchandise,
+        hasWorkshopAccess,
+        invoiceNumber,
+        transactionNumber,
       },
     });
 
@@ -100,38 +93,44 @@ router.post('/create-order', async (req: Request, res: Response) => {
         // passId will be set after pass creation in verify-and-create-pass
         invoiceNumber,
         transactionNumber,
-        razorpayOrderId: razorpayOrder.id,
+        konfhubOrderId: konfhubOrder.orderId,
+        konfhubTicketId: konfhubOrder.ticketId,
         amount: price,
         currency: 'INR',
         status: 'pending',
+        paymentMethod: 'konfhub',
         metadata: {
           passType,
           hasMeals,
           hasMerchandise,
           hasWorkshopAccess,
           orderCreatedAt: new Date().toISOString(),
+          checkoutUrl: konfhubOrder.checkoutUrl,
         },
       },
     });
 
-    logger.info(`Razorpay order created: ${razorpayOrder.id} for user: ${clerkUserId}`);
+    logger.info(`KonfHub order created: ${konfhubOrder.orderId} for user: ${clerkUserId}`);
     logger.info(`Invoice: ${invoiceNumber}, Transaction: ${transactionNumber}`);
 
     sendSuccess(
       res,
       'Order created successfully',
       {
-        orderId: razorpayOrder.id,
-        amount: amountInPaise,
-        currency: razorpayOrder.currency,
+        orderId: konfhubOrder.orderId,
+        ticketId: konfhubOrder.ticketId,
+        amount: price,
+        currency: konfhubOrder.currency,
         transactionId: transaction.id,
         invoiceNumber,
         transactionNumber,
+        checkoutUrl: konfhubOrder.checkoutUrl,
+        paymentUrl: konfhubOrder.paymentUrl,
       },
       201
     );
   } catch (error: any) {
-    logger.error('Create Razorpay order error:', error);
+    logger.error('Create KonfHub order error:', error);
     sendError(res, error.message || 'Failed to create order', 500);
   }
 });
@@ -143,46 +142,43 @@ router.post('/create-order', async (req: Request, res: Response) => {
 router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
   try {
     const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
+      orderId,
+      ticketId,
+      paymentId,
     } = req.body;
 
     // Validate required fields
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      sendError(res, 'Payment verification details are missing', 400);
+    if (!orderId) {
+      sendError(res, 'Order ID is required', 400);
       return;
     }
 
-    // Verify payment signature
-    const generatedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'YOUR_RAZORPAY_KEY_SECRET')
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest('hex');
+    // Verify order status with KonfHub
+    const konfhubOrder = await konfhubService.getOrder(orderId);
 
-    if (generatedSignature !== razorpay_signature) {
-      // Payment verification failed
-      logger.error('Payment signature verification failed');
+    if (konfhubOrder.status !== 'completed') {
+      logger.error('Payment not completed in KonfHub');
       
-      // Update transaction status to failed
+      // Update transaction status
       await prisma.transaction.updateMany({
-        where: { razorpayOrderId: razorpay_order_id },
+        where: { konfhubOrderId: orderId },
         data: {
           status: 'failed',
           metadata: {
-            error: 'Signature verification failed',
+            error: 'Payment not completed',
             failedAt: new Date().toISOString(),
+            konfhubStatus: konfhubOrder.status,
           },
         },
       });
 
-      sendError(res, 'Payment verification failed', 400);
+      sendError(res, 'Payment verification failed - payment not completed', 400);
       return;
     }
 
     // Find the transaction
     const transaction = await prisma.transaction.findFirst({
-      where: { razorpayOrderId: razorpay_order_id },
+      where: { konfhubOrderId: orderId },
       include: { user: true },
     });
 
@@ -203,7 +199,7 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
     });
 
     if (existingPass) {
-      // Refund the payment or mark for manual review
+      // Mark transaction for manual review
       await prisma.transaction.update({
         where: { id: transaction.id },
         data: {
@@ -259,8 +255,8 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
         where: { id: transaction.id },
         data: {
           passId: pass.id,
-          razorpayPaymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
+          konfhubTicketId: ticketId || transaction.konfhubTicketId,
+          konfhubPaymentId: paymentId,
           status: 'completed',
           metadata: {
             ...metadata,
@@ -298,16 +294,16 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
  */
 router.post('/payment-failed', async (req: Request, res: Response) => {
   try {
-    const { razorpay_order_id, error } = req.body;
+    const { orderId, error } = req.body;
 
-    if (!razorpay_order_id) {
+    if (!orderId) {
       sendError(res, 'Order ID is required', 400);
       return;
     }
 
     // Update transaction status to failed
     const transaction = await prisma.transaction.findFirst({
-      where: { razorpayOrderId: razorpay_order_id },
+      where: { konfhubOrderId: orderId },
     });
 
     if (!transaction) {
@@ -327,12 +323,135 @@ router.post('/payment-failed', async (req: Request, res: Response) => {
       },
     });
 
-    logger.warn(`Payment failed for order: ${razorpay_order_id}`);
+    logger.warn(`Payment failed for order: ${orderId}`);
 
     sendSuccess(res, 'Payment failure recorded', { transactionId: transaction.id });
   } catch (error: any) {
     logger.error('Payment failure handler error:', error);
     sendError(res, error.message || 'Failed to record payment failure', 500);
+  }
+});
+
+/**
+ * KonfHub Webhook Handler
+ * POST /api/v1/payment/webhook
+ */
+router.post('/webhook', async (req: Request, res: Response) => {
+  try {
+    const signature = req.headers['x-konfhub-signature'] as string;
+    const payload = JSON.stringify(req.body);
+
+    // Verify webhook signature
+    const isValid = konfhubService.verifyWebhookSignature(payload, signature);
+
+    if (!isValid) {
+      logger.error('Invalid KonfHub webhook signature');
+      sendError(res, 'Invalid signature', 401);
+      return;
+    }
+
+    const webhookData = req.body;
+    const { event, orderId, ticketId, paymentId } = webhookData;
+
+    logger.info(`KonfHub webhook received: ${event} for order: ${orderId}`);
+
+    // Find transaction
+    const transaction = await prisma.transaction.findFirst({
+      where: { konfhubOrderId: orderId },
+      include: { user: true },
+    });
+
+    if (!transaction) {
+      logger.warn(`Transaction not found for webhook order: ${orderId}`);
+      sendSuccess(res, 'Webhook received but transaction not found');
+      return;
+    }
+
+    // Handle different webhook events
+    switch (event) {
+      case 'order.completed':
+        if (transaction.status !== 'completed') {
+          // Automatically create pass when payment is completed
+          const metadata = transaction.metadata as any;
+          const passType = metadata.passType;
+          const { passId } = generateUniqueIdentifiers();
+          const qrCodeUrl = await generateQRCode(passId);
+
+          await prisma.$transaction(async (tx) => {
+            const pass = await tx.pass.create({
+              data: {
+                userId: transaction.userId,
+                passType,
+                passId,
+                price: transaction.amount,
+                hasMeals: metadata.hasMeals || false,
+                hasMerchandise: metadata.hasMerchandise || false,
+                hasWorkshopAccess: metadata.hasWorkshopAccess || false,
+                status: 'Active',
+                qrCodeUrl,
+              },
+            });
+
+            await tx.transaction.update({
+              where: { id: transaction.id },
+              data: {
+                passId: pass.id,
+                konfhubTicketId: ticketId,
+                konfhubPaymentId: paymentId,
+                status: 'completed',
+                metadata: {
+                  ...metadata,
+                  completedAt: new Date().toISOString(),
+                  passId: pass.passId,
+                  webhookProcessed: true,
+                },
+              },
+            });
+          });
+
+          logger.info(`✅ Pass auto-created via webhook for order: ${orderId}`);
+        }
+        break;
+
+      case 'order.cancelled':
+        await prisma.transaction.update({
+          where: { id: transaction.id },
+          data: {
+            status: 'cancelled',
+            metadata: {
+              ...((transaction.metadata as any) || {}),
+              cancelledAt: new Date().toISOString(),
+              webhookProcessed: true,
+            },
+          },
+        });
+        logger.info(`Order cancelled via webhook: ${orderId}`);
+        break;
+
+      case 'ticket.issued':
+        // Update ticket information
+        await prisma.transaction.update({
+          where: { id: transaction.id },
+          data: {
+            konfhubTicketId: ticketId,
+            metadata: {
+              ...((transaction.metadata as any) || {}),
+              ticketIssuedAt: new Date().toISOString(),
+              webhookProcessed: true,
+            },
+          },
+        });
+        logger.info(`Ticket issued via webhook: ${ticketId} for order: ${orderId}`);
+        break;
+
+      default:
+        logger.warn(`Unhandled webhook event: ${event}`);
+    }
+
+    sendSuccess(res, 'Webhook processed successfully');
+  } catch (error: any) {
+    logger.error('Webhook processing error:', error);
+    sendError(res, error.message || 'Failed to process webhook', 500);
   }
 });
 
@@ -377,13 +496,12 @@ router.get('/transaction/:transactionId', async (req: Request, res: Response) =>
 });
 
 /**
- * Initiate Refund
- * POST /api/v1/payment/refund
- * Admin only
+ * Cancel Order
+ * POST /api/v1/payment/cancel
  */
-router.post('/refund', async (req: Request, res: Response) => {
+router.post('/cancel', async (req: Request, res: Response) => {
   try {
-    const { transactionId, reason } = req.body;
+    const { transactionId } = req.body;
 
     if (!transactionId) {
       sendError(res, 'Transaction ID is required', 400);
@@ -400,56 +518,37 @@ router.post('/refund', async (req: Request, res: Response) => {
       return;
     }
 
-    if (transaction.status !== 'completed') {
-      sendError(res, 'Only completed transactions can be refunded', 400);
+    if (transaction.status === 'completed') {
+      sendError(res, 'Cannot cancel completed transactions. Request a refund instead.', 400);
       return;
     }
 
-    if (!transaction.razorpayPaymentId) {
-      sendError(res, 'Razorpay payment ID not found', 400);
+    if (!transaction.konfhubOrderId) {
+      sendError(res, 'KonfHub order ID not found', 400);
       return;
     }
 
-    // Create refund in Razorpay
-    const refund = await razorpay.payments.refund(transaction.razorpayPaymentId, {
-      amount: Math.round(Number(transaction.amount) * 100), // Convert to paise
-      notes: {
-        reason: reason || 'User requested refund',
-        transactionId: transaction.id,
+    // Cancel order in KonfHub
+    await konfhubService.cancelOrder(transaction.konfhubOrderId);
+
+    // Update transaction status
+    await prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        status: 'cancelled',
+        metadata: {
+          ...((transaction.metadata as any) || {}),
+          cancelledAt: new Date().toISOString(),
+        },
       },
     });
 
-    // Update transaction and pass status
-    await prisma.$transaction(async (tx) => {
-      // Update transaction
-      await tx.transaction.update({
-        where: { id: transactionId },
-        data: {
-          status: 'refunded',
-          metadata: {
-            ...((transaction.metadata as any) || {}),
-            refundId: refund.id,
-            refundedAt: new Date().toISOString(),
-            refundReason: reason,
-          },
-        },
-      });
+    logger.info(`Order cancelled for transaction: ${transactionId}`);
 
-      // Cancel the pass if it exists
-      if (transaction.pass) {
-        await tx.pass.update({
-          where: { id: transaction.pass.id },
-          data: { status: 'Refunded' },
-        });
-      }
-    });
-
-    logger.info(`Refund initiated for transaction: ${transactionId}, Refund ID: ${refund.id}`);
-
-    sendSuccess(res, 'Refund initiated successfully', { refund });
+    sendSuccess(res, 'Order cancelled successfully');
   } catch (error: any) {
-    logger.error('Refund error:', error);
-    sendError(res, error.message || 'Failed to initiate refund', 500);
+    logger.error('Cancel order error:', error);
+    sendError(res, error.message || 'Failed to cancel order', 500);
   }
 });
 

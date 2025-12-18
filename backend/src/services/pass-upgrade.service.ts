@@ -252,7 +252,7 @@ export async function getUpgradeHistory(passId: string) {
           select: {
             amount: true,
             status: true,
-            razorpayPaymentId: true,
+            konfhubPaymentId: true,
             createdAt: true,
           },
         },

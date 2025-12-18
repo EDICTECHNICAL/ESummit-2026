@@ -43,11 +43,6 @@ export function Navigation({
   const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn, user } = useUser();
 
-  // Check if user has any valid admin role (Core, JC, or OC)
-  const VALID_ADMIN_ROLES = ['Core', 'JC', 'OC'];
-  const userRole = user?.publicMetadata?.role as string;
-  const isAdmin = userRole && VALID_ADMIN_ROLES.includes(userRole);
-
   const getUserInitials = (name: string) => {
     return name
       .split(" ")

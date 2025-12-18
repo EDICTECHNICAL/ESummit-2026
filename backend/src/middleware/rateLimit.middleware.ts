@@ -106,23 +106,3 @@ export const webhookLimiter = rateLimit({
     });
   },
 });
-
-/**
- * Admin route rate limiter
- * 200 requests per 15 minutes (for admin operations)
- */
-export const adminLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200,
-  message: {
-    success: false,
-    error: 'Admin rate limit exceeded.',
-  },
-  handler: (req, res) => {
-    logger.warn(`Admin rate limit exceeded for IP: ${req.ip}`);
-    res.status(429).json({
-      success: false,
-      error: 'Admin rate limit exceeded.',
-    });
-  },
-});

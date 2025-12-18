@@ -144,7 +144,7 @@ Backend API: `http://localhost:5000`
 
 ## Payment Integration
 
-- **Gateway**: Razorpay
+- **Gateway**: KonfHub
 - **Current Status**: Direct pass creation (development mode)
 - **Supported Methods**: UPI, Cards, Net Banking, Wallets
 - **Security**: Payment signature verification, webhook handling
@@ -212,7 +212,7 @@ See [BACKEND_ARCHITECTURE.md](./docs/BACKEND_ARCHITECTURE.md#database-schema) fo
 - Tailwind CSS
 - Shadcn UI
 - Framer Motion
-- Razorpay SDK
+- KonfHub Widget
 
 ### Backend
 
@@ -277,7 +277,7 @@ See [BACKEND_ARCHITECTURE.md](./docs/BACKEND_ARCHITECTURE.md#database-schema) fo
 
 ### In Progress
 
-- Razorpay payment integration (production mode)
+- KonfHub payment integration (widget mode)
 - Email notifications with QR codes
 - Seed 30 events to database
 - WebSocket for real-time updates
@@ -314,9 +314,10 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/esummit2026
 JWT_SECRET=your_secret_key_here
 JWT_REFRESH_SECRET=your_refresh_key_here
 
-# Razorpay
-RAZORPAY_KEY_ID=rzp_test_xxxxx
-RAZORPAY_KEY_SECRET=xxxxx
+# KonfHub
+KONFHUB_API_KEY=your_konfhub_api_key
+KONFHUB_EVENT_ID=tcet-esummit26
+KONFHUB_BUTTON_ID=btn_a2352136e92a
 
 # QR Code
 QR_SECRET_KEY=generate_using_crypto_64_chars

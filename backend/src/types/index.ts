@@ -26,22 +26,10 @@ export type EventRegistrationStatus = 'registered' | 'attended' | 'cancelled';
 // Check-in types
 export type CheckInType = 'venue_entry' | 'event_entry';
 
-// Admin types (Updated for E-Summit 2025)
-export type AdminRole = 'Core' | 'JC' | 'OC';
-
-export interface AdminPermissions {
-  participants?: boolean;
-  scanner?: boolean;
-  analytics?: boolean;
-  eventIds?: boolean;
-  export?: boolean;
-  edit?: boolean;
-}
-
 // Audit log types
 export type AuditAction = 'check_in' | 'refund' | 'edit_pass' | 'create_event' | 'update_event' | 'delete_event';
 
-export type EntityType = 'pass' | 'user' | 'event' | 'transaction' | 'admin';
+export type EntityType = 'pass' | 'user' | 'event' | 'transaction';
 
 // Sponsor types
 export type SponsorTier = 'title' | 'platinum' | 'gold' | 'silver' | 'bronze';

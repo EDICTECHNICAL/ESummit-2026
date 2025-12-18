@@ -70,14 +70,14 @@ model Pass {
   @@map("passes")
 }
 
-/// Payment transactions with Razorpay integration
+/// Payment transactions with KonfHub integration
 model Transaction {
   id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId            String       @map("user_id") @db.Uuid
   passId            String?      @unique @map("pass_id") @db.Uuid
-  razorpayOrderId   String?      @unique @map("razorpay_order_id") @db.VarChar(255)
-  razorpayPaymentId String?      @map("razorpay_payment_id") @db.VarChar(255)
-  razorpaySignature String?      @map("razorpay_signature") @db.Text
+  konfhubOrderId    String?      @unique @map("konfhub_order_id") @db.VarChar(255)
+  konfhubTicketId   String?      @map("konfhub_ticket_id") @db.VarChar(255)
+  konfhubPaymentId  String?      @map("konfhub_payment_id") @db.VarChar(255)
   amount            Decimal      @db.Decimal(12, 2)
   currency          String       @default("INR") @db.VarChar(3)
   status            String       @db.VarChar(50)
@@ -95,7 +95,7 @@ model Transaction {
 
   @@index([userId])
   @@index([status])
-  @@index([razorpayOrderId], type: Hash)
+  @@index([konfhubOrderId], type: Hash)
   @@index([invoiceNumber], type: Hash)
   @@index([transactionNumber], type: Hash)
   @@index([transactionType])

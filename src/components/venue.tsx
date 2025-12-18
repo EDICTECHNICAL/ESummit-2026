@@ -307,9 +307,6 @@ export function Venue() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div>
-                      <p className="text-sm text-muted-foreground">Capacity: {venue.capacity}</p>
-                    </div>
-                    <div>
                       <h4 className="mb-1 text-sm">Events</h4>
                       <div className="flex flex-wrap gap-1">
                         {venue.events.map((event) => (
