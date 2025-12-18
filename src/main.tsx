@@ -12,27 +12,43 @@ Sentry.init({
     Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
-  // Performance Monitoring
-  tracesSampleRate: 1.0, // Capture 100% of transactions (adjust in production)
-  // Session Replay
-  replaysSessionSampleRate: 0.1, // 10% of sessions
-  replaysOnErrorSampleRate: 1.0, // 100% of sessions with errors
-  // Setting this option to true will send default PII data to Sentry
-  // For example, automatic IP address collection on events
+  tracesSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
   sendDefaultPii: true,
   environment: import.meta.env.MODE,
 });
 
+// Load Clerk key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Clerk Publishable Key");
-}
+// Get root element
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element not found");
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-      <App />
-    </ClerkProvider>
-  </StrictMode>
-);
+// Render App
+const renderApp = () => {
+  if (PUBLISHABLE_KEY) {
+    // If Clerk key exists, wrap with ClerkProvider
+    createRoot(rootElement).render(
+      <StrictMode>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+          <App />
+        </ClerkProvider>
+      </StrictMode>
+    );
+  } else {
+    // If Clerk key missing, render App directly
+    console.warn(
+      "Clerk publishable key missing. Rendering App without authentication."
+    );
+    createRoot(rootElement).render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  }
+};
+
+// Execute render
+renderApp();
