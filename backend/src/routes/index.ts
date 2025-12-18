@@ -3,7 +3,6 @@ import authRoutes from './auth.routes';
 import userRoutes from './user.routes';
 import passRoutes from './pass.routes';
 import checkinRoutes from './checkin.routes';
-import adminRoutes from './admin.routes';
 import eventRoutes from './event.routes';
 import pdfRoutes from './pdf.routes';
 import paymentRoutes from './payment.routes';
@@ -27,7 +26,6 @@ router.use('/passes', passRoutes);
 router.use('/payment', paymentRoutes);
 router.use('/webhooks', webhookRoutes);
 router.use('/checkin', checkinRoutes);
-router.use('/admin', adminRoutes);
 router.use('/events', eventRoutes);
 router.use('/pdf', pdfRoutes);
 

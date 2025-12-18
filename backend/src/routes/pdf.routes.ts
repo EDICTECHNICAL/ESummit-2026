@@ -82,7 +82,7 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
       where: {
         OR: [
           { id: transactionId },
-          { razorpayPaymentId: transactionId }
+          { konfhubPaymentId: transactionId }
         ]
       },
       include: {
@@ -151,8 +151,8 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
       subtotal,
       gstAmount,
       total,
-      paymentMethod: transaction.razorpayPaymentId ? 'Online Payment (Razorpay)' : 'Bypassed (Test Mode)',
-      transactionId: transaction.razorpayPaymentId || transactionNumber,
+      paymentMethod: transaction.konfhubPaymentId ? 'Online Payment (KonfHub)' : 'Bypassed (Test Mode)',
+      transactionId: transaction.konfhubPaymentId || transactionNumber,
       paymentStatus: transaction.status.toUpperCase()
     };
 

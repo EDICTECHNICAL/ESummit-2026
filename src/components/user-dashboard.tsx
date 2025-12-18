@@ -40,7 +40,7 @@ interface Pass {
     id: string;  // UUID string, not number
     amount: number;
     status: string;
-    razorpayPaymentId?: string;
+    konfhubPaymentId?: string;
   };
 }
 
@@ -52,7 +52,7 @@ interface Event {
   time: string;
   venue: string;
   category: string;
-  speaker?: string;
+  speaker?: string | null;
 }
 
 interface EventRegistration {
@@ -107,7 +107,39 @@ export function UserDashboard({
         const data = await response.json();
 
         if (data.success && data.data.passes) {
-          setMyPasses(data.data.passes);
+          // Only show passes with confirmed payment (Active status and completed transaction)
+          const confirmedPasses = data.data.passes.filter((pass: Pass) => {
+            return pass.status === 'Active' && 
+                   pass.transaction && 
+                   pass.transaction.status === 'completed';
+          });
+          setMyPasses(confirmedPasses);
+          
+          // Auto-populate schedule with eligible events based on purchased passes
+          if (confirmedPasses.length > 0) {
+            const passTypeId = getPassTypeId(confirmedPasses[0].passType);
+            const eligibleEvents = getFormattedEventsForPass(passTypeId);
+            
+            // Convert to the Event interface format used by the component
+            const formattedEvents: Event[] = eligibleEvents.map(event => ({
+              id: event.id,
+              title: event.title,
+              description: event.description,
+              date: event.date,
+              time: event.time,
+              venue: event.venue,
+              category: event.category,
+              speaker: event.speaker,
+            }));
+            
+            // Update registered events with eligible events from pass
+            setRegisteredEventDetails(prevEvents => {
+              // Merge with existing registered events, avoid duplicates
+              const existingIds = new Set(prevEvents.map(e => e.id));
+              const newEvents = formattedEvents.filter(e => !existingIds.has(e.id));
+              return [...prevEvents, ...newEvents];
+            });
+          }
         }
       } catch (error) {
         console.error("Error fetching passes:", error);
@@ -460,10 +492,22 @@ export function UserDashboard({
                           <p className="text-sm text-muted-foreground">
                             Purchased on {formatDate(pass.purchaseDate)}
                           </p>
+                          {pass.transaction?.konfhubPaymentId && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Payment ID: {pass.transaction.konfhubPaymentId.substring(0, 20)}...
+                            </p>
+                          )}
                         </div>
-                        <Badge variant={pass.status === 'Active' ? 'default' : 'secondary'}>
-                          {pass.status}
-                        </Badge>
+                        <div className="flex flex-col gap-2">
+                          <Badge variant={pass.status === 'Active' ? 'default' : 'secondary'}>
+                            {pass.status}
+                          </Badge>
+                          {pass.transaction && (
+                            <Badge variant={pass.transaction.status === 'completed' ? 'default' : 'secondary'} className="bg-green-600">
+                              ✓ Confirmed
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -580,9 +624,9 @@ export function UserDashboard({
               ) : (
                 <div className="col-span-2 text-center py-12">
                   <Ticket className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No passes yet</h3>
+                  <h3 className="text-lg font-semibold mb-2">No confirmed passes yet</h3>
                   <p className="text-muted-foreground mb-4">
-                    You haven't purchased any passes yet. Get your pass now!
+                    You haven't purchased any passes yet, or your payment is still being processed. Get your pass now!
                   </p>
                   <Button onClick={() => onNavigate("passes")}>
                     Browse Passes
@@ -628,9 +672,9 @@ export function UserDashboard({
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
-                      <h4 className="mb-1">My Registered Events</h4>
+                      <h4 className="mb-1">Events Included with Your Pass</h4>
                       <p className="text-sm text-muted-foreground mb-2">
-                        Events you have registered for will appear here. {registeredEventDetails.length === 0 ? 'Register for events to build your schedule.' : `You're registered for ${registeredEventDetails.length} event${registeredEventDetails.length > 1 ? 's' : ''}.`}
+                        {registeredEventDetails.length === 0 ? 'Your eligible events will appear here once your pass is confirmed.' : `You have access to ${registeredEventDetails.length} event${registeredEventDetails.length > 1 ? 's' : ''} with your ${myPasses[0]?.passType}.`}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {myPasses.map((pass) => (

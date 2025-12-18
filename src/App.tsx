@@ -29,7 +29,6 @@ import { Venue } from "./components/venue";
 import { Sponsors } from "./components/sponsors";
 import { Team } from "./components/team";
 import { UserDashboard } from "./components/user-dashboard";
-import { AdminPanel } from "./components/admin-panel";
 import { AuthModal } from "./components/auth-modal";
 import { PrivacyPolicy } from "./components/privacy-policy";
 import { TermsOfService } from "./components/terms-of-service";
@@ -52,11 +51,6 @@ export default function App() {
       setCurrentPage(`event-${eventId}`);
     }
   }, []);
-
-  // Check if user has any valid admin role (Core, JC, or OC)
-  const VALID_ADMIN_ROLES = ['Core', 'JC', 'OC'];
-  const userRole = user?.publicMetadata?.role as string;
-  const isAdmin = userRole && VALID_ADMIN_ROLES.includes(userRole);
 
   useEffect(() => {
     // Check for saved theme preference or use system preference
@@ -183,25 +177,6 @@ export default function App() {
         ) : (
           <AuthModal onNavigate={handleNavigate} />
         );
-      case "admin-dashboard":
-        return isAdmin ? (
-          <AdminPanel 
-            onNavigate={handleNavigate}
-          />
-        ) : (
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-              <p className="text-muted-foreground mb-4">You don't have permission to access this page.</p>
-              <button 
-                onClick={() => handleNavigate("home")}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-              >
-                Go Home
-              </button>
-            </div>
-          </div>
-        );
       case "auth":
         return <AuthModal onNavigate={handleNavigate} />;
       case "privacy-policy":
@@ -215,8 +190,8 @@ export default function App() {
     }
   };
 
-  // Don't show navigation and footer for admin pages only
-  const showNavAndFooter = currentPage !== "admin-dashboard";
+  // Show navigation and footer on all pages
+  const showNavAndFooter = true;
 
   return (
     <div className="min-h-screen bg-background">
