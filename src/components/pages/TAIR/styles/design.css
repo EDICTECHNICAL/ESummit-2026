@@ -28,6 +28,7 @@ body {
   opacity: 0;
   transform: translateY(25px);
   transition: all 0.8s ease-out;
+  will-change: opacity, transform;
 }
 
 .section-container.visible {
@@ -42,11 +43,6 @@ body {
 
 .hero-section + .section-container {
   margin-top: 30px;
-}
-
-.center-text {
-  font-size: 1.4rem;
-  margin-bottom: 20px;
 }
 
 /* ================= HEADINGS ================= */
@@ -88,226 +84,6 @@ body {
   text-shadow: 0 0 10px rgba(203, 4, 14, 0.7);
 }
 
-.event-tag {
-  font-size: 1.5rem;
-  margin-bottom: 6px;
-}
-
-/* ================= EVENT BRIEF ================= */
-.event-description-text {
-  font-size: 1.45rem;
-  line-height: 2.4;
-  margin-bottom: 20px;
-  color: #f1f1f1;
-}
-
-/* ================= EVENT DETAILS ================= */
-.event-details {
-  display: flex;
-  justify-content: center;
-  gap: 22px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-  font-size: 1.25rem;
-}
-
-/* ================= BUTTON ================= */
-.register-button {
-  margin-top: 20px;
-  padding: 12px 30px;
-  background: var(--primary-red-gradient);
-  border: none;
-  color: white;
-  font-size: 1.05rem;
-  font-weight: bold;
-  box-shadow: 0 0 15px rgba(100, 4, 9, 0.9);
-  cursor: pointer;
-  border-radius: 15px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.register-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(233, 9, 20, 0.7);
-}
-
-/* ================= CARDS ================= */
-.neon-card,
-.member-card {
-  background: #111;
-  border: 1px solid var(--secondary-red-border);
-  padding: 28px;
-  border-radius: 12px;
-  box-shadow: var(--neon-shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.neon-card:hover,
-.member-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(233, 9, 20, 0.6);
-}
-
-/* ================= GRIDS ================= */
-.two-column-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 26px;
-}
-
-.three-column-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px;
-}
-
-/* OC container */
-.single-flex-row {
-  display: flex;
-  justify-content: center;
-  gap: 26px;
-}
-
-/* ================= MEMBER IMAGE ================= */
-.member-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 3px solid var(--primary-red-gradient);
-  object-fit: cover;
-  margin-bottom: 14px;
-  box-shadow: 0 0 8px rgba(233, 9, 20, 0.8);
-}
-
-/* ================= MEMBER CONTENT ================= */
-.member-card h4 {
-  font-size: 1.55rem;
-  margin-bottom: 8px;
-}
-
-.member-card p,
-.member-contact {
-  font-size: 1.2rem;
-  line-height: 1.7;
-}
-
-/* ================= BENEFITS ================= */
-.benefit-card .benefit-icon {
-  font-size: 4rem;
-}
-
-/* ================= MOBILE FIXES ================= */
-@media (max-width: 768px) {
-
-  /* FACULTY & CORE → SINGLE COLUMN */
-  .two-column-grid,
-  .three-column-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
-  /* ✅ OC CARDS → ONE AFTER ANOTHER (VERTICAL) */
-  .single-flex-row {
-    flex-direction: column;
-    align-items: center;
-    gap: 22px;
-  }
-
-  .single-flex-row .member-card {
-    width: 100%;
-    max-width: 340px;
-  }
-
-  /* FACULTY CARD WIDTH */
-  .two-column-grid .member-card {
-    width: 100%;
-  }
-
-  /* IMAGE SIZE */
-  .member-image {
-    width: 110px;
-    height: 110px;
-  }
-
-  .section-container {
-    margin: 50px 0;
-    padding: 30px 0;
-  }
-}
-
-.stay-tuned-text{
-  font-size: 1.5rem;
-  font-weight: 500;
-  margin-top: 15px;
-}
-.announcement{
-  font-size: 1.25rem;
-}
-
-.location-icon{
-  font-size: 2rem;
-}
-.neon-card h4 {
-  font-size: 1.5rem;
-
-}
-.neon-card p {
-  font-size: 1.5rem;
-}
-.member-icon-placeholder{
-  font-size: 3.5rem;
-}
-/* ======================================================
-   CLASSY PROFESSIONAL SECTION ANIMATIONS (ADD-ON ONLY)
-   ====================================================== */
-
-/* Executive smooth easing for section reveal */
-.section-container {
-  will-change: opacity, transform;
-}
-
-.section-container.visible {
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Staggered card reveal (VC / Demo Day style) */
-.section-container.visible .member-card,
-.section-container.visible .neon-card {
-  animation: cardReveal 0.75s ease-out both;
-}
-
-.section-container.visible .member-card:nth-child(1),
-.section-container.visible .neon-card:nth-child(1) {
-  animation-delay: 0.08s;
-}
-
-.section-container.visible .member-card:nth-child(2),
-.section-container.visible .neon-card:nth-child(2) {
-  animation-delay: 0.14s;
-}
-
-.section-container.visible .member-card:nth-child(3),
-.section-container.visible .neon-card:nth-child(3) {
-  animation-delay: 0.20s;
-}
-
-.section-container.visible .member-card:nth-child(4),
-.section-container.visible .neon-card:nth-child(4) {
-  animation-delay: 0.26s;
-}
-
-@keyframes cardReveal {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Hero title authority entrance */
 .hero-section.visible .main-event-title {
   animation: heroAuthority 1.1s ease-out forwards;
 }
@@ -323,15 +99,81 @@ body {
   }
 }
 
-/* Premium hover light sweep on cards */
-.member-card,
-.neon-card {
+.event-tag {
+  font-size: 1.4rem;
+}
+
+/* ================= EVENT BRIEF ================= */
+.event-description-text {
+  font-size: 1.3rem;
+  line-height: 2.4;
+  margin-bottom: 20px;
+  color: #f1f1f1;
+}
+
+.event-details {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 1.25rem;
+}
+
+/* ================= BUTTON ================= */
+.register-button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: var(--primary-red-gradient);
+  border: none;
+  color: white;
+  font-size: 1.05rem;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.register-button:hover {
+  transform: scale(1.05);
+}
+
+.register-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -100%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: left 0.45s ease;
+}
+
+.register-button:hover::after {
+  left: 100%;
+}
+
+/* ================= CARDS ================= */
+.neon-card,
+.member-card {
+  background: #111;
+  border: 1px solid var(--secondary-red-border);
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: var(--neon-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.member-card::after,
-.neon-card::after {
+.neon-card:hover,
+.member-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 15px rgba(233, 9, 20, 0.6);
+}
+
+/* Light sweep hover */
+.neon-card::after,
+.member-card::after {
   content: "";
   position: absolute;
   top: 0;
@@ -347,12 +189,12 @@ body {
   transition: left 0.8s ease;
 }
 
-.member-card:hover::after,
-.neon-card:hover::after {
+.neon-card:hover::after,
+.member-card:hover::after {
   left: 120%;
 }
 
-/* Calm executive glow on click */
+/* Click glow */
 .clicked {
   box-shadow:
     0 0 12px rgba(233, 9, 20, 0.8),
@@ -360,21 +202,134 @@ body {
   transform: translateY(-4px);
 }
 
-/* Register button – startup CTA sweep */
-.register-button {
-  position: relative;
-  overflow: hidden;
+/* ================= GRIDS ================= */
+.two-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px;
 }
 
-.register-button::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  left: -100%;
-  background: rgba(255, 255, 255, 0.15);
-  transition: left 0.45s ease;
+.three-column-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
 }
 
-.register-button:hover::after {
-  left: 100%;
+.single-flex-row {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+}
+
+/* ================= MEMBER ================= */
+.member-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 14px;
+}
+
+.member-card h4 {
+  font-size: 1.55rem;
+}
+
+.member-card p {
+  font-size: 1.2rem;
+  line-height: 1.7;
+}
+
+/* ================= BENEFITS ================= */
+.benefit-card .benefit-icon {
+  font-size: 4rem;
+}
+
+/* ================= STAGGER ANIMATION ================= */
+.section-container.visible .member-card,
+.section-container.visible .neon-card {
+  animation: cardReveal 0.75s ease-out both;
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= MOBILE FIXES ================= */
+@media (max-width: 768px) {
+
+  .two-column-grid,
+  .three-column-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .single-flex-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .single-flex-row .member-card,
+  .two-column-grid .member-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .two-column-grid > div {
+    display: flex;
+    justify-content: center;
+  }
+
+  .member-image {
+    width: 110px;
+    height: 110px;
+  }
+
+  .section-container {
+    margin: 50px 0;
+    padding: 30px 0;
+  }
+}
+/* === FACULTY CARD SLIGHT SIZE REDUCTION (MOBILE ONLY) === */
+@media (max-width: 768px) {
+  .two-column-grid .member-card {
+    max-width: 310px;   /* earlier 340px */
+    padding: 22px;      /* earlier 28px */
+  }
+
+  .two-column-grid .member-image {
+    width: 95px;
+    height: 95px;
+  }
+
+  .two-column-grid .member-card h4 {
+    font-size: 1.35rem;
+  }
+
+  .two-column-grid .member-card p {
+    font-size: 1.05rem;
+  }
+}
+.member-icon-placeholder {
+  font-size: 3rem;
+}
+.location-icon{
+  font-size: 2.5rem;
+}
+.center-text{
+  font-size: 1.4rem;
+}
+.stay-tuned-text{
+  font-size: 1.2rem;
+}
+.neon-card h4{
+  font-size: 1.5rem;
+}
+.neon-card p{
+  font-size: 1.1rem;
 }
