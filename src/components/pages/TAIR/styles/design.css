@@ -8,8 +8,8 @@
 /* ================= GLOBAL ================= */
 body {
   margin: 0;
-  background: #000;
-  color: #fff;
+  background: #fff;
+  color: rgb(133, 131, 131);
   font-family: 'Inter', sans-serif;
 }
 
@@ -108,7 +108,7 @@ body {
   font-size: 1.2rem;
   line-height: 2.4;
   margin-bottom: 20px;
-  color: #f1f1f1;
+  color: rgb(133, 131, 131);
 }
 .main-event-title{
   font-size: 2.8rem;
@@ -158,7 +158,7 @@ body {
 /* ================= CARDS ================= */
 .neon-card,
 .member-card {
-  background: #111;
+  background: #fff;
   border: 1px solid var(--secondary-red-border);
   padding: 28px;
   border-radius: 12px;
@@ -371,4 +371,14 @@ body {
     margin-bottom: 12px;
   }
 }
+.member-tag{
+ margin-top: 8px; 
+ padding-bottom: 20px;
+ font-size: 1.2rem;
+ font-weight: 500;
+}
 
+.neon-card p{
+  font-size: 1.4rem;
+  line-height: 1.8;
+}
