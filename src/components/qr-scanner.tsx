@@ -34,9 +34,6 @@ interface PassData {
   passId: string;
   passType: string;
   status: string;
-  hasMeals: boolean;
-  hasMerchandise: boolean;
-  hasWorkshopAccess: boolean;
   purchaseDate: string;
   user: {
     email: string;
@@ -531,22 +528,16 @@ export function QRScanner() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {scanResult.pass.hasMeals && (
-                        <Badge variant="outline" className="text-xs">
-                          Meals Included
-                        </Badge>
-                      )}
-                      {scanResult.pass.hasMerchandise && (
-                        <Badge variant="outline" className="text-xs">
-                          Merchandise
-                        </Badge>
-                      )}
-                      {scanResult.pass.hasWorkshopAccess && (
-                        <Badge variant="outline" className="text-xs">
-                          Workshop Access
-                        </Badge>
-                      )}
+                      <Badge variant="outline" className="text-xs">
+                        Event Access
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Certificate
+                      </Badge>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Pass upgrades available at registration desk
+                    </p>
                   </CardContent>
                 </Card>
 

@@ -22,9 +22,6 @@ router.post('/create-order', async (req: Request, res: Response) => {
       clerkUserId,
       passType,
       price,
-      hasMeals = false,
-      hasMerchandise = false,
-      hasWorkshopAccess = false,
     } = req.body;
 
     // Validate required fields
@@ -78,9 +75,6 @@ router.post('/create-order', async (req: Request, res: Response) => {
       metadata: {
         clerkUserId,
         passType,
-        hasMeals,
-        hasMerchandise,
-        hasWorkshopAccess,
         invoiceNumber,
         transactionNumber,
       },
@@ -101,9 +95,6 @@ router.post('/create-order', async (req: Request, res: Response) => {
         paymentMethod: 'konfhub',
         metadata: {
           passType,
-          hasMeals,
-          hasMerchandise,
-          hasWorkshopAccess,
           orderCreatedAt: new Date().toISOString(),
           checkoutUrl: konfhubOrder.checkoutUrl,
         },
@@ -223,9 +214,6 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
     // Get pass details from transaction metadata
     const metadata = transaction.metadata as any;
     const passType = metadata.passType;
-    const hasMeals = metadata.hasMeals === true || metadata.hasMeals === 'true';
-    const hasMerchandise = metadata.hasMerchandise === true || metadata.hasMerchandise === 'true';
-    const hasWorkshopAccess = metadata.hasWorkshopAccess === true || metadata.hasWorkshopAccess === 'true';
 
     // Generate unique pass ID
     const { passId } = generateUniqueIdentifiers();
@@ -242,9 +230,6 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
           passType,
           passId,
           price: transaction.amount,
-          hasMeals,
-          hasMerchandise,
-          hasWorkshopAccess,
           status: 'Active',
           qrCodeUrl,
         },

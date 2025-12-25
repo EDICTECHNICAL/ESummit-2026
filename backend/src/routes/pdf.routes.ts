@@ -40,9 +40,6 @@ router.get('/pass/:passId', async (req: Request, res: Response): Promise<void> =
       userPhone: pass.user.phone || undefined,
       purchaseDate: pass.createdAt.toISOString(),
       qrData: pass.passId, // The QR code contains the pass ID
-      hasMeals: pass.hasMeals,
-      hasMerchandise: pass.hasMerchandise,
-      hasWorkshopAccess: pass.hasWorkshopAccess,
       status: pass.status
     };
 
@@ -124,9 +121,7 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
 
     // Calculate pricing breakdown
     const passPrice = Number(pass.price);
-    const mealsPrice = pass.hasMeals ? 300 : 0;
-    const merchandisePrice = pass.hasMerchandise ? 500 : 0;
-    const subtotal = passPrice + mealsPrice + merchandisePrice;
+    const subtotal = passPrice;
     const gstAmount = Math.round(subtotal * 0.18);
     const total = subtotal + gstAmount;
 
@@ -144,10 +139,6 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
       userCollege: user.college || undefined,
       passType: pass.passType,
       passPrice,
-      hasMeals: pass.hasMeals,
-      mealsPrice,
-      hasMerchandise: pass.hasMerchandise,
-      merchandisePrice,
       subtotal,
       gstAmount,
       total,
@@ -221,10 +212,7 @@ router.get('/schedule/:clerkUserId', async (req: Request, res: Response): Promis
       userEmail: user.email,
       passes: user.passes.map(pass => ({
         passType: pass.passType,
-        passId: pass.passId,
-        hasMeals: pass.hasMeals,
-        hasMerchandise: pass.hasMerchandise,
-        hasWorkshopAccess: pass.hasWorkshopAccess
+        passId: pass.passId
       }))
     };
 
