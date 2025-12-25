@@ -68,9 +68,6 @@ model Pass {
   status            String        @default("Active")
   qrCodeUrl         String?       @map("qr_code_url")
   qrCodeData        String?       @map("qr_code_data")
-  hasMeals          Boolean       @default(false) @map("has_meals")
-  hasMerchandise    Boolean       @default(false) @map("has_merchandise")
-  hasWorkshopAccess Boolean       @default(false) @map("has_workshop_access")
   createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
   checkIns          CheckIn[]

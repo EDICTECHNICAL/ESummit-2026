@@ -44,9 +44,6 @@ interface Pass {
   ticketDetails?: {
     inclusions?: string[];
     features?: string[];
-    hasMeals?: boolean;
-    hasMerchandise?: boolean;
-    hasWorkshopAccess?: boolean;
     [key: string]: any;
   };
   status: string;
@@ -749,36 +746,18 @@ export function UserDashboard({
                                 ))
                               ) : (
                                 <>
-                                  {(pass.ticketDetails?.hasMeals || pass.price && pass.price >= 500) && (
-                                    <div className="flex items-center gap-1">
-                                      <CheckCircle2 className="h-3 w-3 text-green-600" />
-                                      <span>Meals</span>
-                                    </div>
-                                  )}
-                                  {(pass.ticketDetails?.hasMerchandise || pass.price && pass.price >= 1000) && (
-                                    <div className="flex items-center gap-1">
-                                      <CheckCircle2 className="h-3 w-3 text-green-600" />
-                                      <span>Merchandise</span>
-                                    </div>
-                                  )}
-                                  {(pass.ticketDetails?.hasWorkshopAccess || pass.price && pass.price >= 1500) && (
-                                    <div className="flex items-center gap-1">
-                                      <CheckCircle2 className="h-3 w-3 text-green-600" />
-                                      <span>Workshop Access</span>
-                                    </div>
-                                  )}
-                                  {(!pass.price || pass.price < 500) && (
-                                    <>
-                                      <div className="flex items-center gap-1">
-                                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                                        <span>Event Access</span>
-                                      </div>
-                                      <div className="flex items-center gap-1">
-                                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                                        <span>Networking</span>
-                                      </div>
-                                    </>
-                                  )}
+                                  <div className="flex items-center gap-1">
+                                    <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                    <span>Event Access</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                    <span>Networking</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                    <span>Certificate</span>
+                                  </div>
                                 </>
                               )}
                             </div>
@@ -1300,169 +1279,201 @@ export function UserDashboard({
 
       {/* Pass Claim Modal */}
       {showPassClaimModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-2xl border">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-blue-500/10 p-4 sm:p-6 border-b">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold flex items-center gap-2">
-                    <Upload className="h-5 w-5" />
-                    Enter Pass Details
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
+          <div className="relative w-full sm:max-w-lg bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-xl overflow-hidden shadow-2xl border max-h-[95vh] sm:max-h-[90vh] flex flex-col">
+            {/* Header - Fixed */}
+            <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-blue-500/10 p-4 sm:p-5 border-b shrink-0">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-bold flex items-center gap-2">
+                    <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10">
+                      <Upload className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    </div>
+                    <span>Claim Your Pass</span>
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Already purchased a pass? Enter your booking details below.
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                    Already purchased? Enter your booking details to link your pass.
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setShowPassClaimModal(false)}
-                  className="rounded-full hover:bg-destructive/10 hover:text-destructive"
+                  className="rounded-full hover:bg-destructive/10 hover:text-destructive h-8 w-8 sm:h-9 sm:w-9 shrink-0 -mt-1 -mr-1"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </div>
             </div>
             
-            {/* Form */}
-            <div className="p-4 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-              {/* Pass Type */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Pass Type</label>
-                <select 
-                  className="w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={claimFormData.passType}
-                  onChange={(e) => setClaimFormData(prev => ({ ...prev, passType: e.target.value }))}
-                >
-                  <option value="Pixel Pass">Pixel Pass (₹299)</option>
-                  <option value="Silicon Pass">Silicon Pass (₹499)</option>
-                  <option value="Quantum Pass">Quantum Pass (₹999)</option>
-                  <option value="TCET Student Pass">TCET Student Pass (Free)</option>
-                </select>
-              </div>
-
-              {/* Booking ID */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Booking ID / Registration Number</label>
-                <input
-                  type="text"
-                  placeholder="e.g., KONF-12345 or ES26-XXXXX"
-                  className="w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={claimFormData.bookingId}
-                  onChange={(e) => setClaimFormData(prev => ({ ...prev, bookingId: e.target.value }))}
-                />
-                <p className="text-xs text-muted-foreground">Found in your confirmation email</p>
-              </div>
-
-              {/* KonfHub Order ID */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">KonfHub Order ID (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g., ORD-XXXXXXXXXX"
-                  className="w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={claimFormData.konfhubOrderId}
-                  onChange={(e) => setClaimFormData(prev => ({ ...prev, konfhubOrderId: e.target.value }))}
-                />
-              </div>
-
-              {/* Ticket Number */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Ticket Number (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g., TKT-123456"
-                  className="w-full px-3 py-2 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                  value={claimFormData.ticketNumber}
-                  onChange={(e) => setClaimFormData(prev => ({ ...prev, ticketNumber: e.target.value }))}
-                />
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Upload Ticket PDF (Optional)</label>
-                <div className="border-2 border-dashed rounded-lg p-4 text-center hover:border-primary transition-colors">
-                  <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    className="hidden"
-                    id="ticket-upload"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setUploadedFile(file);
-                        toast.success(`File selected: ${file.name}`);
-                      }
-                    }}
-                  />
-                  <label htmlFor="ticket-upload" className="cursor-pointer">
-                    {uploadedFile ? (
-                      <div className="flex items-center justify-center gap-2 text-green-600">
-                        <CheckCircle2 className="h-5 w-5" />
-                        <span className="text-sm font-medium">{uploadedFile.name}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e: React.MouseEvent) => {
-                            e.preventDefault();
-                            setUploadedFile(null);
-                          }}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <FileText className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">
-                          Click to upload your ticket PDF or screenshot
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          PDF or Image, max 10MB
-                        </p>
-                      </>
-                    )}
+            {/* Form - Scrollable */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="p-4 sm:p-5 space-y-4">
+                {/* Pass Type */}
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-sm font-medium text-foreground">
+                    Pass Type <span className="text-destructive">*</span>
                   </label>
+                  <select 
+                    className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none cursor-pointer"
+                    value={claimFormData.passType}
+                    onChange={(e) => setClaimFormData(prev => ({ ...prev, passType: e.target.value }))}
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
+                  >
+                    <option value="Pixel Pass">Pixel Pass (₹299)</option>
+                    <option value="Silicon Pass">Silicon Pass (₹499)</option>
+                    <option value="Quantum Pass">Quantum Pass (₹999)</option>
+                    <option value="TCET Student Pass">TCET Student Pass (Free)</option>
+                  </select>
                 </div>
-              </div>
 
-              {/* Info Alert */}
-              <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800">
-                <AlertCircle className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-xs text-blue-800 dark:text-blue-200">
-                  <strong>How it works:</strong> We'll verify your details against our records. If found immediately, your pass will be activated. Otherwise, we'll check periodically for up to 32 hours. Check back later for updates!
-                </AlertDescription>
-              </Alert>
+                {/* Booking ID */}
+                <div className="space-y-1.5">
+                  <label className="text-xs sm:text-sm font-medium text-foreground">
+                    Booking ID / Registration Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., KONF-12345 or ES26-XXXXX"
+                    className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/60"
+                    value={claimFormData.bookingId}
+                    onChange={(e) => setClaimFormData(prev => ({ ...prev, bookingId: e.target.value }))}
+                  />
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Found in your confirmation email from KonfHub</p>
+                </div>
+
+                {/* Collapsible Optional Fields */}
+                <div className="space-y-3 pt-1">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider font-medium">Additional Details (Optional)</p>
+                  
+                  {/* KonfHub Order ID */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium text-foreground/80">
+                      KonfHub Order ID
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., ORD-XXXXXXXXXX"
+                      className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/60"
+                      value={claimFormData.konfhubOrderId}
+                      onChange={(e) => setClaimFormData(prev => ({ ...prev, konfhubOrderId: e.target.value }))}
+                    />
+                  </div>
+
+                  {/* Ticket Number */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs sm:text-sm font-medium text-foreground/80">
+                      Ticket Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., TKT-123456"
+                      className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/60"
+                      value={claimFormData.ticketNumber}
+                      onChange={(e) => setClaimFormData(prev => ({ ...prev, ticketNumber: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                {/* File Upload */}
+                <div className="space-y-1.5 pt-1">
+                  <label className="text-xs sm:text-sm font-medium text-foreground/80">
+                    Upload Ticket (Optional)
+                  </label>
+                  <div className="border-2 border-dashed rounded-xl p-4 sm:p-5 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer active:scale-[0.99]">
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      className="hidden"
+                      id="ticket-upload"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setUploadedFile(file);
+                          toast.success(`File selected: ${file.name}`);
+                        }
+                      }}
+                    />
+                    <label htmlFor="ticket-upload" className="cursor-pointer block">
+                      {uploadedFile ? (
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-green-600">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-5 w-5 shrink-0" />
+                            <span className="text-sm font-medium truncate max-w-[180px] sm:max-w-[250px]">{uploadedFile.name}</span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e: React.MouseEvent) => {
+                              e.preventDefault();
+                              setUploadedFile(null);
+                            }}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 px-2"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                            <span className="text-xs">Remove</span>
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-muted/50 flex items-center justify-center">
+                            <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
+                              Tap to upload ticket PDF or screenshot
+                            </p>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground/70 mt-0.5">
+                              PDF, PNG, JPG • Max 10MB
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+                </div>
+
+                {/* Info Alert */}
+                <Alert className="bg-blue-50/80 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800/50 rounded-xl">
+                  <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                  <AlertDescription className="text-[10px] sm:text-xs text-blue-800 dark:text-blue-200 leading-relaxed">
+                    <strong>How it works:</strong> We'll verify your details against our records. If found, your pass activates instantly! Otherwise, verification takes up to 32 hours.
+                  </AlertDescription>
+                </Alert>
+              </div>
             </div>
 
-            {/* Footer */}
-            <div className="p-4 sm:p-6 border-t bg-muted/30 flex flex-col sm:flex-row gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setShowPassClaimModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={handleSubmitPassClaim}
-                disabled={isSubmittingClaim || (!claimFormData.bookingId && !claimFormData.konfhubOrderId && !claimFormData.ticketNumber)}
-              >
-                {isSubmittingClaim ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    Submit Claim
-                  </>
-                )}
-              </Button>
+            {/* Footer - Fixed */}
+            <div className="p-4 sm:p-5 border-t bg-muted/30 shrink-0 safe-area-inset-bottom">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 sm:h-10 text-sm"
+                  onClick={() => setShowPassClaimModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="flex-1 h-11 sm:h-10 text-sm font-medium"
+                  onClick={handleSubmitPassClaim}
+                  disabled={isSubmittingClaim || (!claimFormData.bookingId && !claimFormData.konfhubOrderId && !claimFormData.ticketNumber)}
+                >
+                  {isSubmittingClaim ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      Submit & Verify
+                    </>
+                  )}
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center mt-2 sm:hidden">
+                Swipe down to close
+              </p>
             </div>
           </div>
         </div>

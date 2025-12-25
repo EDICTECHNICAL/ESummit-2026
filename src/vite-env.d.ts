@@ -3,9 +3,9 @@
 interface ImportMetaEnv {
   readonly VITE_CLERK_PUBLISHABLE_KEY: string;
   readonly VITE_API_URL: string;
-  readonly VITE_RAZORPAY_KEY_ID: string;
   readonly VITE_APP_NAME: string;
   readonly VITE_EVENT_DATE: string;
+  readonly VITE_KONFHUB_EVENT_ID: string;
 }
 
 interface ImportMeta {

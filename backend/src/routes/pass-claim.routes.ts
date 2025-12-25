@@ -2,9 +2,7 @@ import { Router, Request, Response } from 'express';
 import prisma from '../config/database';
 import { sendSuccess, sendError } from '../utils/response.util';
 import logger from '../utils/logger.util';
-import multer from 'multer';
-import { generateQRCode } from '../services/qrcode.service';
-import { generateUniqueIdentifiers } from '../utils/identifier.util';
+import multer, { FileFilterCallback } from 'multer';
 
 const router = Router();
 
@@ -14,7 +12,7 @@ const upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -27,11 +25,16 @@ const upload = multer({
 const CLAIM_EXPIRY_HOURS = 32;
 const CLAIM_EXPIRY_MS = CLAIM_EXPIRY_HOURS * 60 * 60 * 1000;
 
+// Extend Request type to include file from multer
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
+
 /**
  * Submit a pass claim with manual details
  * POST /api/v1/pass-claims/submit
  */
-router.post('/submit', upload.single('ticketFile'), async (req: Request, res: Response) => {
+router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, res: Response) => {
   try {
     const {
       clerkUserId,

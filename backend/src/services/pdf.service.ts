@@ -12,9 +12,6 @@ interface PassPDFData {
   userPhone?: string;
   purchaseDate: string;
   qrData: string;
-  hasMeals: boolean;
-  hasMerchandise: boolean;
-  hasWorkshopAccess: boolean;
   status: string;
 }
 
@@ -27,10 +24,6 @@ interface InvoicePDFData {
   userCollege?: string;
   passType: string;
   passPrice: number;
-  hasMeals: boolean;
-  mealsPrice: number;
-  hasMerchandise: boolean;
-  merchandisePrice: number;
   subtotal: number;
   gstAmount: number;
   total: number;
@@ -376,20 +369,10 @@ export class PDFService {
     leftY += itemHeight;
     this.drawInclusionItem(doc, 'Panel discussions', leftCol, leftY);
 
-    // Right column - conditional items
-    if (data.hasWorkshopAccess) {
-      this.drawInclusionItem(doc, 'Workshop access', rightCol, rightY);
-      rightY += itemHeight;
-    }
-    
-    if (data.hasMeals) {
-      this.drawInclusionItem(doc, 'Meals and refreshments', rightCol, rightY);
-      rightY += itemHeight;
-    }
-    
-    if (data.hasMerchandise) {
-      this.drawInclusionItem(doc, 'Merchandise kit', rightCol, rightY);
-    }
+    // Right column - pass tier benefits
+    this.drawInclusionItem(doc, 'Event access', rightCol, rightY);
+    rightY += itemHeight;
+    this.drawInclusionItem(doc, 'Certificate of attendance', rightCol, rightY);
   }
 
   /**
@@ -582,22 +565,6 @@ export class PDFService {
         doc.text(`INR ${data.passPrice.toLocaleString('en-IN')}`, 470, currentY);
         currentY += rowHeight;
 
-        // Meals row
-        if (data.hasMeals) {
-          doc.text('Meals & Refreshments', 60, currentY);
-          doc.text('1', 380, currentY);
-          doc.text(`INR ${data.mealsPrice.toLocaleString('en-IN')}`, 470, currentY);
-          currentY += rowHeight;
-        }
-
-        // Merchandise row
-        if (data.hasMerchandise) {
-          doc.text('Merchandise Kit', 60, currentY);
-          doc.text('1', 380, currentY);
-          doc.text(`INR ${data.merchandisePrice.toLocaleString('en-IN')}`, 470, currentY);
-          currentY += rowHeight;
-        }
-
         // Separator line
         currentY += 10;
         doc.rect(50, currentY, 495, 1).fill(this.colors.borderGray);
@@ -704,9 +671,6 @@ export class PDFService {
     passes: Array<{
       passType: string;
       passId: string;
-      hasMeals: boolean;
-      hasMerchandise: boolean;
-      hasWorkshopAccess: boolean;
     }>;
   }): Promise<Buffer> {
     return new Promise((resolve, reject) => {

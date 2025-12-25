@@ -7,9 +7,6 @@ export interface KonfHubOrderData {
   clerkUserId: string;
   passType: string;
   price: number;
-  hasMeals?: boolean;
-  hasMerchandise?: boolean;
-  hasWorkshopAccess?: boolean;
 }
 
 export interface KonfHubOrderResponse {
