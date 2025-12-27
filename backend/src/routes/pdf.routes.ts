@@ -40,9 +40,6 @@ router.get('/pass/:passId', async (req: Request, res: Response): Promise<void> =
       userPhone: pass.user.phone || undefined,
       purchaseDate: pass.createdAt.toISOString(),
       qrData: pass.passId, // The QR code contains the pass ID
-      hasMeals: pass.hasMeals,
-      hasMerchandise: pass.hasMerchandise,
-      hasWorkshopAccess: pass.hasWorkshopAccess,
       status: pass.status
     };
 
@@ -60,7 +57,7 @@ router.get('/pass/:passId', async (req: Request, res: Response): Promise<void> =
     // Send PDF
     res.send(pdfBuffer);
   } catch (error) {
-    console.error('Error generating pass PDF:', error);
+    logger.error('Error generating pass PDF:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to generate pass PDF'
@@ -124,9 +121,7 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
 
     // Calculate pricing breakdown
     const passPrice = Number(pass.price);
-    const mealsPrice = pass.hasMeals ? 300 : 0;
-    const merchandisePrice = pass.hasMerchandise ? 500 : 0;
-    const subtotal = passPrice + mealsPrice + merchandisePrice;
+    const subtotal = passPrice;
     const gstAmount = Math.round(subtotal * 0.18);
     const total = subtotal + gstAmount;
 
@@ -144,14 +139,10 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
       userCollege: user.college || undefined,
       passType: pass.passType,
       passPrice,
-      hasMeals: pass.hasMeals,
-      mealsPrice,
-      hasMerchandise: pass.hasMerchandise,
-      merchandisePrice,
       subtotal,
       gstAmount,
       total,
-      paymentMethod: transaction.konfhubPaymentId ? 'Online Payment (KonfHub)' : 'Bypassed (Test Mode)',
+      paymentMethod: transaction.konfhubPaymentId ? 'Online Payment (KonfHub)' : 'Manual',
       transactionId: transaction.konfhubPaymentId || transactionNumber,
       paymentStatus: transaction.status.toUpperCase()
     };
@@ -170,7 +161,7 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
     // Send PDF
     res.send(pdfBuffer);
   } catch (error) {
-    console.error('Error generating invoice PDF:', error);
+    logger.error('Error generating invoice PDF:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to generate invoice PDF'
@@ -178,76 +169,6 @@ router.get('/invoice/:transactionId', async (req: Request, res: Response): Promi
   }
 });
 
-/**
- * @route   GET /api/v1/pdf/schedule/:clerkUserId
- * @desc    Generate and download personalized schedule PDF based on user's passes
- * @access  Public (with user validation)
- */
-router.get('/schedule/:clerkUserId', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { clerkUserId } = req.params;
 
-    // Fetch user and their passes
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      include: {
-        passes: {
-          where: {
-            status: 'Active'
-          }
-        }
-      }
-    });
-
-    if (!user) {
-      res.status(404).json({
-        success: false,
-        error: 'User not found'
-      });
-      return;
-    }
-
-    if (!user.passes || user.passes.length === 0) {
-      res.status(404).json({
-        success: false,
-        error: 'No active passes found for this user'
-      });
-      return;
-    }
-
-    // Prepare schedule data
-    const scheduleData = {
-      userName: user.fullName || user.firstName || 'Guest',
-      userEmail: user.email,
-      passes: user.passes.map(pass => ({
-        passType: pass.passType,
-        passId: pass.passId,
-        hasMeals: pass.hasMeals,
-        hasMerchandise: pass.hasMerchandise,
-        hasWorkshopAccess: pass.hasWorkshopAccess
-      }))
-    };
-
-    // Generate PDF
-    const pdfBuffer = await pdfService.generateSchedulePDF(scheduleData);
-
-    // Set response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename="ESUMMIT-2026-My-Schedule.pdf"`
-    );
-    res.setHeader('Content-Length', pdfBuffer.length);
-
-    // Send PDF
-    res.send(pdfBuffer);
-  } catch (error) {
-    console.error('Error generating schedule PDF:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to generate schedule PDF'
-    });
-  }
-});
 
 export default router;
