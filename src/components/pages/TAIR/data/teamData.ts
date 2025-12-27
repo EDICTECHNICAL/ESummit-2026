@@ -2,6 +2,8 @@
 // src/data/teamData.ts (FINAL CLEAN CODE - CORE TEAM RESTORED TO ICON STYLE)
 import type { TeamMember, Venue, Benefit, EventListing } from '../types/data';
 
+
+
 // --- Organizing Committee (From image_abe664.png) ---
 export const organizingCommittee: TeamMember[] = [
   {
@@ -82,14 +84,14 @@ export const coreTeam: TeamMember[] = [
 // --- Event Venue, Benefits, Event Listings ---
 export const eventVenue: Venue = { 
     name: "Thakur College of Engineering and Technology",
-    addressLine1: "SH-1" 
+    addressLine1: "530, 531 " 
 };
 
 export const eventBenefits: Benefit[] = [
-    { icon: '💡', title: 'Mentorship from Founders', description: 'Get guidance from industry experts' },
-    { icon: '🏆', title: 'Funding Opportunities', description: 'Connect with investors & VCs' },
-    { icon: '✨', title: 'Networking Sessions', description: 'Meet founders & investors' },
-    { icon: '🚀', title: 'Participation Certificate', description: 'Recognition for all participants' },
+  { icon: 'Lightbulb', title: 'Mentorship from Founders', description: 'Get guidance from industry experts' },
+  { icon: 'Award', title: 'Funding Opportunities', description: 'Connect with investors & VCs' },
+  { icon: 'Sparkles', title: 'Networking Sessions', description: 'Meet founders & investors' },
+  { icon: 'Rocket', title: 'Participation Certificate', description: 'Recognition for all participants' },
 ];
 
 export const eventListings: EventListing[] = [
@@ -98,7 +100,7 @@ export const eventListings: EventListing[] = [
         tag: "Pre-Seed Funding", 
         description: "Simulate real-world investment pitch scenarios and promote practical entrepreneurship.", 
         date: "February 2, 2026", 
-        location: "Seminar Hall - 1", 
+        location: "530, 531", 
         time: "10:00 AM - 1:00 PM" 
     }
 ];
