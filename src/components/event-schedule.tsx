@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { Calendar, Clock, MapPin, Users, Filter, Download, Plus, AlertCircle } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Filter, Plus, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Alert, AlertDescription } from "./ui/alert";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { motion } from "motion/react";
 import { BentoGrid, BentoCard } from "./magicui/bento-grid";
 import { PulseDot } from "./accentricity/pulse-dot";
 import { FloatingCard } from "./accentricity/floating-card";
 
-export function EventSchedule() {
+const EventSchedule = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedVenue, setSelectedVenue] = useState("all");
-  const [mySchedule, setMySchedule] = useState<string[]>([]);
 
   // Define event type for consistency
   type Event = {
@@ -396,28 +395,7 @@ export function EventSchedule() {
     ],
   };
 
-  const toggleEvent = (eventId: string) => {
-    if (mySchedule.includes(eventId)) {
-      setMySchedule(mySchedule.filter((id) => id !== eventId));
-      toast.info("Event removed from your schedule");
-    } else {
-      // Check for clash
-      const event = [...events.day1, ...events.day2].find((e) => e.id === eventId);
-      if (event) {
-        const hasClash = mySchedule.some((scheduledId) => {
-          const scheduledEvent = [...events.day1, ...events.day2].find((e) => e.id === scheduledId);
-          return scheduledEvent && scheduledEvent.time === event.time;
-        });
 
-        if (hasClash) {
-          toast.error("Time clash detected! Please remove conflicting event first.");
-          return;
-        }
-      }
-      setMySchedule([...mySchedule, eventId]);
-      toast.success("Event added to your schedule");
-    }
-  };
 
   const filterEvents = (eventsList: Event[]) => {
     return eventsList.filter((event) => {
@@ -430,21 +408,6 @@ export function EventSchedule() {
   const getCategoryColor = (category: string) => {
     const cat = categories.find((c) => c.id === category);
     return cat?.color || "default";
-  };
-
-  const exportSchedule = () => {
-    const myEvents = [...events.day1, ...events.day2].filter((e) => mySchedule.includes(e.id));
-    const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//E-Summit 2026//EN
-${myEvents.map((event) => `BEGIN:VEVENT
-SUMMARY:${event.title}
-LOCATION:${event.venue}
-DESCRIPTION:${event.description}
-END:VEVENT`).join("\n")}
-END:VCALENDAR`;
-    
-    toast.success("Calendar export prepared! (Demo)");
   };
 
   return (
@@ -483,29 +446,26 @@ END:VCALENDAR`;
               <SelectContent>
                 <SelectItem value="all">All Venues</SelectItem>
                 <SelectItem value="Main Auditorium">Main Auditorium</SelectItem>
-                <SelectItem value="Workshop Hall A">Workshop Hall A</SelectItem>
-                <SelectItem value="Workshop Hall B">Workshop Hall B</SelectItem>
-                <SelectItem value="Conference Hall B">Conference Hall B</SelectItem>
-                <SelectItem value="Conference Hall C">Conference Hall C</SelectItem>
+                <SelectItem value="Auditorium">Auditorium</SelectItem>
+                <SelectItem value="Convocation Hall">Convocation Hall</SelectItem>
+                <SelectItem value="Lobby Area">Lobby Area</SelectItem>
+                <SelectItem value="SH-1">SH-1</SelectItem>
+                <SelectItem value="SH-3, 532, 533, 504">SH-3, 532, 533, 504</SelectItem>
+                <SelectItem value="SH-4">SH-4</SelectItem>
+                <SelectItem value="216, 217">216, 217</SelectItem>
+                <SelectItem value="505, 506">505, 506</SelectItem>
+                <SelectItem value="530, 531">530, 531</SelectItem>
+                <SelectItem value="Lab 520 & 521">Lab 520 & 521</SelectItem>
+                <SelectItem value="Lab 522 & 523">Lab 522 & 523</SelectItem>
+                <SelectItem value="Lab 524 & 525">Lab 524 & 525</SelectItem>
+                <SelectItem value="Lab 526 & 527">Lab 526 & 527</SelectItem>
+                <SelectItem value="Multipurpose Hall 1st floor">Multipurpose Hall 1st floor</SelectItem>
+                <SelectItem value="Multipurpose Hall 2nd Floor & Architecture Ground Floor">Multipurpose Hall 2nd Floor</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <Button variant="outline" onClick={exportSchedule} className="w-full md:w-auto md:ml-auto">
-            <Download className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Export My Schedule</span>
-            <span className="sm:hidden">Export</span>
-          </Button>
         </CardContent>
       </Card>
-
-      {mySchedule.length > 0 && (
-        <Alert className="mb-6">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            You have {mySchedule.length} event(s) in your schedule. We'll send reminders 1 hour before each event.
-          </AlertDescription>
-        </Alert>
-      )}
 
       <Tabs defaultValue="day1" className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-2">
@@ -516,7 +476,7 @@ END:VCALENDAR`;
         <TabsContent value="day1" className="mt-6">
           <div className="space-y-4">
             {filterEvents(events.day1).map((event) => (
-              <Card key={event.id} className={mySchedule.includes(event.id) ? "border-primary" : ""}>
+              <Card key={event.id}>
                 <CardContent className="p-6">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="flex-1">
@@ -524,11 +484,6 @@ END:VCALENDAR`;
                         <Badge variant={getCategoryColor(event.category) as any}>
                           {categories.find((c) => c.id === event.category)?.label}
                         </Badge>
-                        {event.prize && (
-                          <Badge variant="default" className="bg-primary">
-                            Prize: {event.prize}
-                          </Badge>
-                        )}
                       </div>
                       
                       <h3 className="mb-2">{event.title}</h3>
@@ -559,21 +514,6 @@ END:VCALENDAR`;
                         </div>
                       )}
                     </div>
-
-                    <Button
-                      variant={mySchedule.includes(event.id) ? "default" : "outline"}
-                      onClick={() => toggleEvent(event.id)}
-                      className="md:ml-4"
-                    >
-                      {mySchedule.includes(event.id) ? (
-                        <>Added</>
-                      ) : (
-                        <>
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add to Schedule
-                        </>
-                      )}
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -584,7 +524,7 @@ END:VCALENDAR`;
         <TabsContent value="day2" className="mt-6">
           <div className="space-y-4">
             {filterEvents(events.day2).map((event) => (
-              <Card key={event.id} className={mySchedule.includes(event.id) ? "border-primary" : ""}>
+              <Card key={event.id}>
                 <CardContent className="p-6">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="flex-1">
@@ -592,11 +532,6 @@ END:VCALENDAR`;
                         <Badge variant={getCategoryColor(event.category) as any}>
                           {categories.find((c) => c.id === event.category)?.label}
                         </Badge>
-                        {event.prize && (
-                          <Badge variant="default" className="bg-primary">
-                            Prize: {event.prize}
-                          </Badge>
-                        )}
                       </div>
                       
                       <h3 className="mb-2">{event.title}</h3>
@@ -627,21 +562,6 @@ END:VCALENDAR`;
                         </div>
                       )}
                     </div>
-
-                    <Button
-                      variant={mySchedule.includes(event.id) ? "default" : "outline"}
-                      onClick={() => toggleEvent(event.id)}
-                      className="md:ml-4"
-                    >
-                      {mySchedule.includes(event.id) ? (
-                        <>Added</>
-                      ) : (
-                        <>
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add to Schedule
-                        </>
-                      )}
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -651,4 +571,6 @@ END:VCALENDAR`;
       </Tabs>
     </div>
   );
-}
+};
+
+export default EventSchedule;

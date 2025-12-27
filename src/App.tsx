@@ -4,7 +4,7 @@ import * as Sentry from "@sentry/react";
 import { Navigation } from "./components/navigation";
 import { HomePage } from "./components/homepage";
 import { PassBooking } from "./components/pass-booking";
-import { EventSchedule } from "./components/event-schedule";
+import EventSchedule from "./components/event-schedule";
 import { EventsListing } from "./components/events-listing";
 import {
   TenMinuteMillionPage,
@@ -33,9 +33,12 @@ import { AuthModal } from "./components/auth-modal";
 import { PrivacyPolicy } from "./components/privacy-policy";
 import { TermsOfService } from "./components/terms-of-service";
 import { CookiePolicy } from "./components/cookie-policy";
+import { AdminPanel } from "./components/admin-panel";
 import { Footer } from "./components/footer";
 import { Toaster } from "./components/ui/sonner";
 import { API_BASE_URL } from "./lib/api";
+
+// API URL verified at build time - no runtime logging needed in production
 
 export default function App() {
   const { user, isSignedIn } = useUser();
@@ -185,6 +188,8 @@ export default function App() {
         return <TermsOfService />;
       case "cookie-policy":
         return <CookiePolicy />;
+      case "admin":
+        return <AdminPanel onNavigate={handleNavigate} />;
       default:
         return <HomePage onNavigate={handleNavigate} />;
     }

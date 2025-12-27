@@ -12,9 +12,6 @@ interface PassPDFData {
   userPhone?: string;
   purchaseDate: string;
   qrData: string;
-  hasMeals: boolean;
-  hasMerchandise: boolean;
-  hasWorkshopAccess: boolean;
   status: string;
 }
 
@@ -27,10 +24,6 @@ interface InvoicePDFData {
   userCollege?: string;
   passType: string;
   passPrice: number;
-  hasMeals: boolean;
-  mealsPrice: number;
-  hasMerchandise: boolean;
-  merchandisePrice: number;
   subtotal: number;
   gstAmount: number;
   total: number;
@@ -62,7 +55,7 @@ export class PDFService {
     this.hasLogo = fs.existsSync(this.logoPath);
     
     if (!this.hasLogo) {
-      console.warn('Logo file not found at: ' + this.logoPath);
+      logger.warn('Logo file not found at: ' + this.logoPath);
     }
   }
 
@@ -153,14 +146,14 @@ export class PDFService {
 
         // === INCLUSIONS SECTION ===
         const inclusionsY = 630;
-        this.drawInclusions(doc, data, inclusionsY);
+        this.drawInclusions(doc, inclusionsY);
 
         // === FOOTER ===
         this.drawFooter(doc, pageHeight);
 
         doc.end();
       } catch (error) {
-        console.error('Error generating pass PDF:', error);
+        logger.error('Error generating pass PDF:', error);
         reject(error);
       }
     });
@@ -351,7 +344,7 @@ export class PDFService {
   /**
    * Draw inclusions section (perfectly aligned)
    */
-  private drawInclusions(doc: PDFKit.PDFDocument, data: PassPDFData, y: number): void {
+  private drawInclusions(doc: PDFKit.PDFDocument, y: number): void {
     // Section header
     doc.fontSize(15)
        .fillColor(this.colors.textDark)
@@ -376,20 +369,10 @@ export class PDFService {
     leftY += itemHeight;
     this.drawInclusionItem(doc, 'Panel discussions', leftCol, leftY);
 
-    // Right column - conditional items
-    if (data.hasWorkshopAccess) {
-      this.drawInclusionItem(doc, 'Workshop access', rightCol, rightY);
-      rightY += itemHeight;
-    }
-    
-    if (data.hasMeals) {
-      this.drawInclusionItem(doc, 'Meals and refreshments', rightCol, rightY);
-      rightY += itemHeight;
-    }
-    
-    if (data.hasMerchandise) {
-      this.drawInclusionItem(doc, 'Merchandise kit', rightCol, rightY);
-    }
+    // Right column - pass tier benefits
+    this.drawInclusionItem(doc, 'Event access', rightCol, rightY);
+    rightY += itemHeight;
+    this.drawInclusionItem(doc, 'Certificate of attendance', rightCol, rightY);
   }
 
   /**
@@ -582,22 +565,6 @@ export class PDFService {
         doc.text(`INR ${data.passPrice.toLocaleString('en-IN')}`, 470, currentY);
         currentY += rowHeight;
 
-        // Meals row
-        if (data.hasMeals) {
-          doc.text('Meals & Refreshments', 60, currentY);
-          doc.text('1', 380, currentY);
-          doc.text(`INR ${data.mealsPrice.toLocaleString('en-IN')}`, 470, currentY);
-          currentY += rowHeight;
-        }
-
-        // Merchandise row
-        if (data.hasMerchandise) {
-          doc.text('Merchandise Kit', 60, currentY);
-          doc.text('1', 380, currentY);
-          doc.text(`INR ${data.merchandisePrice.toLocaleString('en-IN')}`, 470, currentY);
-          currentY += rowHeight;
-        }
-
         // Separator line
         currentY += 10;
         doc.rect(50, currentY, 495, 1).fill(this.colors.borderGray);
@@ -689,51 +656,13 @@ export class PDFService {
 
         doc.end();
       } catch (error) {
-        console.error('Error generating invoice PDF:', error);
+        logger.error('Error generating invoice PDF:', error);
         reject(error);
       }
     });
   }
 
-  /**
-   * Generate Personalized Schedule PDF based on user's passes
-   */
-  async generateSchedulePDF(data: {
-    userName: string;
-    userEmail: string;
-    passes: Array<{
-      passType: string;
-      passId: string;
-      hasMeals: boolean;
-      hasMerchandise: boolean;
-      hasWorkshopAccess: boolean;
-    }>;
-  }): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      try {
-        const doc = new PDFDocument({
-          size: 'A4',
-          margins: { top: 50, bottom: 50, left: 50, right: 50 },
-          info: {
-            Title: `E-Summit 2026 - My Schedule`,
-            Author: 'E-Summit 2026',
-            Subject: 'Event Schedule',
-            Keywords: 'schedule, event, esummit',
-            Creator: 'E-Summit Platform',
-            Producer: 'E-Summit 2026'
-          }
-        });
-
-        const chunks: Buffer[] = [];
-        doc.on('data', (chunk) => chunks.push(chunk));
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
-        doc.on('error', reject);
-
-        // Event schedule data (matching pass-events.ts structure)
-        const eventSchedule = {
-          day1: [
-            { time: "09:00 - 09:30", title: "Registration & Welcome", category: "Networking", venue: "Main Entrance" },
-            { time: "09:30 - 10:30", title: "Inaugural Ceremony", category: "Networking", venue: "Main Auditorium" },
+  // generateSchedulePDF removed
             { time: "10:00 - 13:00", title: "The Ten Minute Million", category: "Pitching", venue: "Main Auditorium" },
             { time: "14:00 - 17:00", title: "Angel Investors Roundtable", category: "Pitching", venue: "Conference Hall A" },
             { time: "11:00 - 13:00", title: "IPL Auction", category: "Competition", venue: "Competition Arena A" },
@@ -787,6 +716,15 @@ export class PDFService {
         if (passTypes.some(pt => pt.includes('Quantum'))) {
           // Quantum Pass: All events
           eligibleEvents = [...eventSchedule.day1, ...eventSchedule.day2];
+        }
+        // TCET Student Pass: Same as Pixel Pass events
+        if (passTypes.some(pt => pt.includes('TCET') || pt.toLowerCase().includes('tcet student'))) {
+          const tcetTitles = ['Startup Expo', 'Panel Discussion', 'IPL Auction', 
+                              'AI Build-A-Thon', 'Biz-Arena League', 'Networking Arena',
+                              'Registration & Welcome', 'Inaugural Ceremony', 'Closing Ceremony'];
+          eligibleEvents = [...eventSchedule.day1, ...eventSchedule.day2].filter(e => 
+            tcetTitles.some(title => e.title.includes(title))
+          );
         }
         // Legacy pass types
         if (passTypes.some(pt => pt.includes('Gold'))) {
@@ -960,7 +898,7 @@ export class PDFService {
 
         doc.end();
       } catch (error) {
-        console.error('Error generating schedule PDF:', error);
+        logger.error('Error generating schedule PDF:', error);
         reject(error);
       }
     });
