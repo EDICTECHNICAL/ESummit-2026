@@ -7,9 +7,10 @@
 
 /* ================= GLOBAL ================= */
 body {
-  margin: 0;
-  background: #fff;
+  background: var(--bg-main);
+  color: rgb(130, 133, 135);
   font-family: 'Inter', sans-serif;
+  margin: 0;
 }
 
 .event-page-container {
@@ -18,11 +19,6 @@ body {
   padding: 0 16px;
 }
 
-
-body {
-  background: var(--bg-main);
-  color: rgb(130, 133, 135);
-}
 
 
 /* ================= SECTIONS ================= */
@@ -242,13 +238,7 @@ body {
   color: rgb(130, 133, 135);;
 }
 /* ================= BENEFITS ================= */
-.benefit-card .benefit-icon {
-  font-size: 4rem;
-}
 
-.benefit-icon{
-  color: red;
-}
 
 .benefit-card.neon-card {
   border: 1px solid var(--secondary-red-border);
@@ -339,39 +329,10 @@ body {
 .neon-card h4{
   font-size: 1.5rem;
 }
-/* === WHY PARTICIPATE – MOBILE STACK FIX === */
-@media (max-width: 768px) {
 
-  /* Force benefit cards vertical */
-  .benefits-grid,
-  .three-column-grid,
-  .two-column-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Ensure cards are centered */
-  .benefits-grid > div {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Benefit card width control */
-  .benefit-card,
-  .neon-card {
-    width: 100%;
-    max-width: 340px;
-  }
-
-}
 /* === WHY PARTICIPATE – MOBILE VERTICAL STACK === */
 @media (max-width: 768px) {
-  .benefit-card {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-  }
-
+  
   /* Icon on top */
   .benefit-card .benefit-icon {
     margin-bottom: 12px;
@@ -394,16 +355,7 @@ body {
   gap: 8px;
 }
 
-.event-icon {
-  color: #ff2d2d;   /* same red as your design */
-}
-.contact-icon {
-    color: #ff2d2d;   /* same red as your design */
 
-}
-.icon{
-  color: #ff2d2d;   /* same red as your design */
-}
 /* ================= BENEFITS GRID FIX ================= */
 
 .benefits-row-grid {
@@ -426,10 +378,7 @@ body {
   box-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
 }
 
-.benefit-icon svg {
-  stroke: red;
-  margin-bottom: 14px;
-}
+
 @media (max-width: 900px) {
   .benefits-row-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -511,3 +460,47 @@ body {
   position: relative;
   overflow: hidden;
 }
+
+/* ================= FINAL ICON ALIGNMENT (PRODUCTION SAFE) ================= */
+
+/* Center ONLY main icons */
+.benefit-icon,
+.member-icon-placeholder,
+.location-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Big feature icons */
+.benefit-icon svg,
+.member-icon-placeholder svg,
+.location-icon svg {
+  width: 46px;
+  height: 46px;
+  stroke: #ff2d2d;
+  display: block;
+}
+
+/* Contact rows remain inline */
+.event-details span,
+.member-contact span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Phone & email icons inline only */
+.event-icon,
+.contact-icon {
+  display: inline-flex;
+}
+
+.event-icon svg,
+.contact-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: #ff2d2d;
+}
+
