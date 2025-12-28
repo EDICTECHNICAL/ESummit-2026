@@ -456,7 +456,7 @@ body {
   padding: 28px;
   border-radius: 12px;
   box-shadow: var(--neon-shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease, color 0.5s ease;
   position: relative;
   overflow: hidden;
 }
@@ -502,5 +502,24 @@ body {
   width: 18px;
   height: 18px;
   stroke: #ff2d2d;
+}
+
+/* ===== UNIVERSAL RED GLOW CARD ===== */
+.neon-card.member-card{
+  position: relative;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 45, 45, 0.6);
+  box-shadow:
+    0 0 10px rgba(255, 45, 45, 0.25),
+    inset 0 0 6px rgba(255, 45, 45, 0.15);
+  transition: all 0.4s ease;
+}
+
+.neon-card.member-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow:
+    0 0 20px rgba(255, 45, 45, 0.55),
+    0 0 32px rgba(255, 45, 45, 0.45),
+    inset 0 0 10px rgba(255, 45, 45, 0.25);
 }
 
