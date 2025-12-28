@@ -1,4 +1,3 @@
-// src/pages/angelInvestors.tsx
 import React, { useEffect, useState } from 'react';
 import MemberCard from '../componens/MemberCard';
 import AboutSectionContent from '../componens/AboutSection';
@@ -16,7 +15,7 @@ import {
   coreTeam
 } from '../data/teamData';
 
-import type {  TeamMember } from '../types/data';
+import type { TeamMember } from '../types/data';
 
 /* ------------------ Scroll Reveal ------------------ */
 const useRevealAnimation = () => {
@@ -38,12 +37,9 @@ const useRevealAnimation = () => {
   }, []);
 };
 
-/* ------------------ Benefit Card ------------------ */
-
-
 /* ------------------ Faculty Section ------------------ */
-const FacultySection: React.FC<{ 
-  title: string; 
+const FacultySection: React.FC<{
+  title: string;
   members: TeamMember[];
   activeId: string | null;
   onCardClick: (id: string) => void;
@@ -55,11 +51,7 @@ const FacultySection: React.FC<{
       {members.map((m, i) => {
         const id = `faculty-${i}`;
         return (
-          <div 
-            key={m.name} 
-            onClick={() => onCardClick(id)}
-            className={activeId === id ? 'clicked' : ''}
-          >
+          <div key={m.name} onClick={() => onCardClick(id)} className={activeId === id ? 'clicked' : ''}>
             <MemberCard member={m} />
           </div>
         );
@@ -81,29 +73,25 @@ const AngelInvestorsPage: React.FC = () => {
 
   return (
     <div className="event-page-container">
-
       {/* HERO */}
       <section className="section-container hero-section">
         <p className="event-tag">{mainEvent.tag}</p>
         <h1 className="main-event-title glow-red-title">{mainEvent.title}</h1>
         <p className="event-description-text">{mainEvent.description}</p>
         <div className="event-details">
-  <span>
-    <Calendar size={17} className="event-icon" />
-    {mainEvent.date}
-  </span>
-
-  <span>
-    <Clock size={17} className="event-icon" />
-    {mainEvent.time}
-  </span>
-
-  <span>
-    <MapPin size={17} className="event-icon" />
-    {mainEvent.location}
-  </span>
-</div>
-
+          <span>
+            <Calendar size={18} className="event-icon" color="#ff2d2d"  />
+            {mainEvent.date}
+          </span>
+          <span>
+            <Clock size={18} className="event-icon" color="#ff2d2d"  />
+            {mainEvent.time}
+          </span>
+          <span>
+            <MapPin size={18} className="event-icon" color="#ff2d2d"  />
+            {mainEvent.location}
+          </span>
+        </div>
         <button className="register-button">Register Now →</button>
       </section>
 
@@ -137,11 +125,7 @@ const AngelInvestorsPage: React.FC = () => {
           {organizingCommittee.map((m, i) => {
             const id = `oc-${i}`;
             return (
-              <div 
-                key={m.name} 
-                onClick={() => handleCardClick(id)}
-                className={clickedId === id ? 'clicked' : ''}
-              >
+              <div key={m.name} onClick={() => handleCardClick(id)} className={clickedId === id ? 'clicked' : ''}>
                 <MemberCard member={m} />
               </div>
             );
@@ -166,8 +150,8 @@ const AngelInvestorsPage: React.FC = () => {
           onClick={() => handleCardClick('venue')}
         >
           <span>
-    <MapPin size={40} className="event-icon" />
-      </span>
+            <MapPin size={40} className="event-icon" color="#ff2d2d"/>
+          </span>
           <h4>{eventVenue.name}</h4>
           <p>{eventVenue.addressLine1}</p>
         </div>
@@ -181,18 +165,13 @@ const AngelInvestorsPage: React.FC = () => {
           {coreTeam.map((m, i) => {
             const id = `core-${i}`;
             return (
-              <div 
-                key={m.name} 
-                onClick={() => handleCardClick(id)}
-                className={clickedId === id ? 'clicked' : ''}
-              >
+              <div key={m.name} onClick={() => handleCardClick(id)} className={clickedId === id ? 'clicked' : ''}>
                 <MemberCard member={m} />
               </div>
             );
           })}
         </div>
       </section>
-
     </div>
   );
 };
