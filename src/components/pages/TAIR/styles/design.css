@@ -599,3 +599,50 @@ body {
   object-fit: cover;
   margin: 0 auto 12px;
 }
+
+/* ================= MOBILE FIX FOR BENEFITS & OC CARDS ================= */
+
+/* Container grid fix */
+.benefits-grid,
+.oc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Force cards to stretch fully */
+.benefit-card,
+.oc-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* MOBILE SPECIFIC */
+@media (max-width: 768px) {
+  .benefits-grid,
+  .oc-grid {
+    grid-template-columns: 1fr;
+    padding: 0 14px;
+  }
+
+  .benefit-card,
+  .oc-card {
+    min-height: 200px;
+    padding: 22px 16px;
+  }
+
+  .benefit-card h3,
+  .oc-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .benefit-card p,
+  .oc-card p {
+    font-size: 0.95rem;
+  }
+}
