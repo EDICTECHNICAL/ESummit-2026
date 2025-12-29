@@ -214,7 +214,9 @@ export function Venue() {
           transition={{ duration: 0.6 }}
           className="relative z-10"
         >
-          <h1 className="mb-4">Venue Information</h1>
+          <h1 className="mb-4 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Venue Information
+          </h1>
           <p className="text-muted-foreground">
             Thakur College of Engineering and Technology Campus - Hosting E-Summit 2026 (February 2-3, 2026)
           </p>
