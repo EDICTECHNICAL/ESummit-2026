@@ -6,6 +6,7 @@ import pdfRoutes from './pdf.routes';
 import webhookRoutes from './webhook.routes';
 import tcetRoutes from './tcet.routes';
 import adminRoutes from './admin.routes';
+import userRoutes from './user.routes';
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use('/events', eventRoutes);
 router.use('/pdf', pdfRoutes);
 router.use('/tcet', tcetRoutes);
 router.use('/admin', adminRoutes);
+router.use('/users', userRoutes);
 
 export default router;
