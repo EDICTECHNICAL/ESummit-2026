@@ -1,6 +1,10 @@
-import { Router, Request, Response } from 'express';
-import prisma from '../config/database';
-import { sendSuccess, sendError } from '../utils/response.util';
+
+const router = Router();
+
+// Pass creation route (example: POST /api/v1/passes)
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const { user, passType, price, konfhubData } = req.body;
 
     // Check if user already has a pass (ONE PASS PER USER LIMIT)
     const existingPass = await prisma.pass.findFirst({

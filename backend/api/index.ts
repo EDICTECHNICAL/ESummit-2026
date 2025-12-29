@@ -38,7 +38,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     } else {
       // For security, don't allow the request
       res.setHeader('Access-Control-Allow-Origin', 'null');
-      console.warn(`⚠️ CORS: Blocked origin - ${origin}`);
+      console.warn(`CORS: Blocked origin - ${origin}`);
     }
     
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -56,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.url === '/' || req.url === '/api/v1/health') {
       return res.status(200).json({
         success: true,
-        message: '🚀 E-Summit 2026 API is running on Vercel',
+        message: 'E-Summit 2026 API is running',
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
       });
