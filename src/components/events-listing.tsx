@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { motion } from "motion/react";
+import { RippleBackground } from "./accentricity/ripple-background";
 
 interface EventsListingProps {
   onNavigate: (page: string) => void;
@@ -306,11 +308,21 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-4">Events</h1>
-        <p className="text-muted-foreground">
-          Explore 15+ events including pitching competitions, workshops, and networking sessions
-        </p>
+      <div className="relative mb-12">
+        <RippleBackground />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10"
+        >
+          <h1 className="mb-4 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Events
+          </h1>
+          <p className="text-muted-foreground">
+            Explore 15+ events including pitching competitions, workshops, and networking sessions
+          </p>
+        </motion.div>
       </div>
 
       {/* Search */}

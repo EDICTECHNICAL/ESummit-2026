@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import { BentoGrid, BentoCard } from "./magicui/bento-grid";
 import { PulseDot } from "./accentricity/pulse-dot";
 import { FloatingCard } from "./accentricity/floating-card";
+import { RippleBackground } from "./accentricity/ripple-background";
 
 const EventSchedule = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -412,11 +413,21 @@ const EventSchedule = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="mb-4">Event Schedule</h1>
-        <p className="text-muted-foreground">
-          Plan your E-Summit experience with our comprehensive schedule
-        </p>
+      <div className="relative mb-12">
+        <RippleBackground />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10"
+        >
+          <h1 className="mb-4 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Event Schedule
+          </h1>
+          <p className="text-muted-foreground">
+            Plan your E-Summit experience with our comprehensive schedule
+          </p>
+        </motion.div>
       </div>
 
       {/* Filters */}
