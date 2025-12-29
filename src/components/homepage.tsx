@@ -128,7 +128,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               transition={{ duration: 0.6 }}
               className="mb-6 flex justify-center"
             >
-              <Badge className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 text-primary border border-primary/30 px-4 py-2 text-sm backdrop-blur-sm animate-pulse">
+              <Badge className="bg-primary text-primary-foreground border border-primary/50 px-4 py-2 text-sm font-semibold shadow-lg animate-pulse">
                 Inaugural Edition - Making History
               </Badge>
             </motion.div>
