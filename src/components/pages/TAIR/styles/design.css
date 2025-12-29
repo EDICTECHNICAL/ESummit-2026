@@ -7,10 +7,10 @@
 
 /* ================= GLOBAL ================= */
 body {
-  margin: 0;
-  background: #fff;
-  color:#89909d;
+  background: var(--bg-main);
+  color: rgb(130, 133, 135);
   font-family: 'Inter', sans-serif;
+  margin: 0;
 }
 
 .event-page-container {
@@ -18,6 +18,8 @@ body {
   margin: auto;
   padding: 0 16px;
 }
+
+
 
 /* ================= SECTIONS ================= */
 .section-container {
@@ -75,14 +77,6 @@ body {
 }
 
 /* ================= HERO ================= */
-.main-event-title {
-  background: var(--primary-red-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 2.5rem;
-  font-weight: 900;
-  text-shadow: 0 0 10px rgba(203, 4, 14, 0.7);
-}
 
 .hero-section.visible .main-event-title {
   animation: heroAuthority 1.1s ease-out forwards;
@@ -108,7 +102,7 @@ body {
   font-size: 1.2rem;
   line-height: 2.4;
   margin-bottom: 20px;
-  color: #89909d;
+  color: rgb(130, 133, 135);;
 }
 .main-event-title{
   font-size: 2.8rem;
@@ -155,54 +149,7 @@ body {
   left: 100%;
 }
 
-/* ================= CARDS ================= */
-.neon-card,
-.member-card {
-  border: 1px solid var(--secondary-red-border);
-  padding: 28px;
-  border-radius: 12px;
-  box-shadow: var(--neon-shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
 
-.neon-card:hover,
-.member-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(233, 9, 20, 0.6);
-}
-
-/* Light sweep hover */
-.neon-card::after,
-.member-card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 120%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(233, 9, 20, 0.15),
-    transparent
-  );
-  transition: left 0.8s ease;
-}
-
-.neon-card:hover::after,
-.member-card:hover::after {
-  left: 120%;
-}
-
-/* Click glow */
-.clicked {
-  box-shadow:
-    0 0 12px rgba(233, 9, 20, 0.8),
-    0 0 28px rgba(233, 9, 20, 0.45);
-  transform: translateY(-4px);
-}
 
 /* ================= GRIDS ================= */
 .two-column-grid {
@@ -216,11 +163,45 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 26px;
 }
-
 .single-flex-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .single-flex-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .single-flex-row .member-card {
+    width: 90%;
+    max-width: 200px;
+  }
+}
+
+/* Small screens */
+@media (max-width: 500px) {
+  .single-flex-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .single-flex-row .member-card {
+    width: 95%;
+    max-width: 180px;
+  }
+}
+.single-flex-row > div {
   display: flex;
   justify-content: center;
-  gap: 26px;
+}
+
+.single-flex-row .member-card {
+  width: 85%;
+  height: 100%;
+  max-width: 250px;
 }
 
 /* ================= MEMBER ================= */
@@ -240,12 +221,15 @@ body {
   font-size: 1.2rem;
   line-height: 1.7;
 }
-
-/* ================= BENEFITS ================= */
-.benefit-card .benefit-icon {
-  font-size: 4rem;
+.member-contact a{
+  color: rgb(130, 133, 135);;
 }
+/* ================= BENEFITS ================= */
 
+
+.benefit-card.neon-card {
+  border: 1px solid var(--secondary-red-border);
+}
 /* ================= STAGGER ANIMATION ================= */
 .section-container.visible .member-card,
 .section-container.visible .neon-card {
@@ -332,39 +316,10 @@ body {
 .neon-card h4{
   font-size: 1.5rem;
 }
-/* === WHY PARTICIPATE – MOBILE STACK FIX === */
-@media (max-width: 768px) {
 
-  /* Force benefit cards vertical */
-  .benefits-grid,
-  .three-column-grid,
-  .two-column-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Ensure cards are centered */
-  .benefits-grid > div {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Benefit card width control */
-  .benefit-card,
-  .neon-card {
-    width: 100%;
-    max-width: 340px;
-  }
-
-}
 /* === WHY PARTICIPATE – MOBILE VERTICAL STACK === */
 @media (max-width: 768px) {
-  .benefit-card {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-  }
-
+  
   /* Icon on top */
   .benefit-card .benefit-icon {
     margin-bottom: 12px;
@@ -380,4 +335,314 @@ body {
 .neon-card p{
   font-size: 1.4rem;
   line-height: 1.8;
+}
+.event-details span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* ================= BENEFITS GRID FIX ================= */
+.benefits-row-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
+  margin-top: 40px;
+  align-items: stretch;
+}
+
+.benefits-row-grid > div {
+  display: flex;
+  justify-content: center;
+}
+
+/* EXACT SAME STRUCTURE AS .member-card */
+.benefit-card {
+  width: 85%;
+  height: 100%;
+  max-width: 250px;
+  padding: 38px 22px;
+  border-radius: 22px;
+  border: 2px solid rgba(255, 0, 0, 0.45);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 14px;
+  transition: 0.35s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 0 22px rgba(255, 0, 0, 0.85);
+}
+
+.benefit-icon {
+  margin-bottom: 10px;
+}
+
+.benefit-card h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.benefit-card p {
+  font-size: 1.2rem;
+  line-height: 1.45;
+}
+
+/* ========== TABLET ========== */
+@media (max-width: 900px) {
+  .benefits-row-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .benefit-card {
+    width: 90%;
+    max-width: 210px;
+    padding: 32px 18px;
+  }
+
+  .benefit-card p {
+    font-size: 14px;
+  }
+}
+
+/* ========== MOBILE ========== */
+@media (max-width: 500px) {
+  .benefits-row-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .benefits-row-grid > div {
+    display: flex;
+    justify-content: center;
+  }
+
+  .benefit-card {
+    width: 95%;
+    max-width: 180px;
+    padding: 28px 16px;
+  }
+
+  .benefit-card h4 {
+    font-size: 16px;
+  }
+
+  .benefit-card p {
+    font-size: 13px;
+  }
+
+  .benefit-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
+
+/**main-event**/
+.main-event-title {
+  font-weight: 700;
+  letter-spacing: 0.6px;
+
+  background: linear-gradient(90deg, #910505, #ea6767 50%, #9e0a0a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow:
+    0 0 2px rgba(255, 107, 107, 0.35),
+    0 0 4px rgba(255, 107, 107, 0.25),
+    0 0 6px rgba(255, 107, 107, 0.2);
+  transition: text-shadow 0.3s ease, font-size 0.3s ease;
+}
+
+.main-event-title:hover {
+  text-shadow:
+    0 0 4px rgba(255, 107, 107, 0.45),
+    0 0 8px rgba(255, 107, 107, 0.3),
+    0 0 12px rgba(255, 107, 107, 0.2);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .main-event-title {
+    font-size: 2.2rem;
+    text-shadow:
+      0 0 1.5px rgba(255, 107, 107, 0.3),
+      0 0 3px rgba(255, 107, 107, 0.2),
+      0 0 5px rgba(255, 107, 107, 0.15);
+  }
+
+  .main-event-title:hover {
+    text-shadow:
+      0 0 3px rgba(255, 107, 107, 0.4),
+      0 0 6px rgba(255, 107, 107, 0.25),
+      0 0 9px rgba(255, 107, 107, 0.15);
+  }
+}
+
+@media (max-width: 500px) {
+  .main-event-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* ================= FINAL ICON ALIGNMENT (PRODUCTION SAFE) ================= */
+
+/* Center ONLY main icons */
+.benefit-icon,
+.member-icon-placeholder,
+.location-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Big feature icons */
+.benefit-icon svg,
+.member-icon-placeholder svg,
+.location-icon svg {
+  width: 46px;
+  height: 46px;
+  stroke: #ff2d2d;
+  display: block;
+}
+
+/* Contact rows remain inline */
+.event-details span,
+.member-contact span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Phone & email icons inline only */
+.event-icon,
+.contact-icon {
+  display: inline-flex;
+}
+
+.event-icon svg,
+.contact-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: #ff2d2d;
+}
+
+/* ===== UNIVERSAL RED GLOW CARD ===== */
+
+
+.neon-card,
+.member-card,
+.benefit-card {
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 45, 45, 0.6);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+
+  box-shadow:
+    0 0 10px rgba(255, 45, 45, 0.25),
+    inset 0 0 6px rgba(255, 45, 45, 0.15);
+
+  transition: all 0.4s ease;
+}
+
+.neon-card:hover,
+.member-card:hover,
+.benefit-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow:
+    0 0 20px rgba(255, 45, 45, 0.55),
+    0 0 32px rgba(255, 45, 45, 0.45),
+    inset 0 0 10px rgba(255, 45, 45, 0.25);
+}
+
+/* light sweep */
+.neon-card::after,
+.member-card::after,
+.benefit-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: -120%;
+  width: 120%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 45, 45, 0.25),
+    transparent
+  );
+  transition: left 0.8s ease;
+}
+
+.neon-card:hover::after,
+.member-card:hover::after,
+.benefit-card:hover::after {
+  left: 120%;
+}
+
+.benefit-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.member-card img {
+   width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin: 0 auto 12px;
+}
+
+/* ================= MOBILE FIX FOR BENEFITS & OC CARDS ================= */
+
+/* Container grid fix */
+.benefits-grid,
+.oc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* Force cards to stretch fully */
+.benefit-card,
+.oc-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* MOBILE SPECIFIC */
+@media (max-width: 768px) {
+  .benefits-grid,
+  .oc-grid {
+    grid-template-columns: 1fr;
+    padding: 0 14px;
+  }
+
+  .benefit-card,
+  .oc-card {
+    min-height: 200px;
+    padding: 22px 16px;
+  }
+
+  .benefit-card h3,
+  .oc-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .benefit-card p,
+  .oc-card p {
+    font-size: 0.95rem;
+  }
 }

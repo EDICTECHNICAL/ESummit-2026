@@ -14,12 +14,15 @@ export interface Venue {
   name: string;
   addressLine1: string;
 }
+export type BenefitIcon = 'Lightbulb' | 'Award' | 'Sparkles' | 'Rocket';
 
 export interface Benefit {
-  icon: string;
+  icon: BenefitIcon;
   title: string;
   description: string;
 }
+
+
 
 export interface EventListing {
   title: string;
