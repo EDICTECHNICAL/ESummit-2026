@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import * as Sentry from "@sentry/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Navigation } from "./components/navigation";
 import { HomePage } from "./components/homepage";
 import { PassBooking } from "./components/pass-booking";
@@ -218,6 +219,7 @@ export default function App() {
       <main className={showNavAndFooter ? "pt-24" : ""}>{renderPage()}</main>
       {showNavAndFooter && <Footer onNavigate={handleNavigate} />}
       <Toaster />
+      <SpeedInsights />
     </div>
   );
 }
