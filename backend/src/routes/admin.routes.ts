@@ -57,6 +57,24 @@ router.options('*', (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
+// Debug endpoint to inspect how admin secret is delivered (booleans only)
+router.get('/debug-admin-secret', (req: Request, res: Response) => {
+  const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
+  const header = !!req.headers['x-admin-secret'];
+  const authorization = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || '';
+  const authHeaderPresent = !!authorization;
+  const authIsBearer = authorization.toLowerCase().startsWith('bearer ');
+  const bodySecretPresent = !!req.body?.adminSecret;
+  const querySecretPresent = !!req.query?.adminSecret;
+  const match = (
+    (req.headers['x-admin-secret'] as string) === expectedSecret ||
+    (authIsBearer && authorization.slice(7).trim() === expectedSecret) ||
+    req.body?.adminSecret === expectedSecret ||
+    req.query?.adminSecret === expectedSecret
+  );
+  return res.json({ header, authHeaderPresent, authIsBearer, bodySecretPresent, querySecretPresent, match });
+});
+
 // Use /tmp/uploads in serverless/production, otherwise use local uploads
 const uploadsDir =
   process.env.VERCEL || process.env.NODE_ENV === 'production'
