@@ -60,27 +60,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Clerk authentication middleware - MUST be before routes
-// Move non-JWT Authorization values (admin secret) to `x-admin-secret`
-// so Clerk doesn't attempt to validate them as JWTs.
-app.use((req, _res, next) => {
+// Apply Clerk middleware for all API routes except admin routes.
+// Admin routes use a separate admin-secret flow and should not be parsed by Clerk.
+app.use((req, res, next) => {
   try {
-    const auth = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || undefined;
-    if (auth && auth.toLowerCase().startsWith('bearer ')) {
-      const token = auth.slice(7).trim();
-      // Heuristic: JWTs contain two dots separating three parts
-      if (!token.includes('.')) {
-        // treat as admin secret: copy to x-admin-secret and remove Authorization
-        req.headers['x-admin-secret'] = token as any;
-        delete req.headers['authorization'];
-        delete req.headers['Authorization'];
-      }
+    const url = req.originalUrl || req.url || '';
+    // If request is for admin endpoints, skip Clerk middleware
+    if (url.startsWith('/api/v1/admin') || url.startsWith('/api/admin') || req.path.startsWith('/api/v1/admin')) {
+      return next();
     }
+    return clerkAuth(req, res, next);
   } catch (e) {
-    // ignore
+    return next();
   }
 });
-
-app.use(clerkAuth);
 
 // HTTP request logger
 if (config.env === 'development') {
