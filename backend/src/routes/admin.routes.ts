@@ -498,6 +498,17 @@ router.get('/import-history', async (req: Request, res: Response) => {
  * GET /api/v1/admin/stats
  */
 router.get('/stats', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+  
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   try {
     const adminSecret = req.headers['x-admin-secret'] || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
@@ -861,6 +872,17 @@ router.get('/konfhub-tickets', async (req: Request, res: Response) => {
  * GET /api/v1/admin/users
  */
 router.get('/users', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+  
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   try {
     const adminSecret = req.headers['x-admin-secret'] || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
@@ -910,6 +932,17 @@ router.get('/users', async (req: Request, res: Response) => {
  * GET /api/v1/admin/passes
  */
 router.get('/passes', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+  
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   try {
     const adminSecret = req.headers['x-admin-secret'] || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
@@ -962,6 +995,17 @@ router.get('/passes', async (req: Request, res: Response) => {
  * GET /api/v1/admin/registrations
  */
 router.get('/registrations', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+  
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   try {
     const adminSecret = req.headers['x-admin-secret'] || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
@@ -1024,6 +1068,17 @@ router.get('/registrations', async (req: Request, res: Response) => {
  * GET /api/v1/admin/claims
  */
 router.get('/claims', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+  
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
   try {
     const adminSecret = req.headers['x-admin-secret'] || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
