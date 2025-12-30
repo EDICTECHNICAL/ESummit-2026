@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
-import * as Sentry from "@sentry/react";
 import { Navigation } from "./components/navigation";
 import { HomePage } from "./components/homepage";
 import { PassBooking } from "./components/pass-booking";
