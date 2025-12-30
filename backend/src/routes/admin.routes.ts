@@ -37,18 +37,40 @@ const isAdminAuthorized = async (req: Request): Promise<boolean> => {
   if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) return true;
   if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) return true;
 
-  // Fallback: check Clerk-authenticated user
+  // Fallback: check Clerk-authenticated user with proper admin role
   try {
     const userId = getClerkUserId(req as any);
     if (!userId) return false;
-    // TEMPORARY: Allow any signed-in Clerk user as admin for testing
-    // TODO: Revert to: if (publicMeta?.adminRole === 'core') return true;
-    return true; // Allow any Clerk user
+
+    // Import clerk client for metadata check
+    const { createClerkClient } = await import('@clerk/backend');
+    const clerkClient = createClerkClient({
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+
+    const user = await clerkClient.users.getUser(userId);
+    const publicMeta = (user as any)?.publicMetadata || (user as any)?.public_metadata || {};
+    const adminRole = publicMeta?.adminRole;
+
+    // Check for valid admin roles
+    if (adminRole && ["core", "jc", "oc"].includes(String(adminRole).toLowerCase())) {
+      return true;
+    }
+
+    // Check organization roles as fallback
+    const orgMemberships = (user as any)?.organizationMemberships || [];
+    for (const membership of orgMemberships) {
+      const role = membership?.role;
+      if (role && ["org:admin", "admin"].includes(String(role).toLowerCase())) {
+        return true;
+      }
+    }
+
+    return false;
   } catch (err) {
     logger.debug('isAdminAuthorized: clerk user fetch failed', { err: String(err) });
+    return false;
   }
-
-  return false;
 };
 
 // Debug endpoint to inspect how admin secret is delivered (booleans only)
