@@ -437,6 +437,10 @@ router.get('/import-history', async (req: Request, res: Response) => {
     const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
     
+    // Debugging: log presence and match result (do NOT log the secret value)
+    logger.info('Admin secret present:', !!adminSecret);
+    logger.info('Admin secret matches expected:', adminSecret === expectedSecret);
+
     if (adminSecret !== expectedSecret) {
       return sendError(res, 'Unauthorized', 403);
     }
