@@ -261,11 +261,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch dashboard stats
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/stats`, {
-        headers: {
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/stats?adminSecret=${encodeURIComponent((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`);
       const data = await response.json();
       if (data.success) {
         setStats(data.data);
@@ -279,11 +275,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch all users
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users`, {
-        headers: {
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/users?adminSecret=${encodeURIComponent((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`);
       const data = await response.json();
       if (data.success) {
         setUsers(data.data.users || []);
@@ -297,11 +289,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch all passes
   const fetchPasses = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/passes`, {
-        headers: {
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/passes?adminSecret=${encodeURIComponent((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`);
       const data = await response.json();
       if (data.success) {
         setPasses(data.data.passes || []);
@@ -315,11 +303,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch event registrations
   const fetchEventRegistrations = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/registrations`, {
-        headers: {
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/registrations?adminSecret=${encodeURIComponent((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`);
       const data = await response.json();
       if (data.success) {
         setEventRegistrations(data.data.registrations || []);
@@ -333,11 +317,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch pass claims
   const fetchClaims = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/claims`, {
-        headers: {
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
-        },
-      });
+      const response = await fetch(`${API_BASE_URL}/admin/claims?adminSecret=${encodeURIComponent((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`);
       const data = await response.json();
       if (data.success) {
         setClaims(data.data.claims || []);
@@ -365,13 +345,17 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
     if (adminNotes === null) return; // User cancelled
 
     try {
+      const form = new URLSearchParams();
+      form.append('action', action);
+      form.append('adminNotes', adminNotes);
+      form.append('adminSecret', (import.meta as ImportMeta).env.VITE_ADMIN_SECRET || 'esummit2026-admin-import');
+
       const response = await fetch(`${API_BASE_URL}/admin/claims/${claimId}/action`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${((import.meta as ImportMeta).env.VITE_ADMIN_SECRET || "esummit2026-admin-import")}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({ action, adminNotes }),
+        body: form.toString(),
       });
 
       const data = await response.json();
