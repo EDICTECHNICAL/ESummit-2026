@@ -816,7 +816,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                      <div className="relative flex-1 min-w-[180px] max-w-full">
+                      <div className="relative flex-1 min-w-[480px] max-w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           type="text"
@@ -1025,7 +1025,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                      <div className="relative flex-1 min-w-[180px] max-w-full">
+                      <div className="relative flex-1 min-w-[480px] max-w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           type="text"
@@ -1170,7 +1170,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <div className="relative flex-1 min-w-[200px]">
+                      <div className="relative flex-1 min-w-[500px]">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           type="text"
@@ -1429,7 +1429,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                      <div className="relative flex-1 min-w-[180px] max-w-full">
+                      <div className="relative flex-1 min-w-[480px] max-w-full">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           type="text"
