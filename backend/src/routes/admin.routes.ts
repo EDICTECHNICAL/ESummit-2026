@@ -7,6 +7,8 @@ import prisma from '../config/database';
 import { sendSuccess, sendError } from '../utils/response.util';
 import logger from '../utils/logger.util';
 import { konfhubService, KONFHUB_TICKET_IDS, KONFHUB_CUSTOM_FORM_IDS } from '../services/konfhub.service';
+import { getClerkUserId } from '../middleware/clerk.middleware';
+import { clerkClient } from '@clerk/backend';
 
 const router = Router();
 
@@ -19,6 +21,36 @@ const getAdminSecretFromReq = (req: Request): string | undefined => {
     return auth.slice(7).trim();
   }
   return undefined;
+};
+
+// Check whether the request is authorized as admin either via admin-secret or Clerk user metadata
+const isAdminAuthorized = async (req: Request): Promise<boolean> => {
+  const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
+
+  // Check header / authorization / body / query for admin secret first
+  const headerSecret = (req.headers['x-admin-secret'] as string) || undefined;
+  if (headerSecret && headerSecret === expectedSecret) return true;
+  const authorization = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || '';
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    const token = authorization.slice(7).trim();
+    if (token === expectedSecret) return true;
+  }
+  if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) return true;
+  if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) return true;
+
+  // Fallback: check Clerk-authenticated user public metadata
+  try {
+    const userId = getClerkUserId(req as any);
+    if (!userId) return false;
+    // Use Clerk backend client to fetch user and inspect public metadata
+    const user = await clerkClient.users.getUser(userId);
+    const publicMeta = (user as any)?.publicMetadata || (user as any)?.public_metadata || {};
+    if (publicMeta?.adminRole === 'core') return true;
+  } catch (err) {
+    logger.debug('isAdminAuthorized: clerk user fetch failed', { err: String(err) });
+  }
+
+  return false;
 };
 
 // CORS middleware for admin routes
@@ -115,11 +147,8 @@ router.post('/import-passes', upload.single('file'), async (req: Request, res: R
   let filePath: string | undefined;
   
   try {
-    // Admin authentication via secret key in header or body
-    const adminSecret = getAdminSecretFromReq(req) || req.body?.adminSecret || req.query?.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    // Authorize admin via admin-secret or Clerk public metadata
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized - Invalid admin secret', 403);
     }
 
@@ -133,12 +162,9 @@ router.post('/import-passes', upload.single('file'), async (req: Request, res: R
       filename: req.file.originalname, 
       size: req.file.size,
       type: fileExt 
-    });
-
-    let records: any[];
-
-    // Parse based on file type
-    if (fileExt === '.csv') {
+    if (!(await isAdminAuthorized(req))) {
+      return sendError(res, 'Unauthorized - Invalid admin secret', 403);
+    }
       const fileContent = fs.readFileSync(filePath, 'utf-8');
       records = parse(fileContent, {
         columns: true,
@@ -452,14 +478,8 @@ router.post('/import-passes', upload.single('file'), async (req: Request, res: R
  */
 router.get('/import-history', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    // Debugging: log presence and match result (do NOT log the secret value)
-    logger.info('Admin secret present:', !!adminSecret);
-    logger.info('Admin secret matches expected:', adminSecret === expectedSecret);
-
-    if (adminSecret !== expectedSecret) {
+    // Authorize admin via admin-secret or Clerk public metadata
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -543,10 +563,7 @@ router.get('/stats', async (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -653,11 +670,8 @@ router.get('/stats', async (req: Request, res: Response) => {
  */
 router.delete('/passes/:passId', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.body?.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
-      return sendError(res, 'Unauthorized', 403);
+    if (!(await isAdminAuthorized(req))) {
+      return sendError(res, 'Unauthorized - Invalid admin secret', 403);
     }
 
     const { passId } = req.params;
@@ -694,10 +708,7 @@ router.delete('/passes/:passId', async (req: Request, res: Response) => {
  */
 router.post('/sync-konfhub', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.body?.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized - Invalid admin secret', 403);
     }
 
@@ -734,10 +745,7 @@ router.post('/sync-konfhub', async (req: Request, res: Response) => {
  */
 router.get('/konfhub-status', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -881,10 +889,7 @@ router.post('/capture-ticket', async (req: Request, res: Response) => {
  */
 router.get('/konfhub-tickets', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -917,10 +922,7 @@ router.get('/users', async (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -977,10 +979,7 @@ router.get('/passes', async (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
@@ -1040,10 +1039,7 @@ router.get('/registrations', async (req: Request, res: Response) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   
   try {
-    const adminSecret = getAdminSecretFromReq(req) || req.query.adminSecret;
-    const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-    
-    if (adminSecret !== expectedSecret) {
+    if (!(await isAdminAuthorized(req))) {
       return sendError(res, 'Unauthorized', 403);
     }
 
