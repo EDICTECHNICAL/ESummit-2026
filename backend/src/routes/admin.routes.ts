@@ -631,7 +631,7 @@ router.get('/stats', async (req: Request, res: Response) => {
  */
 router.delete('/passes/:passId', async (req: Request, res: Response) => {
   try {
-    const adminSecret = getAdminSecretFromReq(req);
+    const adminSecret = getAdminSecretFromReq(req) || req.body?.adminSecret;
     const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
     
     if (adminSecret !== expectedSecret) {
