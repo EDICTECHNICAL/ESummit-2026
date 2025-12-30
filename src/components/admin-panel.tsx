@@ -190,7 +190,7 @@ const ADMIN_ROLES: { [email: string]: AdminRole } = {
 
 export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const { user, isSignedIn, isLoaded } = useUser();
-  const { signOut } = useAuth();
+  const { signOut, getToken } = useAuth();
   const [activeTab, setActiveTab] = useState("stats");
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<AdminRole>(null);
@@ -218,6 +218,30 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   
   // Expanded rows for pass details
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  // Helper to get auth headers for API calls
+  const getAuthHeaders = async () => {
+    try {
+      const token = await getToken();
+      const headers: any = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        // TEMPORARY: Fallback to admin-secret if no token
+        headers['x-admin-secret'] = 'esummit2026-admin-import';
+      }
+      return headers;
+    } catch (error) {
+      console.error('Failed to get auth token:', error);
+      // TEMPORARY: Fallback to admin-secret if token fails
+      return {
+        'Content-Type': 'application/json',
+        'x-admin-secret': 'esummit2026-admin-import',
+      };
+    }
+  };
 
   // Determine user role from Clerk metadata or email mapping
   useEffect(() => {
@@ -261,7 +285,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch dashboard stats
   const fetchStats = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/stats`, { credentials: 'include' });
+      const response = await fetch(`${API_BASE_URL}/admin/stats`, { 
+        headers: await getAuthHeaders() 
+      });
       const data = await response.json();
       if (data.success) {
         setStats(data.data);
@@ -275,7 +301,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch all users
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/users`, { credentials: 'include' });
+      const response = await fetch(`${API_BASE_URL}/admin/users`, { 
+        headers: await getAuthHeaders() 
+      });
       const data = await response.json();
       if (data.success) {
         setUsers(data.data.users || []);
@@ -289,7 +317,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch all passes
   const fetchPasses = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/passes`, { credentials: 'include' });
+      const response = await fetch(`${API_BASE_URL}/admin/passes`, { 
+        headers: await getAuthHeaders() 
+      });
       const data = await response.json();
       if (data.success) {
         setPasses(data.data.passes || []);
@@ -303,7 +333,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch event registrations
   const fetchEventRegistrations = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/registrations`, { credentials: 'include' });
+      const response = await fetch(`${API_BASE_URL}/admin/registrations`, { 
+        headers: await getAuthHeaders() 
+      });
       const data = await response.json();
       if (data.success) {
         setEventRegistrations(data.data.registrations || []);
@@ -317,7 +349,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Fetch pass claims
   const fetchClaims = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/claims`, { credentials: 'include' });
+      const response = await fetch(`${API_BASE_URL}/admin/claims`, { 
+        headers: await getAuthHeaders() 
+      });
       const data = await response.json();
       if (data.success) {
         setClaims(data.data.claims || []);
@@ -344,7 +378,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
     try {
       const resp = await fetch(`${API_BASE_URL}/admin/debug-admin-secret`, {
         method: 'GET',
-        credentials: 'include',
+        headers: await getAuthHeaders(),
       });
       const json = await resp.json();
       if (json && typeof json.match !== 'undefined') {
@@ -374,9 +408,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
 
       const response = await fetch(`${API_BASE_URL}/admin/claims/${claimId}/action`, {
         method: 'POST',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          ...await getAuthHeaders(),
         },
         body: form.toString(),
       });

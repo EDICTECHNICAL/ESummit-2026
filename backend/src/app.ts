@@ -59,29 +59,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Clerk authentication middleware - apply Clerk to non-admin routes.
-// Admin endpoints use a separate admin-secret flow and should be skipped entirely.
-app.use((req, res, next) => {
-  try {
-    const url = req.originalUrl || req.url || '';
-    const authHeader = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || '';
-    const xAdminSecret = (req.headers['x-admin-secret'] as string) || '';
-    const expectedAdminSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-
-    // If an admin secret is present in Authorization or x-admin-secret, skip Clerk
-    if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
-      const token = authHeader.slice(7).trim();
-      if (token === expectedAdminSecret) return next();
-    }
-
-    if (xAdminSecret && xAdminSecret === expectedAdminSecret) return next();
-
-    // Otherwise, run Clerk middleware (this ensures Clerk-authenticated admin sessions work)
-    return clerkAuth(req, res, next);
-  } catch (e) {
-    return next();
-  }
-});
+// Clerk authentication middleware - always run Clerk to populate req.auth
+app.use(clerkAuth);
 
 // HTTP request logger
 if (config.env === 'development') {
