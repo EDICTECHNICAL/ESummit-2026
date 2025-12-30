@@ -5,21 +5,22 @@ import {
   Calendar,
   Ticket,
   Download,
-  RefreshCw,
+        <div className="flex items-center gap-2">
   Search,
   Filter,
   CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Eye,
-  ChevronDown,
-  ChevronUp,
-  LogOut,
-  Shield,
-  BarChart3,
-  Loader2,
-  Home,
-  X,
+            <>
+              <Button variant="outline" onClick={checkClerkAdmin} title="Verify Clerk admin metadata">Verify Clerk Admin</Button>
+              {isSignedIn ? (
+                <Button variant="ghost" onClick={() => signOut()}>
+                  <LogOut className="mr-2" /> Sign out
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={() => window.location.hash = '#/login'}>
+                  Sign in
+                </Button>
+              )}
+            </>
   FileCheck,
   CheckCircle,
 } from "lucide-react";
@@ -338,6 +339,29 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
       if (hasPermission("claims")) fetchClaims();
     }
   }, [userRole, fetchStats, fetchUsers, fetchPasses, fetchEventRegistrations, fetchClaims]);
+
+  // Check Clerk-admin status by calling backend debug endpoint (no adminSecret)
+  const checkClerkAdmin = async () => {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/admin/debug-admin-secret`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const json = await resp.json();
+      if (json && typeof json.match !== 'undefined') {
+        if (json.match) {
+          toast.success('Clerk public metadata indicates admin access');
+        } else {
+          toast.error('Clerk public metadata does not indicate admin access');
+        }
+      } else {
+        toast.error('Unexpected response from server');
+      }
+    } catch (err) {
+      logger.error('Error checking Clerk admin status:', err);
+      toast.error('Failed to verify Clerk admin status');
+    }
+  };
 
   // Handle claim approval/rejection
   const handleClaimAction = async (claimId: string, action: 'approve' | 'reject') => {

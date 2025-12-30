@@ -33,13 +33,8 @@ const isAdminAuthorized = async (req: Request): Promise<boolean> => {
   const expectedSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
 
   // Check header / authorization / body / query for admin secret first
-  const headerSecret = (req.headers['x-admin-secret'] as string) || undefined;
-  if (headerSecret && headerSecret === expectedSecret) return true;
-  const authorization = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || '';
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    const token = authorization.slice(7).trim();
-    if (token === expectedSecret) return true;
-  }
+  const helperSecret = getAdminSecretFromReq(req);
+  if (helperSecret && helperSecret === expectedSecret) return true;
   if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) return true;
   if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) return true;
 
