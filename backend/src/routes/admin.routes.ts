@@ -34,21 +34,35 @@ const isAdminAuthorized = async (req: Request): Promise<boolean> => {
 
   // Check header / authorization / body / query for admin secret first
   const helperSecret = getAdminSecretFromReq(req);
-  if (helperSecret && helperSecret === expectedSecret) return true;
-  if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) return true;
-  if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) return true;
+  console.log('isAdminAuthorized: helperSecret', helperSecret ? 'present' : 'not present');
+  if (helperSecret && helperSecret === expectedSecret) {
+    console.log('isAdminAuthorized: admin-secret matched');
+    return true;
+  }
+  if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) {
+    console.log('isAdminAuthorized: body adminSecret matched');
+    return true;
+  }
+  if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) {
+    console.log('isAdminAuthorized: query adminSecret matched');
+    return true;
+  }
 
   // Fallback: check Clerk-authenticated user
   try {
     const userId = getClerkUserId(req as any);
+    console.log('isAdminAuthorized: userId from Clerk', userId ? 'present' : 'not present', userId);
     if (!userId) return false;
     // TEMPORARY: Allow any signed-in Clerk user as admin for testing
     // TODO: Revert to: if (publicMeta?.adminRole === 'core') return true;
+    console.log('isAdminAuthorized: allowing Clerk user');
     return true; // Allow any Clerk user
   } catch (err) {
+    console.log('isAdminAuthorized: clerk error', err);
     logger.debug('isAdminAuthorized: clerk user fetch failed', { err: String(err) });
   }
 
+  console.log('isAdminAuthorized: no auth found, returning false');
   return false;
 };
 
