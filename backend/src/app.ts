@@ -59,8 +59,23 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Clerk authentication middleware - always run Clerk to populate req.auth
-app.use(clerkAuth);
+// Clerk authentication middleware - run Clerk unless admin-secret is present
+app.use((req, res, next) => {
+  try {
+    const xAdminSecret = (req.headers['x-admin-secret'] as string) || '';
+    const expectedAdminSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
+
+    // If admin secret is present in x-admin-secret, skip Clerk
+    if (xAdminSecret && xAdminSecret === expectedAdminSecret) {
+      return next();
+    }
+
+    // Otherwise, run Clerk middleware
+    return clerkAuth(req, res, next);
+  } catch (e) {
+    return next();
+  }
+});
 
 // HTTP request logger
 if (config.env === 'development') {

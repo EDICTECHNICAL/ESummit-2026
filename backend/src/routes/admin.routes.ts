@@ -12,12 +12,17 @@ import { getClerkUserId } from '../middleware/clerk.middleware';
 const router = Router();
 
 // Helper to extract admin secret from headers (x-admin-secret or Authorization: Bearer ...)
+// Skips JWT tokens (starting with 'eyJ') in Authorization header
 const getAdminSecretFromReq = (req: Request): string | undefined => {
   const headerSecret = (req.headers['x-admin-secret'] as string) || undefined;
   if (headerSecret) return headerSecret;
   const auth = (req.headers['authorization'] as string) || (req.headers['Authorization'] as string) || undefined;
   if (auth && auth.toLowerCase().startsWith('bearer ')) {
-    return auth.slice(7).trim();
+    const token = auth.slice(7).trim();
+    // Don't treat JWT tokens as admin secrets
+    if (!token.startsWith('eyJ')) {
+      return token;
+    }
   }
   return undefined;
 };
@@ -28,73 +33,23 @@ const isAdminAuthorized = async (req: Request): Promise<boolean> => {
 
   // Check header / authorization / body / query for admin secret first
   const helperSecret = getAdminSecretFromReq(req);
-  console.log('isAdminAuthorized: helperSecret', helperSecret ? 'present' : 'not present');
-  if (helperSecret && helperSecret === expectedSecret) {
-    console.log('isAdminAuthorized: admin-secret matched');
-    return true;
-  }
-  if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) {
-    console.log('isAdminAuthorized: body adminSecret matched');
-    return true;
-  }
-  if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) {
-    console.log('isAdminAuthorized: query adminSecret matched');
-    return true;
-  }
+  if (helperSecret && helperSecret === expectedSecret) return true;
+  if (req.body?.adminSecret && req.body.adminSecret === expectedSecret) return true;
+  if (req.query?.adminSecret && String(req.query.adminSecret) === expectedSecret) return true;
 
   // Fallback: check Clerk-authenticated user
   try {
     const userId = getClerkUserId(req as any);
-    console.log('isAdminAuthorized: userId from Clerk', userId ? 'present' : 'not present', userId);
     if (!userId) return false;
     // TEMPORARY: Allow any signed-in Clerk user as admin for testing
     // TODO: Revert to: if (publicMeta?.adminRole === 'core') return true;
-    console.log('isAdminAuthorized: allowing Clerk user');
     return true; // Allow any Clerk user
   } catch (err) {
-    console.log('isAdminAuthorized: clerk error', err);
     logger.debug('isAdminAuthorized: clerk user fetch failed', { err: String(err) });
   }
 
-  console.log('isAdminAuthorized: no auth found, returning false');
   return false;
 };
-
-// CORS middleware for admin routes
-router.use((req: Request, res: Response, next) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
-  
-  if (allowedOrigins.includes(origin || '') || !origin) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-    return;
-  }
-  
-  next();
-});
-
-// Handle preflight OPTIONS requests for admin routes
-router.options('*', (req: Request, res: Response) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
-  
-  if (allowedOrigins.includes(origin || '') || !origin) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-  }
-  
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-});
 
 // Debug endpoint to inspect how admin secret is delivered (booleans only)
 router.get('/debug-admin-secret', (req: Request, res: Response) => {
