@@ -73,6 +73,9 @@ router.get('/:identifier', async (req: Request, res: Response) => {
  */
 router.post('/', async (req: Request, res: Response) => {
   try {
+    // TODO: Add admin authentication middleware here
+    // For now, this endpoint should be protected by API gateway or firewall rules
+    
     const {
       eventId,
       title,
@@ -153,6 +156,9 @@ router.post('/', async (req: Request, res: Response) => {
  */
 router.put('/:identifier', async (req: Request, res: Response) => {
   try {
+    // TODO: Add admin authentication middleware here
+    // For now, this endpoint should be protected by API gateway or firewall rules
+    
     const { identifier } = req.params;
 
     // Find event first
@@ -196,9 +202,13 @@ router.put('/:identifier', async (req: Request, res: Response) => {
 /**
  * Delete an event (Admin only)
  * DELETE /api/v1/events/:identifier
+ * WARNING: This endpoint is currently unprotected!
  */
 router.delete('/:identifier', async (req: Request, res: Response) => {
   try {
+    // CRITICAL: Add admin authentication middleware here
+    // For now, this endpoint should be protected by API gateway or firewall rules
+    
     const { identifier } = req.params;
 
     // Find event first
