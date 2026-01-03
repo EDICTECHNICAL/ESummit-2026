@@ -1187,27 +1187,31 @@ router.get('/claims', async (req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Fetch user details for each claim
-    const claimsWithUserData = await Promise.all(
-      claims.map(async (claim) => {
-        const user = await prisma.user.findUnique({
-          where: { clerkUserId: claim.clerkUserId },
-          select: {
-            id: true,
-            email: true,
-            fullName: true,
-            phone: true,
-            college: true,
-            bookingVerified: true,
-          },
-        });
-
-        return {
-          ...claim,
-          user,
-        };
-      })
-    );
+    // Get unique clerk user IDs
+    const clerkUserIds = [...new Set(claims.map(c => c.clerkUserId))];
+    
+    // Fetch all users in one query
+    const users = await prisma.user.findMany({
+      where: { clerkUserId: { in: clerkUserIds } },
+      select: {
+        clerkUserId: true,
+        id: true,
+        email: true,
+        fullName: true,
+        phone: true,
+        college: true,
+        bookingVerified: true,
+      },
+    });
+    
+    // Create a map for O(1) lookup
+    const userMap = new Map(users.map(u => [u.clerkUserId, u]));
+    
+    // Merge claims with user data
+    const claimsWithUserData = claims.map(claim => ({
+      ...claim,
+      user: userMap.get(claim.clerkUserId) || null,
+    }));
 
     return sendSuccess(res, 'Claims fetched', {
       claims: claimsWithUserData,
