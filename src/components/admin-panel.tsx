@@ -54,10 +54,14 @@ interface UserData {
   id: string;
   email: string;
   fullName: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
   phone: string | null;
   college: string | null;
+  yearOfStudy?: string | null;
   createdAt: string;
   bookingVerified: boolean;
+  is_active?: boolean;
   clerkUserId: string | null;
   passes: PassData[];
 }
@@ -211,6 +215,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const [passTypeFilter, setPassTypeFilter] = useState<string>("all");
   const [verificationFilter, setVerificationFilter] = useState<string>("all");
   const [eventFilter, setEventFilter] = useState<string>("all");
+  const [claimStatusFilter, setClaimStatusFilter] = useState<string>("all");
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -518,7 +523,10 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
       claim.user?.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       claim.bookingId?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesSearch;
+    const matchesStatus =
+      claimStatusFilter === "all" || claim.status === claimStatusFilter;
+
+    return matchesSearch && matchesStatus;
   });
 
   // Pagination
@@ -1488,7 +1496,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                      <div className="relative flex-1 min-w-[480px] max-w-full">
+                      <div className="relative flex-1 min-w-[200px] max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <input
                           type="text"
@@ -1499,6 +1507,17 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                           style={{ minWidth: 0 }}
                         />
                       </div>
+                      <select
+                        value={claimStatusFilter}
+                        onChange={(e) => setClaimStatusFilter(e.target.value)}
+                        className="h-10 px-3 rounded-lg border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
+                      >
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="expired">Expired</option>
+                      </select>
                       <Button
                         variant="outline"
                         size="sm"
@@ -1524,9 +1543,17 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                           <CardHeader>
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h3 className="font-semibold">{claim.attendeeName}</h3>
-                                  <Badge variant={claim.status === 'pending' ? 'default' : claim.status === 'approved' ? 'default' : 'destructive'}>
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                  <h3 className="font-semibold break-words">{claim.attendeeName}</h3>
+                                  <Badge 
+                                    variant={
+                                      claim.status === 'pending' ? 'default' : 
+                                      claim.status === 'approved' ? 'default' : 
+                                      claim.status === 'expired' ? 'secondary' : 
+                                      'destructive'
+                                    }
+                                    className="capitalize"
+                                  >
                                     {claim.status}
                                   </Badge>
                                 </div>
@@ -1631,24 +1658,31 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
 
                               {/* Action Buttons */}
                               {claim.status === 'pending' && (
-                                <div className="flex gap-2 pt-4 border-t">
+                                <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
                                   <Button
                                     size="sm"
                                     onClick={() => handleClaimAction(claim.id, 'approve')}
-                                    className="flex-1"
+                                    className="flex-1 min-w-0"
                                   >
-                                    <CheckCircle className="h-4 w-4 mr-2" />
-                                    Approve
+                                    <CheckCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                                    <span className="truncate">Approve</span>
                                   </Button>
                                   <Button
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => handleClaimAction(claim.id, 'reject')}
-                                    className="flex-1"
+                                    className="flex-1 min-w-0"
                                   >
-                                    <XCircle className="h-4 w-4 mr-2" />
-                                    Reject
+                                    <XCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                                    <span className="truncate">Reject</span>
                                   </Button>
+                                </div>
+                              )}
+                              {claim.status !== 'pending' && (
+                                <div className="pt-4 border-t">
+                                  <p className="text-sm text-muted-foreground">
+                                    This claim has been {claim.status}. {claim.processedAt && `Processed on ${formatDate(claim.processedAt)}`}
+                                  </p>
                                 </div>
                               )}
                             </div>

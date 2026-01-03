@@ -192,7 +192,7 @@ export function EventRegistrationModal({
 
     // Validate required fields
     if (!tenMinuteMillionForm.startupName.trim()) {
-      toast.error("Startup name is required");
+      toast.error("📝 Please enter your startup name.");
       return;
     }
     if (!tenMinuteMillionForm.problemStatement.trim()) {
@@ -233,7 +233,13 @@ export function EventRegistrationModal({
         onSuccess();
         onClose();
       } else {
-        toast.error(data.message || "Registration failed");
+        // Handle specific error cases
+        if (data.error === 'ALREADY_REGISTERED') {
+          toast.error("You are already registered for this event!");
+          onClose();
+        } else {
+          toast.error(data.message || "Registration failed");
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -290,7 +296,13 @@ export function EventRegistrationModal({
         onSuccess();
         onClose();
       } else {
-        toast.error(data.message || "Registration failed");
+        // Handle specific error cases
+        if (data.error === 'ALREADY_REGISTERED') {
+          toast.error("You are already registered for this event!");
+          onClose();
+        } else {
+          toast.error(data.message || "Registration failed");
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -339,7 +351,13 @@ export function EventRegistrationModal({
         onSuccess();
         onClose();
       } else {
-        toast.error(data.message || "Registration failed");
+        // Handle specific error cases
+        if (data.error === 'ALREADY_REGISTERED') {
+          toast.error("You are already registered for this event!");
+          onClose();
+        } else {
+          toast.error(data.message || "Registration failed");
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -376,7 +394,13 @@ export function EventRegistrationModal({
         onSuccess();
         onClose();
       } else {
-        toast.error(data.message || "Registration failed");
+        // Handle specific error cases
+        if (data.error === 'ALREADY_REGISTERED') {
+          toast.error("You are already registered for this event!");
+          onClose();
+        } else {
+          toast.error(data.message || "Registration failed");
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);

@@ -77,7 +77,7 @@ export function EventPageTemplate({
 
   const handleRegistration = async () => {
     if (!isSignedIn) {
-      toast.error("Please sign in to register for this event");
+      toast.error("🔒 Please sign in to secure your spot at this event!");
       return;
     }
 

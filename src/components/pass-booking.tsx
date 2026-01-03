@@ -217,7 +217,7 @@ export function PassBooking({
           onNavigate("dashboard");
         }, 1500);
       } else {
-        toast.error("Failed to create pass. Please try again.");
+        toast.error("⚠️ Couldn't create your pass. Please try again or contact support if the issue continues.");
         setIsProcessingPayment(false);
       }
     } catch (error) {
@@ -225,7 +225,7 @@ export function PassBooking({
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to create pass. Please try again."
+          : "⚠️ Pass creation failed. Please refresh and try again, or contact support for assistance."
       );
       setIsProcessingPayment(false);
     }

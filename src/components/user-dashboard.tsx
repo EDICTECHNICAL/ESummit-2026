@@ -155,7 +155,7 @@ export function UserDashboard({
   // Handle TCET pass booking
   const handleTcetPassBooking = async () => {
     if (!user?.id) {
-      toast.error("Please login to book a pass");
+      toast.error("🔒 Please sign in to book your pass and unlock exclusive event access!");
       return;
     }
 
@@ -171,7 +171,7 @@ export function UserDashboard({
         const data = await response.json();
 
         if (!data.success) {
-          toast.error(data.error || "Failed to assign code");
+          toast.error(data.error || "❌ Unable to apply this code. Please verify the code and try again.");
           setIsAssigningCode(false);
           return;
         }
@@ -187,7 +187,7 @@ export function UserDashboard({
       setShowKonfHubWidget(true);
     } catch (error) {
       // Error already handled by toast notification
-      toast.error("Failed to process request. Please try again.");
+      toast.error("⚠️ Something went wrong. Please refresh the page and try again.");
     } finally {
       setIsAssigningCode(false);
     }
@@ -283,12 +283,12 @@ export function UserDashboard({
   // Handle pass claim submission
   const handleSubmitPassClaim = async () => {
     if (!user?.id || !userEmail) {
-      toast.error("Please login to submit a pass claim");
+      toast.error("🔒 Please sign in to claim your pass. Already have a booking? We'll help you get your pass!");
       return;
     }
 
     if (!claimFormData.bookingId && !claimFormData.konfhubOrderId && !claimFormData.ticketNumber) {
-      toast.error("Please enter at least one identifier (Booking ID, Order ID, or Ticket Number)");
+      toast.error("📋 Please provide at least one identifier from your booking confirmation (Booking ID, Order ID, or Ticket Number).");
       return;
     }
 
@@ -349,7 +349,7 @@ export function UserDashboard({
       }
     } catch (error) {
       console.error("Error submitting pass claim:", error);
-      toast.error("Failed to submit claim. Please try again.");
+      toast.error("⚠️ Couldn't submit your claim. Please check your information and try again. Contact support if the issue persists.");
     } finally {
       setIsSubmittingClaim(false);
     }
@@ -561,7 +561,7 @@ export function UserDashboard({
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading pass PDF:', error);
-      alert(error instanceof Error ? error.message : 'Failed to download pass PDF. Please try again.');
+      toast.error(error instanceof Error ? error.message : '⚠️ Unable to download your pass. Please check your internet connection and try again.');
     } finally {
       setDownloadingPassId(null);
     }
@@ -570,7 +570,7 @@ export function UserDashboard({
   // Handle event registration
   const handleEventRegistration = async (eventId: string) => {
     if (!user?.id) {
-      alert('Please login to register for events');
+      toast.error('🔒 Please sign in to register for events. Your pass grants you access to exclusive opportunities!');
       return;
     }
 
@@ -588,10 +588,10 @@ export function UserDashboard({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setRegisteredEvents(prev => new Set([...prev, eventId]));
-      alert(`Successfully registered for the event! You'll receive further details soon.`);
+      toast.success(`✅ You're registered! Check your email for event details and next steps.`, { duration: 5000 });
     } catch (error) {
       console.error('Error registering for event:', error);
-      alert('Failed to register for event. Please try again.');
+      toast.error('⚠️ Registration failed. Please check your pass eligibility and try again. Need help? Contact support.');
     } finally {
       setRegisteringEventId(null);
     }
