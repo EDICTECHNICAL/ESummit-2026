@@ -129,7 +129,7 @@ export function ProfileCompletionModal({
     // Validate and prepare data based on user type
     if (userType === "tcet-student") {
       if (!tcetFormData.phone || !tcetFormData.branch || !tcetFormData.yearOfStudy) {
-        toast.error("Please fill in all required fields");
+        toast.error("📝 Please complete all required fields: phone, branch, and year of study.");
         return;
       }
       dataToSubmit = { 
@@ -139,7 +139,7 @@ export function ProfileCompletionModal({
       };
     } else if (userType === "company") {
       if (!companyFormData.phone || !companyFormData.companyName || !companyFormData.industry) {
-        toast.error("Please fill in all required fields");
+        toast.error("📝 Please complete all required fields: phone, company name, and industry.");
         return;
       }
       dataToSubmit = { 
@@ -149,7 +149,7 @@ export function ProfileCompletionModal({
       };
     } else if (userType === "entrepreneur") {
       if (!entrepreneurFormData.phone || !entrepreneurFormData.professionalBackground || !entrepreneurFormData.expertise) {
-        toast.error("Please fill in all required fields");
+        toast.error("📝 Please complete all required fields: phone, professional background, and expertise.");
         return;
       }
       dataToSubmit = { 
@@ -159,7 +159,7 @@ export function ProfileCompletionModal({
       };
     } else if (userType === "student") {
       if (!studentFormData.phone || !studentFormData.college || !studentFormData.yearOfStudy) {
-        toast.error("Please fill in all required fields");
+        toast.error("📝 Please complete all required fields: phone, college, and year of study.");
         return;
       }
       dataToSubmit = { 
@@ -168,7 +168,7 @@ export function ProfileCompletionModal({
         phone: `${studentFormData.countryCode}${studentFormData.phone}`
       };
     } else {
-      toast.error("Please select a registration type");
+      toast.error("📋 Please select your registration type to proceed.");
       return;
     }
 
@@ -191,7 +191,7 @@ export function ProfileCompletionModal({
       onComplete();
     } catch (error) {
       console.error("Profile completion error:", error);
-      toast.error("Failed to complete profile. Please try again.");
+      toast.error("⚠️ Couldn't save your profile. Please check your information and try again.");
     } finally {
       setLoading(false);
     }

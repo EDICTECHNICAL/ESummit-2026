@@ -128,7 +128,7 @@ export function TenMinuteMillionPage() {
 
   const handleRegistration = async () => {
     if (!isSignedIn) {
-      toast.error("Please sign in to register for this event");
+      toast.error("🔒 Please sign in to register for this exciting opportunity!");
       return;
     }
 
