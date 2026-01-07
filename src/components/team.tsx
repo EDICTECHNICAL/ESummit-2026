@@ -274,7 +274,6 @@ export function Team() {
       { name: "Siddhesh Wagh", year: "SE", branch: "BCA", position: "OC - Marketing", department: "Marketing" },
       { name: "Shubham Mane", year: "SE", branch: "COMP", position: "OC - Marketing", department: "Marketing" },
       { name: "Sitanshu Shetty", year: "FE", branch: "E&TC", position: "OC - Marketing", department: "Marketing" },
-      { name: "Kavya Jhaveri", year: "FE", branch: "BCA", position: "OC - Marketing", department: "Marketing" },
       { name: "Arpit Gawande", year: "FE", branch: "IoT", position: "OC - Marketing", department: "Marketing" },
       { name: "Sakshi Thakur", year: "SE", branch: "AI&DS", position: "OC - Marketing", department: "Marketing" },
       { name: "Shiva Saraswati", year: "SE", branch: "MME", position: "OC - Marketing", department: "Marketing" },

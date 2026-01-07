@@ -16,7 +16,6 @@ export function StartupYouthConclavePage() {
     { name: "Shreya Yadav", role: "OC Member" },
     { name: "Nikhil Shukla", role: "OC Member" },
     { name: "Namasavi Singh", role: "OC Member" },
-    { name: "Kavya Jhaveri", role: "OC Member" },
   ];
 
   return <EventPageTemplate event={event} eventId="d2-startup-youth-conclave" panelTitle="E-Cell Representatives" primaryContacts={primaryContacts} />;
