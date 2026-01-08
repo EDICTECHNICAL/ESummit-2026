@@ -388,12 +388,6 @@ router.post('/import-passes', upload.single('file'), async (req: Request, res: R
           college,
           teamName: getField(record, 'Team Name', 'Team name'),
           
-          // Check-in Details
-          checkInStatus: getField(record, 'Event Check-in Check In Status', 'Check-in Status', 'Check In Status'),
-          checkInTime: getField(record, 'Event Check-in Check In Time', 'Check In Time'),
-          checkInComment: getField(record, 'Check In Comment'),
-          checkedInBy: getField(record, 'Event Check-in Checked In By', 'Checked In By'),
-          
           // WhatsApp Details
           whatsappNumber: getField(record, 'WhatsApp Number', 'Whatsapp Number'),
           waCountryCode: getField(record, 'Wa Country Code', 'WA country code'),
@@ -455,9 +449,6 @@ router.post('/import-passes', upload.single('file'), async (req: Request, res: R
           status = 'Active';
         } else if (regStatusLower === 'cancel' || regStatusLower === 'cancelled') {
           status = 'Cancelled';
-        } else if (ticketDetails.checkInStatus?.toLowerCase() === 'true' || 
-                   ticketDetails.checkInStatus?.toLowerCase() === 'checked-in') {
-          status = 'Used';
         }
 
         const passData = {
@@ -1218,11 +1209,38 @@ router.get('/claims', async (req: Request, res: Response) => {
     // Create a map for O(1) lookup
     const userMap = new Map(users.map(u => [u.clerkUserId, u]));
     
-    // Merge claims with user data
-    const claimsWithUserData = claimsWithFiles.map(claim => ({
-      ...claim,
-      user: userMap.get(claim.clerkUserId) || null,
-    }));
+    // Fetch passes for all users
+    const userIds = users.map(u => u.id);
+    const passes = await prisma.pass.findMany({
+      where: { userId: { in: userIds } },
+      select: {
+        id: true,
+        userId: true,
+        passId: true,
+        passType: true,
+        status: true,
+        bookingId: true,
+      },
+    });
+    
+    // Create a map of userId to passes
+    const passesMap = new Map<string, any[]>();
+    passes.forEach(pass => {
+      if (!passesMap.has(pass.userId)) {
+        passesMap.set(pass.userId, []);
+      }
+      passesMap.get(pass.userId)?.push(pass);
+    });
+    
+    // Merge claims with user data and passes
+    const claimsWithUserData = claimsWithFiles.map(claim => {
+      const user = userMap.get(claim.clerkUserId);
+      return {
+        ...claim,
+        user: user || null,
+        passes: user ? (passesMap.get(user.id) || []) : [],
+      };
+    });
 
     return sendSuccess(res, 'Claims fetched', {
       claims: claimsWithUserData,
@@ -1323,6 +1341,14 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
         data: {
           status: 'approved',
           verifiedAt: new Date(),
+        },
+      });
+
+      // Update user's booking verified status
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          bookingVerified: true,
         },
       });
 
