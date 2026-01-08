@@ -1,8 +1,17 @@
 import jwt from 'jsonwebtoken';
 
-// Environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-change-in-production';
+// Environment variables - required for security
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
+if (!JWT_REFRESH_SECRET) {
+  throw new Error('JWT_REFRESH_SECRET environment variable is required');
+}
+
 const JWT_EXPIRES_IN: string | number = process.env.JWT_EXPIRES_IN || '1h';
 const JWT_REFRESH_EXPIRES_IN: string | number = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
 

@@ -81,6 +81,8 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   return (
     <style
       dangerouslySetInnerHTML={{
+        // SECURITY: This generates CSS for chart themes using controlled config data.
+        // Chart IDs are sanitized and colors come from component props, not user input.
         __html: Object.entries(THEMES)
           .map(
             ([theme, prefix]) => `

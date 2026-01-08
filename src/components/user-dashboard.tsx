@@ -212,22 +212,17 @@ export function UserDashboard({
         const data = await response.json();
 
         if (data.success && data.data.passes) {
-          console.log('[Dashboard] Fetched passes:', data.data.passes);
           // Show all Active passes
           const confirmedPasses = data.data.passes.filter((pass: Pass) => {
             return pass.status === 'Active';
           });
-          console.log('[Dashboard] Active passes:', confirmedPasses);
           setMyPasses(confirmedPasses);
           
           // Auto-populate schedule with eligible events based on purchased passes
           if (confirmedPasses.length > 0) {
-            console.log('[Dashboard] Processing passes for schedule:', confirmedPasses);
             const passTypeId = getPassTypeId(confirmedPasses[0].passType);
-            console.log('[Dashboard] Pass Type ID:', passTypeId);
             
             const eligibleEvents = getFormattedEventsForPass(passTypeId);
-            console.log('[Dashboard] Eligible events from pass-events.ts:', eligibleEvents.length, eligibleEvents);
             
             // Convert to the Event interface format used by the component
             const formattedEvents: Event[] = eligibleEvents.map(event => ({
@@ -246,7 +241,6 @@ export function UserDashboard({
             // Store eligible events separately
             setEligibleEventsFromPass(formattedEvents);
           } else {
-            console.log('[Dashboard] No confirmed passes, clearing eligible events');
             setEligibleEventsFromPass([]);
           }
         }
@@ -559,7 +553,6 @@ export function UserDashboard({
     };
     
     const passTypeId = passTypeMap[normalizedName] || "pixel";
-    console.log('[Dashboard] Pass Type Mapping:', { passTypeName, normalizedName, passTypeId });
     return passTypeId;
   };
 

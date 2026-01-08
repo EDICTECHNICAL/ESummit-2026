@@ -1449,4 +1449,43 @@ router.get('/claims/:claimId/pdf', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Cleanup old uploaded files (older than 24 hours)
+ * POST /api/v1/admin/cleanup-files
+ */
+router.post('/cleanup-files', async (req: Request, res: Response) => {
+  try {
+    const adminSecret = getAdminSecretFromReq(req);
+    if (!adminSecret || adminSecret !== process.env.ADMIN_IMPORT_SECRET) {
+      return sendError(res, 'Unauthorized', 401);
+    }
+
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      return sendSuccess(res, 'No uploads directory found', { cleaned: 0 });
+    }
+
+    const files = fs.readdirSync(uploadsDir);
+    let cleanedCount = 0;
+    const now = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+    for (const file of files) {
+      const filePath = path.join(uploadsDir, file);
+      const stats = fs.statSync(filePath);
+      
+      if (now - stats.mtime.getTime() > maxAge) {
+        fs.unlinkSync(filePath);
+        cleanedCount++;
+        logger.info(`Cleaned up old file: ${file}`);
+      }
+    }
+
+    return sendSuccess(res, `Cleaned up ${cleanedCount} old files`, { cleaned: cleanedCount });
+  } catch (error: any) {
+    logger.error('File cleanup error:', error);
+    return sendError(res, error.message || 'Cleanup failed', 500);
+  }
+});
+
 export default router;
