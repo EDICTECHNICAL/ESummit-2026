@@ -3,6 +3,22 @@ import prisma from '../config/database';
 import { sendSuccess, sendError } from '../utils/response.util';
 import logger from '../utils/logger.util';
 import multer, { FileFilterCallback } from 'multer';
+import { put } from '@vercel/blob';
+
+/**
+ * Pass Claim Routes
+ * 
+ * File uploads are handled using Vercel Blob storage for persistent, scalable file storage.
+ * Required environment variable: BLOB_READ_WRITE_TOKEN
+ * 
+ * To set up Vercel Blob:
+ * 1. Go to Vercel Dashboard → Your Project → Storage
+ * 2. Click "Connect Store" → "Create Blob Store"
+ * 3. Copy the BLOB_READ_WRITE_TOKEN from the dashboard
+ * 4. Add it to your .env file locally or Vercel environment variables
+ * 
+ * The token is automatically available in production deployments.
+ */
 
 const router = Router();
 
@@ -121,33 +137,33 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
     // Calculate expiry time (32 hours from now)
     const expiresAt = new Date(Date.now() + CLAIM_EXPIRY_MS);
 
-    // Save uploaded file to disk
-    const fs = require('fs');
+    // Upload file to Vercel Blob storage
     const path = require('path');
-    
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(__dirname, '../../uploads/pass-claims');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    // Generate unique filename
     const fileExtension = path.extname(req.file.originalname);
-    const uniqueFilename = `${clerkUserId}-${Date.now()}${fileExtension}`;
-    const filePath = path.join(uploadDir, uniqueFilename);
-    const relativeFilePath = `uploads/pass-claims/${uniqueFilename}`;
+    const uniqueFilename = `pass-claims/${clerkUserId}-${Date.now()}${fileExtension}`;
     
-    // Write file to disk
-    fs.writeFileSync(filePath, req.file.buffer);
-    logger.info(`Ticket file saved: ${relativeFilePath}`);
+    let fileUrl: string;
+    try {
+      const blob = await put(uniqueFilename, req.file.buffer, {
+        access: 'public',
+        contentType: req.file.mimetype,
+      });
+      fileUrl = blob.url;
+      logger.info(`Ticket file uploaded to Vercel Blob: ${fileUrl}`);
+    } catch (uploadError: any) {
+      logger.error('Vercel Blob upload error:', uploadError);
+      sendError(res, 'Failed to upload ticket file', 500);
+      return;
+    }
 
-    // Store file info and path
+    // Store file info and URL
     const extractedData: any = {
       fileName: req.file.originalname,
       fileSize: req.file.size,
       mimeType: req.file.mimetype,
       uploadedAt: new Date().toISOString(),
-      filePath: relativeFilePath,
+      fileUrl: fileUrl,
+      blobPath: uniqueFilename,
     };
 
     // Create pending claim
