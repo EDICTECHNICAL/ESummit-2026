@@ -42,6 +42,15 @@ router.get('/pass/:passId', async (req: Request, res: Response) => {
 
     // PRIORITY 1: If user uploaded PDF during verification, serve that
     if (pass.pdfUrl) {
+      // Check if it's a Vercel Blob URL (starts with https://)
+      if (pass.pdfUrl.startsWith('http://') || pass.pdfUrl.startsWith('https://')) {
+        // It's a Vercel Blob URL - redirect to it
+        console.log(`Redirecting to Vercel Blob URL for pass: ${passId}`);
+        res.redirect(pass.pdfUrl);
+        return;
+      }
+      
+      // Legacy: Check local filesystem
       const filePath = path.join(__dirname, '../../', pass.pdfUrl);
       
       if (fs.existsSync(filePath)) {

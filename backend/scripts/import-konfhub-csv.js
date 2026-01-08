@@ -143,7 +143,6 @@ async function importKonfHubCSV() {
             couponCode: record['Coupon code'],
             ticketUrl: record['Ticket URL'],
             invoiceUrl: record['Invoice URL'],
-            checkInStatus: record['Check-in Status'],
             utmSource: record['UTM source'],
             utmMedium: record['UTM medium'],
             utmCampaign: record['UTM campaign'],

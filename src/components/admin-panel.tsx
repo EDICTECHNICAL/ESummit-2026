@@ -144,22 +144,21 @@ interface EventRegistrationData {
 interface PassClaimData {
   id: string;
   clerkUserId: string;
-  attendeeName: string;
   email: string;
-  phone: string;
-  college: string;
+  fullName: string | null;
   passType: string;
   bookingId: string | null;
   konfhubOrderId: string | null;
-  price: number | null;
-  ticketUrl: string | null;
-  ticketFileUrl: string | null;
-  status: 'pending' | 'approved' | 'rejected' | 'expired';
-  reason: string;
-  adminNotes: string | null;
-  createdAt: string;
-  processedAt: string | null;
+  ticketNumber: string | null;
+  qrCodeData: string | null;
+  extractedData: any;
+  status: 'pending' | 'approved' | 'rejected' | 'expired' | 'verified';
+  verifiedAt: string | null;
   expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+  pdfFileUrl: string | null;
+  pdfFileName: string | null;
   user: {
     id: string;
     email: string;
@@ -167,7 +166,7 @@ interface PassClaimData {
     phone: string | null;
     college: string | null;
     bookingVerified: boolean;
-  };
+  } | null;
   passes: PassData[];
 }
 
@@ -518,10 +517,10 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const filteredClaims = claims.filter((claim) => {
     const matchesSearch =
       searchQuery === "" ||
-      claim.attendeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (claim.fullName && claim.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
       claim.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      claim.user?.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      claim.bookingId?.toLowerCase().includes(searchQuery.toLowerCase());
+      (claim.user?.fullName && claim.user.fullName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (claim.bookingId && claim.bookingId.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesStatus =
       claimStatusFilter === "all" || claim.status === claimStatusFilter;
@@ -938,114 +937,107 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                           </thead>
                           <tbody>
                             {paginatedUsers.map((user) => (
-                              <tr key={user.id} className="border-b hover:bg-muted/50">
-                                <td className="p-4 align-middle">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                      <Users className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                      <div className="font-medium">
-                                        {user.fullName || user.firstName + " " + user.lastName || "N/A"}
+                              <>
+                                <tr key={user.id} className="border-b hover:bg-muted/50">
+                                  <td className="p-4 align-middle">
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <Users className="h-4 w-4 text-primary" />
                                       </div>
-                                      <div className="text-sm text-muted-foreground sm:hidden">
-                                        {user.email}
+                                      <div>
+                                        <div className="font-medium">
+                                          {user.fullName || user.firstName + " " + user.lastName || "N/A"}
+                                        </div>
+                                        <div className="text-sm text-muted-foreground sm:hidden">
+                                          {user.email}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </td>
-                                <td className="p-4 align-middle hidden sm:table-cell">
-                                  <div className="text-sm">{user.email}</div>
-                                </td>
-                                <td className="p-4 align-middle hidden md:table-cell">
-                                  <div className="text-sm">{user.college || "N/A"}</div>
-                                </td>
-                                <td className="p-4 align-middle hidden lg:table-cell">
-                                  <Badge variant="outline">
-                                    {user.passes?.[0]?.passType || "No Pass"}
-                                  </Badge>
-                                </td>
-                                <td className="p-4 align-middle">
-                                  <Badge
-                                    variant={user.is_active ? "default" : "secondary"}
-                                  >
-                                    {user.is_active ? "Active" : "Inactive"}
-                                  </Badge>
-                                </td>
-                                <td className="p-4 align-middle">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setExpandedRows((prev) => {
-                                      const newSet = new Set(prev);
-                                      if (newSet.has(user.id)) {
-                                        newSet.delete(user.id);
-                                      } else {
-                                        newSet.add(user.id);
-                                      }
-                                      return newSet;
-                                    })}
-                                  >
-                                    {expandedRows.has(user.id) ? (
-                                      <ChevronUp className="h-4 w-4" />
-                                    ) : (
-                                      <ChevronDown className="h-4 w-4" />
-                                    )}
-                                  </Button>
-                                </td>
-                              </tr>
+                                  </td>
+                                  <td className="p-4 align-middle hidden sm:table-cell">
+                                    <div className="text-sm">{user.email}</div>
+                                  </td>
+                                  <td className="p-4 align-middle hidden md:table-cell">
+                                    <div className="text-sm">{user.college || "N/A"}</div>
+                                  </td>
+                                  <td className="p-4 align-middle hidden lg:table-cell">
+                                    <Badge variant="outline">
+                                      {user.passes?.[0]?.passType || "No Pass"}
+                                    </Badge>
+                                  </td>
+                                  <td className="p-4 align-middle">
+                                    <Badge
+                                      variant={user.is_active ? "default" : "secondary"}
+                                    >
+                                      {user.is_active ? "Active" : "Inactive"}
+                                    </Badge>
+                                  </td>
+                                  <td className="p-4 align-middle">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setExpandedRows((prev) => {
+                                        const newSet = new Set(prev);
+                                        if (newSet.has(user.id)) {
+                                          newSet.delete(user.id);
+                                        } else {
+                                          newSet.add(user.id);
+                                        }
+                                        return newSet;
+                                      })}
+                                    >
+                                      {expandedRows.has(user.id) ? (
+                                        <ChevronUp className="h-4 w-4" />
+                                      ) : (
+                                        <ChevronDown className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </td>
+                                </tr>
+                                
+                                {/* Expanded User Details - Shown directly below the user row */}
+                                {expandedRows.has(user.id) && (
+                                  <tr key={`details-${user.id}`}>
+                                    <td colSpan={6} className="p-0 bg-muted/30">
+                                      <div className="p-4 border-l-4 border-l-primary">
+                                        <div className="grid gap-4 sm:grid-cols-2">
+                                          <div>
+                                            <h4 className="font-medium mb-2">Basic Information</h4>
+                                            <div className="space-y-1 text-sm">
+                                              <p><strong>Email:</strong> {user.email}</p>
+                                              <p><strong>Phone:</strong> {user.phone || "N/A"}</p>
+                                              <p><strong>College:</strong> {user.college || "N/A"}</p>
+                                              <p><strong>Year:</strong> {user.yearOfStudy || "N/A"}</p>
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <h4 className="font-medium mb-2">Pass Information</h4>
+                                            <div className="space-y-1 text-sm">
+                                              {user.passes && user.passes.length > 0 ? (
+                                                user.passes.map((pass) => (
+                                                  <div key={pass.id} className="flex items-center gap-2">
+                                                    <Badge variant="outline">{pass.passType}</Badge>
+                                                    <span className="text-muted-foreground">
+                                                      Status: {pass.status}
+                                                    </span>
+                                                  </div>
+                                                ))
+                                              ) : (
+                                                <p className="text-muted-foreground">No passes found</p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </>
                             ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
-
-                    {/* Expanded User Details */}
-                    {expandedRows.size > 0 && (
-                      <div className="space-y-4">
-                        {filteredUsers
-                          .filter((user) => expandedRows.has(user.id))
-                          .map((user) => (
-                            <Card key={`details-${user.id}`} className="border-l-4 border-l-primary">
-                              <CardHeader>
-                                <CardTitle className="text-lg">
-                                  {user.fullName || user.firstName + " " + user.lastName || "User Details"}
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                  <div>
-                                    <h4 className="font-medium mb-2">Basic Information</h4>
-                                    <div className="space-y-1 text-sm">
-                                      <p><strong>Email:</strong> {user.email}</p>
-                                      <p><strong>Phone:</strong> {user.phone || "N/A"}</p>
-                                      <p><strong>College:</strong> {user.college || "N/A"}</p>
-                                      <p><strong>Year:</strong> {user.yearOfStudy || "N/A"}</p>
-                                    </div>
-                                  </div>
-                                  <div>
-                                    <h4 className="font-medium mb-2">Pass Information</h4>
-                                    <div className="space-y-1 text-sm">
-                                      {user.passes && user.passes.length > 0 ? (
-                                        user.passes.map((pass) => (
-                                          <div key={pass.id} className="flex items-center gap-2">
-                                            <Badge variant="outline">{pass.passType}</Badge>
-                                            <span className="text-muted-foreground">
-                                              Status: {pass.status}
-                                            </span>
-                                          </div>
-                                        ))
-                                      ) : (
-                                        <p className="text-muted-foreground">No passes found</p>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-                      </div>
-                    )}
 
                     {/* Pagination */}
                     {filteredUsers.length > itemsPerPage && (
@@ -1278,7 +1270,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                           <th className="text-left py-3 px-4 font-medium min-w-[120px]">Pass ID</th>
                           <th className="text-left py-3 px-4 font-medium min-w-[160px]">User</th>
                           <th className="text-left py-3 px-4 font-medium min-w-[120px] hidden md:table-cell">Type</th>
-                          <th className="text-left py-3 px-4 font-medium min-w-[100px]">Verified</th>
+                          <th className="text-left py-3 px-4 font-medium min-w-[140px]">Registration</th>
                           <th className="text-left py-3 px-4 font-medium min-w-[140px] hidden lg:table-cell">Date</th>
                           <th className="text-center py-3 px-4 font-medium min-w-[80px]">Actions</th>
                         </tr>
@@ -1309,17 +1301,16 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                   <Badge variant="outline">{pass.passType}</Badge>
                                 </td>
                                 <td className="py-3 px-4">
-                                  {pass.user?.bookingVerified ? (
-                                    <div className="flex items-center gap-1 text-green-600">
-                                      <CheckCircle2 className="h-4 w-4" />
-                                      <span className="text-xs hidden sm:inline">Verified</span>
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center gap-1 text-amber-600">
-                                      <AlertCircle className="h-4 w-4" />
-                                      <span className="text-xs hidden sm:inline">Pending</span>
-                                    </div>
-                                  )}
+                                  <div>
+                                    <Badge variant={pass.ticketDetails?.registrationStatus === 'Confirmed' ? 'default' : 'secondary'} className="text-xs">
+                                      {pass.ticketDetails?.registrationStatus || 'N/A'}
+                                    </Badge>
+                                    {pass.ticketDetails?.registeredAt && (
+                                      <p className="text-xs text-muted-foreground mt-1">
+                                        {formatDate(pass.ticketDetails.registeredAt)}
+                                      </p>
+                                    )}
+                                  </div>
                                 </td>
                                 <td className="py-3 px-4 hidden lg:table-cell text-muted-foreground">
                                   {formatDate(pass.createdAt)}
@@ -1352,10 +1343,6 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                         <p className="font-mono text-xs">{pass.konfhubOrderId || "N/A"}</p>
                                       </div>
                                       <div>
-                                        <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Amount Paid</p>
-                                        <p className="font-semibold">₹{pass.price || pass.ticketDetails?.amountPaid || 0}</p>
-                                      </div>
-                                      <div>
                                         <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Status</p>
                                         <Badge variant={
                                           pass.status === 'Active' ? 'default' : 
@@ -1380,18 +1367,6 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                       <div>
                                         <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Registered At</p>
                                         <p className="text-xs">{pass.ticketDetails?.registeredAt || formatDate(pass.createdAt)}</p>
-                                      </div>
-                                      
-                                      {/* Check-in Info */}
-                                      <div>
-                                        <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Check-in Status</p>
-                                        <p className="flex items-center gap-1">
-                                          {pass.ticketDetails?.checkInStatus?.toLowerCase() === 'true' ? (
-                                            <><CheckCircle2 className="h-3 w-3 text-green-600" /> Checked In</>
-                                          ) : (
-                                            <><XCircle className="h-3 w-3 text-muted-foreground" /> Not Checked In</>
-                                          )}
-                                        </p>
                                       </div>
                                       
                                       {/* Payment Info */}
@@ -1544,7 +1519,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                                  <h3 className="font-semibold break-words">{claim.attendeeName}</h3>
+                                  <h3 className="font-semibold break-words">{claim.fullName || claim.user?.fullName || 'N/A'}</h3>
                                   <Badge 
                                     variant={
                                       claim.status === 'pending' ? 'default' : 
@@ -1558,7 +1533,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                   </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground">{claim.email}</p>
-                                <p className="text-sm text-muted-foreground">{claim.phone} • {claim.college}</p>
+                                <p className="text-sm text-muted-foreground">{claim.user?.phone || 'N/A'} • {claim.user?.college || 'N/A'}</p>
                               </div>
                               <div className="text-right">
                                 <p className="font-medium">{claim.passType}</p>
@@ -1607,52 +1582,21 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                     <p className="text-sm text-muted-foreground">KonfHub Order ID</p>
                                     <p className="font-mono text-sm">{claim.konfhubOrderId || 'N/A'}</p>
                                   </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Price</p>
-                                    <p className="font-medium">₹{claim.price || 0}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">Reason</p>
-                                    <p className="text-sm">{claim.reason}</p>
-                                  </div>
                                 </div>
                               </div>
 
-                              {/* Ticket URL */}
-                              {claim.ticketUrl && (
-                                <div>
-                                  <p className="text-sm text-muted-foreground mb-1">Ticket URL</p>
-                                  <a
-                                    href={claim.ticketUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:underline text-sm break-all"
-                                  >
-                                    {claim.ticketUrl}
-                                  </a>
-                                </div>
-                              )}
-
                               {/* Ticket File */}
-                              {claim.ticketFileUrl && (
+                              {claim.pdfFileUrl && (
                                 <div>
                                   <p className="text-sm text-muted-foreground mb-1">Uploaded Ticket File</p>
                                   <a
-                                    href={claim.ticketFileUrl}
+                                    href={claim.pdfFileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-600 hover:underline text-sm"
                                   >
-                                    View Uploaded File
+                                    View Uploaded File ({claim.pdfFileName || 'ticket.pdf'})
                                   </a>
-                                </div>
-                              )}
-
-                              {/* Admin Notes */}
-                              {claim.adminNotes && (
-                                <div>
-                                  <p className="text-sm text-muted-foreground mb-1">Admin Notes</p>
-                                  <p className="text-sm bg-muted p-2 rounded">{claim.adminNotes}</p>
                                 </div>
                               )}
 
