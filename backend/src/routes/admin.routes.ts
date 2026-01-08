@@ -1299,7 +1299,7 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
           price: extractedData.price || 0,
           purchaseDate: new Date(),
           status: 'Active',
-          pdfUrl: extractedData.filePath || null, // Use uploaded PDF
+          pdfUrl: extractedData.fileUrl || extractedData.filePath || null, // Use Vercel Blob URL or legacy path
           qrCodeUrl: extractedData.ticketUrl || null,
           qrCodeData: claim.qrCodeData || claim.bookingId || claimId,
           ticketDetails: {
