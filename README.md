@@ -81,10 +81,9 @@ ESummit-2026/
 
 ## 📚 Documentation
 
-- [Backend API](./backend/README.md)
-- [Architecture](./docs/BACKEND_ARCHITECTURE.md)
-- [Implementation Guide](./docs/IMPLEMENTATION_GUIDE.md)
-- [Setup Instructions](./docs/BACKEND_SETUP.md)
+- [Backend Setup](./docs/BACKEND_SETUP.md)
+- [Backend Architecture](./docs/BACKEND_ARCHITECTURE.md)
+- [Project Status](./docs/PROJECT_STATUS.md)
 
 ## 🤝 Contributing
 
