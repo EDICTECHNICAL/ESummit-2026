@@ -9,7 +9,7 @@ export function TenMinuteMillionPage() {
     date: "February 2-3, 2026",
     time: "10:00 AM – 5:00 PM (Both days)",
     venue: "SH-1",
-    prize: "Seed Funding Opportunity",
+    prize: { first: "₹50,000", second: "₹30,000", third: undefined, total: "₹80,000" },
     eligibility: "Quantum Pass required",
   };
 

@@ -11,6 +11,13 @@ import { EventRegistrationModal } from "../event-registration-modal";
 import { GlassCard } from "../accentricity/glass-card";
 import { API_BASE_URL } from "../../lib/api";
 
+type PrizeObject = {
+  first?: string;
+  second?: string;
+  third?: string | null;
+  total?: string;
+};
+
 type EventData = {
   title: string;
   tagline?: string;
@@ -18,7 +25,7 @@ type EventData = {
   date?: string;
   time?: string;
   venue?: string;
-  prize?: string;
+  prize?: string | PrizeObject;
   eligibility?: string;
 };
 
@@ -268,7 +275,24 @@ export function EventPageTemplate({
                           </div>
                           <h4 className="font-bold text-base sm:text-lg text-foreground">Prize Pool</h4>
                         </div>
-                        <p className="text-foreground/70 text-sm sm:text-base leading-relaxed">{event.prize}</p>
+                        {typeof event.prize === 'string' ? (
+                          <p className="text-foreground/70 text-sm sm:text-base leading-relaxed">{event.prize}</p>
+                        ) : (
+                          <div className="text-foreground/70 text-sm sm:text-base leading-relaxed">
+                            {event.prize.first && (
+                              <div className="mb-1"><strong>1st Prize:</strong> {event.prize.first}</div>
+                            )}
+                            {event.prize.second && (
+                              <div className="mb-1"><strong>2nd Prize:</strong> {event.prize.second}</div>
+                            )}
+                            {event.prize.third && event.prize.third !== '—' && event.prize.third !== '-' && (
+                              <div className="mb-1"><strong>3rd Prize:</strong> {event.prize.third}</div>
+                            )}
+                            {event.prize.total && (
+                              <div className="mt-2 font-semibold"><strong>Total:</strong> {event.prize.total}</div>
+                            )}
+                          </div>
+                        )}
                       </motion.div>
                     )}
                     {event.eligibility && (

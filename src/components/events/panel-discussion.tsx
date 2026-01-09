@@ -9,6 +9,7 @@ export function PanelDiscussionPage() {
     time: "2:00 PM to 5:00 PM (Post Lunch)",
     venue: "Auditorium",
     eligibility: "All pass holders",
+    prize: undefined, // No prize for panel discussion
   };
   const primaryContacts = [
     { name: "Nidhi Shukla", role: "Core Member" },

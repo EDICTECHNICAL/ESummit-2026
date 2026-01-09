@@ -8,7 +8,7 @@ export function AiBuildathonPage() {
     date: "February 2-3, 2026",
     time: "10:00 AM – 5:00 PM",
     venue: "SH 3",
-    prize: "₹1,50,000",
+    prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };
 
