@@ -32,7 +32,12 @@ export interface PitchArenaForm {
   pitchDeckLink?: string;
 }
 
+export interface SimpleRegistrationForm {
+  registrationType: 'simple';
+}
+
 export type EventRegistrationFormData =
   | TenMinuteMillionForm
   | AngelRoundtableForm
-  | PitchArenaForm;
+  | PitchArenaForm
+  | SimpleRegistrationForm;
