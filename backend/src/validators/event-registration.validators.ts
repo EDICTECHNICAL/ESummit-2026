@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Base registration form schema
 const baseRegistrationSchema = z.object({
-  registrationType: z.enum(['ten_minute_million', 'angel_roundtable', 'pitch_arena']),
+  registrationType: z.enum(['ten_minute_million', 'angel_roundtable', 'pitch_arena', 'simple']),
 });
 
 // Ten Minute Deal form validation
@@ -41,15 +41,22 @@ export const pitchArenaSchema = baseRegistrationSchema.extend({
   pitchDeckLink: z.string().url('Invalid pitch deck link').optional().or(z.literal('')),
 });
 
+// Simple registration form validation (for events that don't require detailed forms)
+export const simpleRegistrationSchema = baseRegistrationSchema.extend({
+  registrationType: z.literal('simple'),
+});
+
 // Union type for all registration forms
 export const eventRegistrationFormSchema = z.discriminatedUnion('registrationType', [
   tenMinuteMillionSchema,
   angelRoundtableSchema,
   pitchArenaSchema,
+  simpleRegistrationSchema,
 ]);
 
 // Type exports
 export type TenMinuteMillionForm = z.infer<typeof tenMinuteMillionSchema>;
 export type AngelRoundtableForm = z.infer<typeof angelRoundtableSchema>;
 export type PitchArenaForm = z.infer<typeof pitchArenaSchema>;
+export type SimpleRegistrationForm = z.infer<typeof simpleRegistrationSchema>;
 export type EventRegistrationFormData = z.infer<typeof eventRegistrationFormSchema>;
