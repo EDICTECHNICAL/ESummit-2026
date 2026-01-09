@@ -8,7 +8,7 @@ export function IplAuctionPage() {
     date: "February 2-3, 2026",
     time: "Day 1: 10:00 AM – 5:00 PM | Day 2: 9:30 AM – 1:30 PM",
     venue: "601, TIMSR",
-    prize: "TBD",
+    prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };
   const primaryContacts = [

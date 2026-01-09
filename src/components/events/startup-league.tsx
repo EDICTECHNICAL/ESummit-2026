@@ -8,7 +8,7 @@ export function StartupLeaguePage() {
     date: "February 2-3, 2026",
     time: "10:00 AM to 1:00 PM",
     venue: "301, TIMSR",
-    prize: "₹1,00,000",
+    prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };
   const primaryContacts = [
