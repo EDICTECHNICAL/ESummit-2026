@@ -561,7 +561,7 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
                 title: "FREE Pixel Pass Available",
                 date: "Jan 07, 2026",
                 content:
-                  "Access 5 exciting events absolutely FREE! Limited seats available for the inaugural edition.",
+                  "Access 5 exciting events absolutely FREE for the first 120 passes! Limited seats available for the inaugural edition.",
                 icon: Trophy,
               },
               {
