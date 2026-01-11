@@ -1,141 +1,265 @@
 import { motion } from "motion/react";
-import { Linkedin } from "lucide-react";
+import { Linkedin, Twitter, Globe, Calendar, MapPin, Mail } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
 import { AuroraText } from "./magicui/aurora-text";
 import { Particles } from "./magicui/particles";
 import { GlassCard } from "./accentricity/glass-card";
+import { RippleBackground } from "./accentricity/ripple-background";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function Speakers() {
+  const speakers = [
+    {
+      name: "Devang Raja",
+      title: "Founder, Venture Wolf",
+      bio: "Devang Raja is the founder of Venture Wolf, a venture capital firm dedicated to empowering early-stage startups. As a panelist at E-Summit 2026, he brings extensive experience in startup funding and investment strategies.",
+      expertise: ["Venture Capital", "Startup Investing", "Entrepreneurship"],
+      achievements: [
+        "Founded Venture Wolf",
+        "Panelist at TTMD & Panel Discussion",
+        "Event Sponsor for E-Summit 2026",
+      ],
+      session: [
+        {
+          title: "The Ten Minute Deal",
+          date: "February 2, 2026",
+          time: "10:00 AM – 5:00 PM",
+          venue: "SH-1",
+        },
+        {
+          title: "Panel Discussion: Future of Startup Funding",
+          date: "February 2, 2026",
+          time: "02:00 PM",
+          venue: "Main Auditorium",
+        },
+      ],
+      social: {
+        linkedin: "https://www.linkedin.com/in/devangraja2001/",
+      },
+      image: "/assets/panel/devang_raja.png",
+    },
+  ];
+
   return (
-    <div className="container relative mx-auto py-20 overflow-hidden">
-      <Particles className="absolute inset-0 opacity-30" quantity={50} ease={60} />
-      
-      {/* Coming Soon Section */}
-      <div className="relative z-10 flex min-h-[75vh] flex-col items-center justify-center">
-        <div className="max-w-4xl w-full px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 bg-gradient-to-br from-foreground to-foreground/60 bg-clip-text text-transparent px-4">
-              Keynote Speakers & Guests
-            </h1>
-            
-            <AuroraText
-              size="lg"
-              colors={["#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fecaca"]}
-              className="mb-8 px-4"
+    <div className="container mx-auto px-4 py-8 max-w-full overflow-x-hidden">
+          <div className="relative mb-12">
+            <RippleBackground />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative z-10 text-center"
             >
-              Will be announced soon
-            </AuroraText>
-            
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-              We're finalizing our incredible lineup of industry leaders, successful entrepreneurs, and investors
-            </p>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <GlassCard className="p-8 md:p-12">              
-              <div className="text-center">
-                <p className="text-xl font-semibold mb-6" style={{ color: 'var(--foreground)' }}>
-                  Want to be a speaker at E-Summit 2026?
-                </p>
-                <p className="text-sm mb-8" style={{ color: 'var(--foreground)' }}>
-                  Contact our Speakers Team:
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-3">
-                    <Avatar className="h-32 w-32 mb-4 mx-auto">
-                      <AvatarImage src="/assets/team/nidhi.png?v=2" alt="Nidhi Shukla" />
-                      <AvatarFallback>NS</AvatarFallback>
-                    </Avatar>
-                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>Nidhi Shukla</p>
-                    <p className="text-sm" style={{ color: 'var(--foreground)' }}>Event Manager</p>
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://wa.me/918169231870', '_blank')}
-                      >
-                        <FaWhatsapp className="h-4 w-4 mr-2" />
-                        WhatsApp
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://www.linkedin.com/in/nidhi-shukla-36151a329/', '_blank')}
-                      >
-                        <Linkedin className="h-4 w-4 mr-2" />
-                        LinkedIn
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Avatar className="h-32 w-32 mb-4 mx-auto">
-                      <AvatarImage src="/assets/team/tanvi.png?v=2" alt="Tanvi Jabare" />
-                      <AvatarFallback>TJ</AvatarFallback>
-                    </Avatar>
-                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>Tanvi Jabare</p>
-                    <p className="text-sm" style={{ color: 'var(--foreground)' }}>Publication Head</p>
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://wa.me/919619368299', '_blank')}
-                      >
-                        <FaWhatsapp className="h-4 w-4 mr-2" />
-                        WhatsApp
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://www.linkedin.com/in/tanvi-jabare-b310a0347/', '_blank')}
-                      >
-                        <Linkedin className="h-4 w-4 mr-2" />
-                        LinkedIn
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <Avatar className="h-32 w-32 mb-4 mx-auto">
-                      <AvatarImage src="/assets/team/vedant.png?v=2" alt="Vedant Singh" />
-                      <AvatarFallback>VS</AvatarFallback>
-                    </Avatar>
-                    <p className="font-medium" style={{ color: 'var(--foreground)' }}>Vedant Singh</p>
-                    <p className="text-sm" style={{ color: 'var(--foreground)' }}>OC - Executive</p>
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://wa.me/911234567890', '_blank')}
-                      >
-                        <FaWhatsapp className="h-4 w-4 mr-2" />
-                        WhatsApp
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => window.open('https://www.linkedin.com/in/vedant-singh-93056b2bb/', '_blank')}
-                      >
-                        <Linkedin className="h-4 w-4 mr-2" />
-                        LinkedIn
-                      </Button>
-                    </div>
+              <h1 className="mb-4 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                Speakers, Panelists & Guests
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Coming Soon: Learn from industry leaders, successful entrepreneurs, and investors who have built and scaled remarkable businesses
+              </p>
+            </motion.div>
+          </div>
+
+      <div className="flex justify-center">
+        <div className="max-w-md w-full">
+          {speakers.map((speaker, index) => (
+            <motion.div
+              key={speaker.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -10 }}
+            >
+              <Card className="overflow-hidden transition-shadow hover:shadow-2xl h-full">
+                <div className="relative h-64">
+                  <ImageWithFallback
+                    src={speaker.image}
+                    alt={speaker.name}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 text-white">
+                    <h3 className="mb-1 text-white">{speaker.name}</h3>
+                    <p className="text-sm text-white/90">{speaker.title}</p>
                   </div>
                 </div>
-              </div>
-            </GlassCard>
-          </motion.div>
+
+                <CardContent className="space-y-4 p-6">
+                  <p className="text-sm text-muted-foreground">{speaker.bio}</p>
+
+                  <div>
+                    <h4 className="mb-2 text-sm">Expertise</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {speaker.expertise.map((exp) => (
+                        <Badge key={exp} variant="secondary">
+                          {exp}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="mb-2 text-sm">Key Achievements</h4>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      {speaker.achievements.slice(0, 3).map((achievement) => (
+                        <li key={achievement}>• {achievement}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="rounded-lg bg-muted p-3">
+                    <h4 className="mb-2 text-sm">Session Details</h4>
+                    {speaker.session.map((sess, idx) => (
+                      <div key={idx} className="mb-2">
+                        <p className="text-sm">{sess.title}</p>
+                        <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {sess.date} at {sess.time}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {sess.venue}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2 border-t pt-4">
+                    {speaker.social.twitter && (
+                      <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+                        <a href={`https://twitter.com/${speaker.social.twitter.replace('@', '')}`} target="_blank" rel="noopener noreferrer">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Twitter className="h-4 w-4" />
+                          </Button>
+                        </a>
+                      </motion.div>
+                    )}
+                    {speaker.social.linkedin && (
+                      <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+                        <a href={speaker.social.linkedin} target="_blank" rel="noopener noreferrer">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Linkedin className="h-4 w-4" />
+                          </Button>
+                        </a>
+                      </motion.div>
+                    )}
+                    {speaker.social.website && (
+                      <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+                        <a href={`https://${speaker.social.website}`} target="_blank" rel="noopener noreferrer">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Globe className="h-4 w-4" />
+                          </Button>
+                        </a>
+                      </motion.div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       </div>
+
+      {/* Contact Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="mt-48"
+      >
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl py-4 font-bold mb-4 text-foreground">
+            Speakers, Judges & Guests
+          </h2>
+          <p className="text-foreground text-lg">
+            For any Speaker, Judge, or Guest related Queries
+          </p>
+          <div className="w-24 h-1 bg-primary mx-auto mt-6"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            {
+              name: "Nidhi Dilipkumar Shukla",
+              role: "Event Manager",
+              image: "/assets/team/nidhi.png",
+              whatsapp: "+918169231870",
+              linkedin: "https://www.linkedin.com/in/nidhi-shukla-36151a329/"
+            },
+            {
+              name: "Tanvi Prakash Jabare",
+              role: "Publication Head",
+              image: "/assets/team/tanvi.png",
+              whatsapp: "+919619368299",
+              linkedin: "https://www.linkedin.com/in/tanvi-jabare-b310a0347/"
+            },
+            {
+              name: "Vedant Singh",
+              role: "OC - Executive",
+              image: "/assets/team/vedant.png",
+              whatsapp: "+911234567890",
+              linkedin: "https://www.linkedin.com/in/vedant-singh-93056b2bb/"
+            },
+          ].map((contact, index) => (
+            <motion.div
+              key={contact.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <Card className="border border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg">
+                <CardContent className="p-8 text-center space-y-6">
+                  <Avatar className="h-32 w-32 mb-4 mx-auto">
+                    <AvatarImage src={contact.image} alt={contact.name} />
+                    <AvatarFallback className="text-2xl">
+                      {contact.name.split(" ").map(n => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div>
+                    <h4 className="text-xl font-bold mb-2">{contact.name}</h4>
+                    <p className="text-sm text-muted-foreground font-medium mb-4">
+                      {contact.role}
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-1">Contact</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={contact.linkedin && !contact.linkedin.includes('/in/example') ? "flex-1" : "w-full"}
+                      onClick={() => window.open(`https://wa.me/${contact.whatsapp.replace(/[^0-9]/g, '')}`, '_blank')}
+                    >
+                      <FaWhatsapp className="mr-2 h-4 w-4" />
+                      WhatsApp
+                    </Button>
+                    {contact.linkedin && !contact.linkedin.includes('/in/example') && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => window.open(contact.linkedin, '_blank')}
+                      >
+                        <Linkedin className="mr-2 h-4 w-4" />
+                        LinkedIn
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }
