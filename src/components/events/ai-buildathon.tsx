@@ -7,7 +7,7 @@ export function AiBuildathonPage() {
       "Push the boundaries of AI. Tackle a real-world problem by designing and presenting an innovative, AI-driven solution. Showcase your technical skills and creativity to win the challenge.",
     date: "February 2-3, 2026",
     time: "10:00 AM – 5:00 PM",
-    venue: "SH 3",
+    venue: "SH 3 (Seminar Hall 3)",
     prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };

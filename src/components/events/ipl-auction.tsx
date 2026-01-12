@@ -7,7 +7,7 @@ export function IplAuctionPage() {
       "Master the art of the deal. In this high-energy bidding game, build your dream team with a limited budget. Test your strategic thinking and financial savvy to outbid rivals and create a winning roster.",
     date: "February 2-3, 2026",
     time: "Day 1: 10:00 AM – 5:00 PM | Day 2: 9:30 AM – 1:30 PM",
-    venue: "601, TIMSR",
+    venue: "601 TIMSR",
     prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };

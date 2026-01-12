@@ -7,7 +7,7 @@ export function DesignThinkingPage() {
       "Hands-on workshop on design thinking and innovation for building successful ventures. 3-hour interactive sessions throughout the day.",
     date: "February 2-3, 2026",
     time: "10:00 - 17:00 (3 Hours Sessions)",
-    venue: "Lab 522 & 523",
+    venue: "Lab 522 / 523",
     eligibility: "Silicon & Quantum Pass holders",
   };
   const primaryContacts = [
