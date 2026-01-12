@@ -8,7 +8,7 @@ export function TenMinuteMillionPage() {
     description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
     date: "February 2-3, 2026",
     time: "10:00 AM – 5:00 PM (Both days)",
-    venue: "SH-1",
+    venue: "SH-1 (Seminar Hall 1)",
     eligibility: "Quantum Pass required",
   };
 
