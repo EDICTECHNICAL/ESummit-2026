@@ -274,7 +274,8 @@ export function Team() {
       { name: "Hitarth Bhatt", year: "FE", branch: "MME", position: "OC - Marketing", department: "Marketing" },
       { name: "Khushi Tyagi", year: "FE", branch: "COMP", position: "OC - Marketing", department: "Marketing" },
       { name: "Prashant Gupta", year: "FE", branch: "MME", position: "OC - Marketing", department: "Marketing" },
-      { name: "Shivanshi Pandit", year: "FE", branch: "AI&DS", position: "OC - Marketing", department: "Marketing" }
+      { name: "Shivanshi Pandit", year: "FE", branch: "AI&DS", position: "OC - Marketing", department: "Marketing" },
+      { name: "Siddharth Sangwan", year: "FE", branch: "IoT", position: "OC - Marketing", department: "Marketing" }
     ],
     operations: [
       { name: "Aayush Mishra", year: "FE", branch: "AI&DS", position: "OC - Operations", department: "Operations" },
@@ -289,7 +290,8 @@ export function Team() {
       { name: "Namasavi Singh", year: "FE", branch: "CSE", position: "OC - Operations", department: "Operations" },
       { name: "Prashant Yadav", year: "FE", branch: "AI&DS", position: "OC - Operations", department: "Operations" },
       { name: "Shravani Kiran Salunke", year: "FE", branch: "AI&DS", position: "OC - Operations", department: "Operations" },
-      { name: "Sachin Kumawat", year: "FE", branch: "CSE", position: "OC - Operations", department: "Operations" }
+      { name: "Sachin Kumawat", year: "FE", branch: "CSE", position: "OC - Operations", department: "Operations" },
+      { name: "Parthavi Rai", year: "FE", branch: "IoT", position: "OC - Operating", department: "Operations" }
     ],
     technical: [
       { name: "Himanshu Basant Naik", year: "FE", branch: "IoT", position: "OC - Technical (SMM)", department: "Technical" },
@@ -297,6 +299,7 @@ export function Team() {
       { name: "Sakshi Yadav", year: "FE", branch: "CSE", position: "OC - Technical (SMM)", department: "Technical" },
       { name: "Aryan Anil Singh", year: "FE", branch: "COMP", position: "OC - Technical (SMM)", department: "Technical" },
       { name: "Pratik Verma", year: "SE", branch: "COMP", position: "OC - Technical (SMM)", department: "Technical" },
+      { name: "Archit Kumar", year: "FE", branch: "IT", position: "OC - Technical - SMM", department: "Technical" },
       // Removed Sneha Chauhan
       { name: "Nikhil Shukla", year: "SE", branch: "IT", position: "OC - Technical", department: "Technical" },
       { name: "Saloni Suthar", year: "FE", branch: "BCA", position: "OC - Technical", department: "Technical" },
