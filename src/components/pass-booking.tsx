@@ -100,8 +100,8 @@ export function PassBooking({
     {
       id: "pixel",
       name: "Pixel Pass",
-      price: 0,
-      earlyBirdPrice: 0,
+      price: 299,
+      earlyBirdPrice: 199,
       originalPrice: 299,
       features: [
         "Startup Expo",
@@ -111,8 +111,8 @@ export function PassBooking({
         "Biz-Arena League",
         "Certificate of participation",
       ],
-      badge: "Free",
-      description: "Free for the first 120 passes",
+      badge: "Early Bird",
+      description: "Use coupon EARLYBIRD100 for ₹199 (first 150 passes only)",
     },
     {
       id: "silicon",
@@ -225,7 +225,7 @@ export function PassBooking({
       const requestBody = {
         clerkUserId: clerkUserId,
         passType: selectedPassData?.name || "Standard Pass",
-        price: selectedPassData?.price || 0,
+        price: selectedPassData?.earlyBirdPrice || selectedPassData?.price || 0,
         hasMeals: false,
         hasMerchandise: false,
         hasWorkshopAccess: false,
@@ -256,7 +256,7 @@ export function PassBooking({
           id: selectedPassData?.id || "",
           type: selectedPassData?.name || "",
           passId: createdPass.passId,
-          price: selectedPassData?.price || 0,
+          price: selectedPassData?.earlyBirdPrice || selectedPassData?.price || 0,
           purchaseDate: new Date().toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -360,6 +360,15 @@ export function PassBooking({
                     <Info className="mx-auto h-4 w-4 text-primary" />
                     <AlertDescription className="text-center text-sm text-primary/80">
                       <strong>Pass upgrades available!</strong> You can upgrade your pass at the venue during check-in for additional benefits.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+                <div className="flex-1">
+                  <Alert className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950 text-center h-full">
+                    <Ticket className="mx-auto h-4 w-4 text-green-600 dark:text-green-400" />
+                    <AlertDescription className="text-center text-green-600 dark:text-green-400">
+                      <p className="text-sm font-bold">Early Bird Coupon</p>
+                      <p className="text-xs mt-1">Use EARLYBIRD100 for ₹199 (first 150 passes only) - Pixel Pass only</p>
                     </AlertDescription>
                   </Alert>
                 </div>
@@ -473,7 +482,8 @@ export function PassBooking({
                               <span>{feature}</span>
                             </motion.li>
                           ))}
-                        </ul>                        {pass.description && (
+                        </ul>
+                        {pass.description && (
                           <Alert className="mb-4">
                             <AlertCircle className="h-4 w-4" />
                             <AlertDescription className="text-xs">
