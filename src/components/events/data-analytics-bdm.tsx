@@ -11,10 +11,10 @@ export function DataAnalyticsBdmPage() {
     eligibility: "Silicon & Quantum Pass holders",
   };
   const primaryContacts = [
-    { name: "Varun Maurya", role: "Junior Core Member" },
-    { name: "Ayush Tyagi", role: "OC Member" },
-    { name: "SHLOK YADAV", role: "OC Member" },
-    { name: "Arpit Gawande", role: "OC Member" },
+    { name: "Varun Maurya", role: "Junior Core Member", phone: "8104751559" },
+    { name: "Ayush Tyagi", role: "OC Member", phone: "9324065445" },
+    { name: "SHLOK YADAV", role: "OC Member", phone: "9967630097" },
+    { name: "Arpit Gawande", role: "OC Member", phone: "7447743779" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-data-analytics" panelTitle="Speakers" primaryContacts={primaryContacts} />;

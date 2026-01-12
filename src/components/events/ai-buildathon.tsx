@@ -13,11 +13,11 @@ export function AiBuildathonPage() {
   };
 
   const primaryContacts = [
-    { name: "Bhummi Girnara", role: "Core Member" },
-    { name: "Nishil Dhanuka", role: "OC Member" },
-    { name: "Ayush Chandel", role: "OC Member" },
-    { name: "Shravani Salunke", role: "OC Member" },
-    { name: "Prashant Gupta", role: "OC Member" },
+    { name: "Bhummi Girnara", role: "Core Member", phone: "9869832960" },
+    { name: "Nishil Dhanuka", role: "OC Member", phone: "9137589740" },
+    { name: "Ayush Chandel", role: "OC Member", phone: "6389005936" },
+    { name: "Shravani Salunke", role: "OC Member", phone: "9326070090" },
+    { name: "Prashant Gupta", role: "OC Member", phone: "9373270698" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-ai-buildathon-start" panelTitle="Judges & Mentors" primaryContacts={primaryContacts} />;

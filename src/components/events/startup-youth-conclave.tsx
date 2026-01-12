@@ -11,11 +11,11 @@ export function StartupYouthConclavePage() {
     eligibility: "Silicon & Quantum Pass holders",
   };
   const primaryContacts = [
-    { name: "Krish Jain", role: "Core Member" },
-    { name: "Shaleen Singh", role: "Junior Core Member" },
-    { name: "Shreya Yadav", role: "OC Member" },
-    { name: "Nikhil Shukla", role: "OC Member" },
-    { name: "Namasavi Singh", role: "OC Member" },
+    { name: "Krish Jain", role: "Core Member", phone: "9324065445" },
+    { name: "Shaleen Singh", role: "Junior Core Member", phone: "9324065445" },
+    { name: "Shreya Yadav", role: "OC Member", phone: "9324065445" },
+    { name: "Nikhil Shukla", role: "OC Member", phone: "9324065445" },
+    { name: "Namasavi Singh", role: "OC Member", phone: "9324065445" },
   ];
 
   return <EventPageTemplate event={event} eventId="d2-startup-youth-conclave" panelTitle="E-Cell Representatives" primaryContacts={primaryContacts} />;

@@ -12,13 +12,13 @@ export function IncubatorSummitPage() {
     eligibility: "Quantum Pass required",
   };
   const primaryContacts = [
-    { name: "Bhummi Girnara", role: "Core Member" },
-    { name: "Yash Yadav", role: "Core Member" },
-    { name: "Yash Mattha", role: "Junior Core Member" },
-    { name: "Kanchan Tripathi", role: "Junior Core Member" },
-    { name: "Avya Chaurasia", role: "OC Member" },
-    { name: "Arjun Parab", role: "OC Member" },
-    { name: "Hitarth Bhatt", role: "OC Member" },
+    { name: "Bhummi Girnara", role: "Core Member", phone: "9869832960" },
+    { name: "Yash Yadav", role: "Core Member", phone: "8591134029" },
+    { name: "Yash Mattha", role: "Junior Core Member", phone: "8591129559" },
+    { name: "Kanchan Tripathi", role: "Junior Core Member", phone: "7709339449" },
+    { name: "Avya Chaurasia", role: "OC Member", phone: "8779549523" },
+    { name: "Arjun Parab", role: "OC Member", phone: "9321313968" },
+    { name: "Hitarth Bhatt", role: "OC Member", phone: "9819418228" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-incubator-summit" panelTitle="Incubation Centre Evaluators" primaryContacts={primaryContacts} />;

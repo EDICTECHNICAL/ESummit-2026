@@ -12,12 +12,12 @@ export function IplAuctionPage() {
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };
   const primaryContacts = [
-    { name: "Hredey Chaand", role: "Core Member" },
-    { name: "Aman Pandey", role: "Core Member" },
-    { name: "Pawan Shetty", role: "Junior Core Member" },
-    { name: "Sakshi Yadav", role: "Junior Core Member" },
-    { name: "Prachi Kumari", role: "OC Member" },
-    { name: "Sitanshu Shetty", role: "OC Member" },
+    { name: "Hredey Chaand", role: "Core Member", phone: "9004724466" },
+    { name: "Aman Pandey", role: "Core Member", phone: "8108390154" },
+    { name: "Pawan Shetty", role: "Junior Core Member", phone: "7045146854" },
+    { name: "Sakshi Yadav", role: "Junior Core Member", phone: "9136010511" },
+    { name: "Prachi Kumari", role: "OC Member", phone: "8104047564" },
+    { name: "Sitanshu Shetty", role: "OC Member", phone: "7208390629" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-ipl-auction" panelTitle="Mentors & Judges" primaryContacts={primaryContacts} />;
