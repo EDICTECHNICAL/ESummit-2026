@@ -722,30 +722,24 @@ export function UserDashboard({
                           
                           <div className="space-y-2">
                             <p className="text-sm font-semibold">Includes:</p>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              {pass.ticketDetails?.inclusions && pass.ticketDetails.inclusions.length > 0 ? (
-                                pass.ticketDetails.inclusions.map((item, idx) => (
-                                  <div key={idx} className="flex items-center gap-1 min-w-0">
-                                    <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
-                                    <span className="break-words">{item}</span>
-                                  </div>
-                                ))
-                              ) : (
-                                <>
+                            <div className="grid grid-cols-1 gap-2 text-xs">
+                              {(() => {
+                                const passTypeId = getPassTypeId(pass.passType);
+                                const eligibleEvents = getFormattedEventsForPass(passTypeId);
+                                return eligibleEvents.length > 0 ? (
+                                  eligibleEvents.map((event, idx) => (
+                                    <div key={idx} className="flex items-center gap-1 min-w-0">
+                                      <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
+                                      <span className="break-words">{event.title}</span>
+                                    </div>
+                                  ))
+                                ) : (
                                   <div className="flex items-center gap-1 min-w-0">
                                     <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
                                     <span className="break-words">Event Access</span>
                                   </div>
-                                  <div className="flex items-center gap-1 min-w-0">
-                                    <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
-                                    <span className="break-words">Networking</span>
-                                  </div>
-                                  <div className="flex items-center gap-1 min-w-0">
-                                    <CheckCircle2 className="h-3 w-3 text-green-600 flex-shrink-0" />
-                                    <span className="break-words">Certificate</span>
-                                  </div>
-                                </>
-                              )}
+                                );
+                              })()}
                             </div>
                           </div>
 
