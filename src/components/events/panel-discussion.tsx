@@ -12,12 +12,12 @@ export function PanelDiscussionPage() {
     prize: undefined, // No prize for panel discussion
   };
   const primaryContacts = [
-    { name: "Nidhi Shukla", role: "Core Member" },
-    { name: "Mehwish Siddiqui", role: "Junior Core Member" },
-    { name: "Om Paranjape", role: "OC Member" },
+    { name: "Nidhi Shukla", role: "Core Member", phone: "9324065445" },
+    { name: "Mehwish Siddiqui", role: "Junior Core Member", phone: "9324065445" },
+    { name: "Om Paranjape", role: "OC Member", phone: "9324065445" },
     // Removed Prakash Mandal
-    { name: "Sachin Kumawat", role: "OC Member" },
-    { name: "Siddharth Sangwan", role: "OC Member" },
+    { name: "Sachin Kumawat", role: "OC Member", phone: "9324065445" },
+    { name: "Siddharth Sangwan", role: "OC Member", phone: "9324065445" },
   ];
 
   const judges = [

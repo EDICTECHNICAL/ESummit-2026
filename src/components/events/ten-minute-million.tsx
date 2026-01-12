@@ -22,13 +22,13 @@ export function TenMinuteMillionPage() {
   ];
 
   const primaryContacts = [
-    { name: "Aman Pandey", role: "Core Member" },
-    { name: "Yask Khatri", role: "Core Member" },
-    { name: "Ashita Sharma", role: "Junior Core Member" },
-    { name: "Vedant Singh", role: "OC Member" },
-    { name: "Pratik Verma", role: "OC Member" },
-    { name: "Roshni Joshi", role: "OC Member" },
-    { name: "Niyatee Thakur", role: "OC Member" },
+    { name: "Aman Pandey", role: "Core Member", phone: "8108390154" },
+    { name: "Yask Khatri", role: "Core Member", phone: "9518509120" },
+    { name: "Ashita Sharma", role: "Junior Core Member", phone: "9321516123" },
+    { name: "Vedant Singh", role: "OC Member", phone: "9833223507" },
+    { name: "Pratik Verma", role: "OC Member", phone: "9167655416" },
+    { name: "Roshni Joshi", role: "OC Member", phone: "9372711453" },
+    { name: "Niyatee Thakur", role: "OC Member", phone: "9892682981" },
   ];
 
   const seniorContacts = [

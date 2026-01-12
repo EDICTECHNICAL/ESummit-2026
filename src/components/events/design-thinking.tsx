@@ -11,11 +11,11 @@ export function DesignThinkingPage() {
     eligibility: "Silicon & Quantum Pass holders",
   };
   const primaryContacts = [
-    { name: "Nikita Tiwari", role: "Core Member" },
-    { name: "Shweta Shukla", role: "Junior Core Member" },
-    { name: "Mitesh Purohit", role: "OC Member" },
-    { name: "Archit Kumar", role: "OC Member" },
-    { name: "Shivang Shukla", role: "OC Member" },
+    { name: "Nikita Tiwari", role: "Core Member", phone: "8446156587" },
+    { name: "Shweta Shukla", role: "Junior Core Member", phone: "9867882433" },
+    { name: "Mitesh Purohit", role: "OC Member", phone: "9664805151" },
+    { name: "Archit Kumar", role: "OC Member", phone: "8356028780" },
+    { name: "Shivang Shukla", role: "OC Member", phone: "8668424061" },
     // Removed Sneha Chauhan
   ];
 

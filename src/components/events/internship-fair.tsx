@@ -11,12 +11,12 @@ export function InternshipFairPage() {
     eligibility: "Quantum Pass holders",
   };
   const primaryContacts = [
-    { name: "Tanvi Jabare", role: "Core Member" },
-    { name: "Shashank Barot", role: "Junior Core Member" },
-    { name: "Tushar Gaba", role: "OC Member" },
-    { name: "Chinmay Mhatre", role: "OC Member" },
-    { name: "Shreeya Dewangan", role: "OC Member" },
-    { name: "Shubham Mane", role: "OC Member" },
+    { name: "Tanvi Jabare", role: "Core Member", phone: "9324065445" },
+    { name: "Shashank Barot", role: "Junior Core Member", phone: "9324065445" },
+    { name: "Tushar Gaba", role: "OC Member", phone: "9324065445" },
+    { name: "Chinmay Mhatre", role: "OC Member", phone: "9324065445" },
+    { name: "Shreeya Dewangan", role: "OC Member", phone: "9324065445" },
+    { name: "Shubham Mane", role: "OC Member", phone: "9324065445" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-internship-fair" panelTitle="Participating Startups" primaryContacts={primaryContacts} />;

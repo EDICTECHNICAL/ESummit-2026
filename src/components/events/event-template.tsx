@@ -6,7 +6,7 @@ import { Particles } from "../magicui/particles";
 import { GradientText } from "../magicui/gradient-text";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Calendar, Clock, MapPin, Mail, Phone, ArrowRight, ArrowLeft, Trophy, Users, Target, CheckCircle2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Mail, Phone, ArrowRight, ArrowLeft, Trophy, Users, Target, CheckCircle2, MessageCircle } from "lucide-react";
 import { EventRegistrationModal } from "../event-registration-modal";
 import { GlassCard } from "../accentricity/glass-card";
 import { API_BASE_URL } from "../../lib/api";
@@ -628,10 +628,10 @@ export function EventPageTemplate({
                           <div className="space-y-2 pt-2">
                             {contact.phone && (
                               <div className="flex items-center gap-2 text-xs sm:text-sm text-foreground/70">
-                                <div className="p-1.5 rounded-md bg-primary/10">
-                                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                                <div className="p-1.5 rounded-md bg-green-500/10">
+                                  <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                                 </div>
-                                <a href={`tel:${contact.phone}`} className="hover:text-primary transition-colors break-all">{contact.phone}</a>
+                                <a href={`https://wa.me/91${contact.phone}`} target="_blank" rel="noopener noreferrer" className="hover:text-green-600 transition-colors break-all">WhatsApp</a>
                               </div>
                             )}
                             {contact.email && (

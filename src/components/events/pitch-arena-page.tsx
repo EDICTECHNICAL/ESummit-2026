@@ -20,10 +20,10 @@ export function PitchArenaPage() {
   ];
 
   const primaryContacts = [
-    { name: "Akshay Upadhyay", role: "OC Member" },
-    { name: "Saloni Suthar", role: "OC Member" },
-    { name: "Shruti Jadhav", role: "OC Member" },
-    { name: "Sakshi Thakur", role: "OC Member" },
+    { name: "Akshay Upadhyay", role: "OC Member", phone: "9653310551" },
+    { name: "Saloni Suthar", role: "OC Member", phone: "6378370213" },
+    { name: "Shruti Jadhav", role: "OC Member", phone: "9820462485" },
+    { name: "Sakshi Thakur", role: "OC Member", phone: "8655443326" },
   ];
 
   const seniorContacts = [

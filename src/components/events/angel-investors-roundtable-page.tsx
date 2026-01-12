@@ -12,13 +12,13 @@ export function AngelInvestorsRoundtablePage() {
   };
 
   const primaryContacts = [
-    { name: "Hredey Chaand", role: "Core Member" },
-    { name: "Mishti Dhiman", role: "Core Member" },
-    { name: "Diya Tailor", role: "Junior Core Member" },
-    { name: "Shruti Nale", role: "OC Member" },
-    { name: "Aryan Singh", role: "OC Member" },
-    { name: "Rutuja Bunke", role: "OC Member" },
-    { name: "Dhanush Shetty", role: "OC Member" },
+    { name: "Hredey Chaand", role: "Core Member", phone: "9004724466" },
+    { name: "Mishti Dhiman", role: "Core Member", phone: "9805411677" },
+    { name: "Diya Tailor", role: "Junior Core Member", phone: "8007857018" },
+    { name: "Shruti Nale", role: "OC Member", phone: "9324065445" },
+    { name: "Aryan Singh", role: "OC Member", phone: "7977915755" },
+    { name: "Rutuja Bunke", role: "OC Member", phone: "9967598257" },
+    { name: "Dhanush Shetty", role: "OC Member", phone: "8850180464" },
   ];
 
   return <EventPageTemplate event={event} eventId="d2-angel-roundtable" panelTitle="Angel Investors Panel" primaryContacts={primaryContacts} />;

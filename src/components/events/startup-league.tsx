@@ -12,12 +12,12 @@ export function StartupLeaguePage() {
     eligibility: "All pass holders (Pixel, Silicon, Quantum)",
   };
   const primaryContacts = [
-    { name: "Aman Pandey", role: "Core Member" },
-    { name: "Raj Mane", role: "Core Member" },
-    { name: "Kaushal Shetty", role: "OC Member" },
-    { name: "Bhavika Vasule", role: "OC Member" },
-    { name: "Anugrah Yadav", role: "OC Member" },
-    { name: "Shiva Saraswati", role: "OC Member" },
+    { name: "Aman Pandey", role: "Core Member", phone: "8108390154" },
+    { name: "Raj Mane", role: "Core Member", phone: "7715869977" },
+    { name: "Kaushal Shetty", role: "OC Member", phone: "9136127041" },
+    { name: "Bhavika Vasule", role: "OC Member", phone: "7276652506" },
+    { name: "Anugrah Yadav", role: "OC Member", phone: "9807310372" },
+    { name: "Shiva Saraswati", role: "OC Member", phone: "9561914349" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-biz-arena" panelTitle="Mentors & Judges" primaryContacts={primaryContacts} />;

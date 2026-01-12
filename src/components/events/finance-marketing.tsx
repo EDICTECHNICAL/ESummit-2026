@@ -11,12 +11,12 @@ export function FinanceMarketingPage() {
     eligibility: "Silicon & Quantum Pass holders",
   };
   const primaryContacts = [
-    { name: "Sayyam Lohade", role: "Core Member" },
-    { name: "Priyanshi Negi", role: "Junior Core Member" },
-    { name: "Ayush Giri", role: "OC Member" },
-    { name: "Himanshu Naik", role: "OC Member" },
-    { name: "Parthavi Rai", role: "OC Member" },
-    { name: "Siddhesh Wagh", role: "OC Member" },
+    { name: "Sayyam Lohade", role: "Core Member", phone: "9373749488" },
+    { name: "Priyanshi Negi", role: "Junior Core Member", phone: "8669098431" },
+    { name: "Ayush Giri", role: "OC Member", phone: "9022307407" },
+    { name: "Himanshu Naik", role: "OC Member", phone: "9561874652" },
+    { name: "Parthavi Rai", role: "OC Member", phone: "7307254413" },
+    { name: "Siddhesh Wagh", role: "OC Member", phone: "7058338686" },
   ];
 
   return <EventPageTemplate event={event} eventId="d1-finance-marketing" panelTitle="Speakers" primaryContacts={primaryContacts} />;
