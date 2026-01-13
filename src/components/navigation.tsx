@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, Calendar, Users, MapPin, Trophy, Ticket, LogIn, User, LogOut, Shield } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "./ui/sheet";
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { UserButton, useUser, useClerk } from "@clerk/clerk-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +42,7 @@ export function Navigation({
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
 
   const getUserInitials = (name: string) => {
     return name
@@ -173,12 +174,13 @@ export function Navigation({
 
               {/* Use Clerk UserButton if signed in with Clerk, otherwise use custom auth */}
               {isSignedIn ? (
-                <div className="hidden sm:block">
+                <div className="hidden sm:block relative z-10">
                   <UserButton
                     afterSignOutUrl="/"
                     appearance={{
                       elements: {
                         avatarBox: "h-8 w-8",
+                        userButtonPopoverCard: "shadow-lg border",
                       },
                     }}
                   />
@@ -289,20 +291,33 @@ export function Navigation({
                     {isSignedIn ? (
                       <div className="border-b px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <UserButton
-                            afterSignOutUrl="/"
-                            appearance={{
-                              elements: {
-                                avatarBox: "h-10 w-10",
-                              },
-                            }}
-                          />
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="bg-primary text-primary-foreground">
+                              {user?.firstName?.[0] || user?.primaryEmailAddress?.emailAddress?.[0] || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium">Clerk Account</p>
-                            <p className="text-xs text-muted-foreground">
-                              Signed in with Clerk
+                            <p className="text-sm font-medium truncate">
+                              {user?.firstName || 'Clerk User'}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {user?.primaryEmailAddress?.emailAddress}
                             </p>
                           </div>
+                        </div>
+                        <div className="mt-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => {
+                              signOut({ redirectUrl: '/' });
+                              setIsOpen(false);
+                            }}
+                          >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            Sign Out
+                          </Button>
                         </div>
                       </div>
                     ) : isUserAuthenticated && userData && (

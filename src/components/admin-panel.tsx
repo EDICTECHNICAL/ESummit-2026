@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useUser, SignIn, useAuth } from "@clerk/clerk-react";
+import { useUser, SignIn, useClerk } from "@clerk/clerk-react";
 import {
   Users,
   Calendar,
@@ -194,7 +194,7 @@ const ADMIN_ROLES: { [email: string]: AdminRole } = {
 
 export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const { user, isSignedIn, isLoaded } = useUser();
-  const { signOut, getToken } = useAuth();
+  const { signOut, getToken } = useClerk();
   const [activeTab, setActiveTab] = useState("stats");
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<AdminRole>(null);
