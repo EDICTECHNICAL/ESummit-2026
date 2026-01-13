@@ -53,20 +53,46 @@ router.post('/clerk', async (req: Request, res: Response) => {
     if (event.type === 'user.created') {
       logger.info('Creating user from Clerk webhook:', eventData.id);
 
+      const userEmail = eventData.email_addresses?.[0]?.email_address;
       const fullName = `${eventData.first_name || ''} ${eventData.last_name || ''}`.trim();
 
-      await prisma.user.create({
-        data: {
-          clerkUserId: eventData.id,
-          email: eventData.email_addresses?.[0]?.email_address || '',
-          ...(fullName && { fullName }),
-          ...(eventData.first_name && { firstName: eventData.first_name }),
-          ...(eventData.last_name && { lastName: eventData.last_name }),
-          ...(eventData.image_url && { imageUrl: eventData.image_url }),
-        },
+      if (!userEmail) {
+        logger.warn('No email found for user creation:', eventData.id);
+        return res.status(200).json({ success: true });
+      }
+
+      // Check if user already exists by email
+      const existingUser = await prisma.user.findUnique({
+        where: { email: userEmail },
       });
 
-      logger.info('User created successfully:', eventData.id);
+      if (existingUser) {
+        // Update existing user with Clerk ID
+        await prisma.user.update({
+          where: { email: userEmail },
+          data: {
+            clerkUserId: eventData.id,
+            ...(fullName && { fullName }),
+            ...(eventData.first_name && { firstName: eventData.first_name }),
+            ...(eventData.last_name && { lastName: eventData.last_name }),
+            ...(eventData.image_url && { imageUrl: eventData.image_url }),
+          },
+        });
+        logger.info('Updated existing user with Clerk data:', eventData.id);
+      } else {
+        // Create new user
+        await prisma.user.create({
+          data: {
+            clerkUserId: eventData.id,
+            email: userEmail,
+            ...(fullName && { fullName }),
+            ...(eventData.first_name && { firstName: eventData.first_name }),
+            ...(eventData.last_name && { lastName: eventData.last_name }),
+            ...(eventData.image_url && { imageUrl: eventData.image_url }),
+          },
+        });
+        logger.info('User created successfully:', eventData.id);
+      }
     }
 
     // Handle user.updated event
