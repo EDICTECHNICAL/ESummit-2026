@@ -8,6 +8,9 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Redirect imports of `moment` to a lightweight Day.js shim to avoid
+      // bundling the large Moment.js library and prevent non-ISO parsing fallbacks.
+      'moment': path.resolve(__dirname, 'src', 'lib', 'moment-shim.ts'),
     },
   },
   build: {
