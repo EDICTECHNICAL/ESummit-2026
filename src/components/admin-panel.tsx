@@ -194,7 +194,7 @@ const ADMIN_ROLES: { [email: string]: AdminRole } = {
 
 export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const { user, isSignedIn, isLoaded } = useUser();
-  const { signOut, getToken } = useClerk();
+  const clerk = useClerk();
   const [activeTab, setActiveTab] = useState("stats");
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<AdminRole>(null);
@@ -227,7 +227,24 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   // Helper to get auth headers for API calls
   const getAuthHeaders = async () => {
     try {
-      const token = await getToken();
+      let token: string | null = null;
+      try {
+        // Preferred: clerk.getToken()
+        if (clerk && typeof (clerk as any).getToken === "function") {
+          token = await (clerk as any).getToken();
+        }
+        // Fallback: clerk.session.getToken()
+        else if (clerk && (clerk as any).session && typeof (clerk as any).session.getToken === "function") {
+          token = await (clerk as any).session.getToken();
+        }
+        // Fallback: window.Clerk.session.getToken()
+        else if (typeof window !== "undefined" && (window as any).Clerk && (window as any).Clerk.session && typeof (window as any).Clerk.session.getToken === "function") {
+          token = await (window as any).Clerk.session.getToken();
+        }
+      } catch (e) {
+        logger.debug('getToken source failed', e);
+      }
+
       const headers: any = {
         'Content-Type': 'application/json',
       };
