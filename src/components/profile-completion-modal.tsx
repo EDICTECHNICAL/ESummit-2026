@@ -42,6 +42,8 @@ const TCET_BRANCHES = [
   "B.Tech Artificial Intelligence & Data Science (Working Professional)",
   "Bachelor Of Computer Application (BCA)",
   "Bachelor Of Business Administration (BBA)",
+  "Master Of Business Administration (MBA)",
+  "Master Of Computer Applications (MCA)",
   "B.Voc Artificial Intelligence and Data Science",
   "B.Voc Software Development",
   "B.Voc Animation & Graphic Designing",
