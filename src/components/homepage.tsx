@@ -66,32 +66,23 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
 
   const speakers = [
     {
-      name: "Dr. Rajesh Kumar",
-      title: "CEO, TechVentures India",
-      topic: "Building Scalable Startups in Emerging Markets",
-      image:
-        "https://images.unsplash.com/photo-1689150571822-1b573b695391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMGNvbmZlcmVuY2UlMjBzcGVha2VyfGVufDF8fHx8MTc1OTQyODg5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      name: "Devang Raja",
+      title: "Founder, Venture Wolf",
+      topic: "The Ten Minute Deal & Future of Startup Funding",
+      image: "/assets/panel/devang_raja.png",
     },
     {
-      name: "Priya Sharma",
-      title: "Founder, StartupHub",
-      topic: "From Idea to IPO: The Startup Journey",
-      image:
-        "https://images.unsplash.com/photo-1590097520505-416422f07ad1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGFydHVwJTIwZW50cmVwcmVuZXVyJTIwcHJlc2VudGF0aW9ufGVufDF8fHx8MTc1OTQyODg5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-    },
-    {
-      name: "Amit Patel",
-      title: "VP Engineering, GlobalTech",
-      topic: "AI & the Future of Entrepreneurship",
-      image:
-        "https://images.unsplash.com/photo-1675716921224-e087a0cca69a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG5ldHdvcmtpbmclMjBldmVudHxlbnwxfHx8fDE3NTk0MTY5MDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      name: "Nikhil Jadhav",
+      title: "VC, Ten Minute Deal",
+      topic: "Startup Leadership & Investment Strategy",
+      image: "/assets/panel/nikhil_jadhav.jpg",
     },
   ];
 
   const stats = [
-    { label: "Events", value: "30+", icon: Trophy },
-    { label: "Judges & Speakers", value: "50+", icon: Users },
-    { label: "Expected Attendees", value: "2000+", icon: Users },
+    { label: "Events", value: "18+", icon: Trophy },
+    { label: "Judges & Speakers", value: "30+", icon: Users },
+    { label: "Expected Attendees", value: "1000+", icon: Users },
     { label: "Startup Pitches", value: "50+", icon: Building2 },
   ];
 
@@ -401,71 +392,11 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
         </div>
       </section>
 
-      {/* Featured Speakers Section */}
-      <section className="relative border-b py-20 overflow-hidden">
-        <Particles className="absolute inset-0 opacity-30" quantity={50} ease={60} />
-        
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="mb-12 text-center px-4">
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-foreground"
-            >
-              Featured Speakers
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-sm sm:text-base text-foreground"
-            >
-              Learn from the best in the industry
-            </motion.p>
-          </div>
-
-          <div className="relative mx-auto max-w-4xl">
-            <Card className="overflow-hidden">
-              <CardContent className="flex flex-col items-center justify-center p-12 md:p-16 text-center min-h-[300px]">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="mb-6"
-                >
-                  <Users className="h-16 w-16 text-primary/40 mx-auto mb-4" />
-                  <div className="mb-3">
-                    <span className="text-2xl font-semibold bg-gradient-to-r from-primary via-primary to-primary/80 bg-clip-text text-transparent">
-                      Speakers Announcement Coming Soon
-                    </span>
-                  </div>
-                  <p className="text-foreground max-w-md">
-                    We're finalizing our incredible lineup of industry leaders, successful entrepreneurs, 
-                    and investors. Stay tuned for the official announcement!
-                  </p>
-                </motion.div>
-                <Button
-                  onClick={() => onNavigate("speakers")}
-                  variant="outline"
-                >
-                  Visit Speakers Page
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* COMMENTED SPEAKERS CAROUSEL - Uncomment when speakers are ready
-      <section className="border-b py-16">
+      <section className="border-b py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4">Featured Speakers</h2>
-            <p className="text-muted-foreground">
+            <h2 className="mb-4 text-3xl md:text-4xl font-bold text-foreground">Featured Speakers</h2>
+            <p className="text-lg md:text-xl text-foreground">
               Learn from the best in the industry
             </p>
           </div>
@@ -473,7 +404,7 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
           <div className="relative mx-auto max-w-4xl">
             <Card className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
-                <div className="relative h-64 md:h-auto md:w-1/2">
+                <div className="relative h-64">
                   <ImageWithFallback
                     src={speakers[currentSpeaker].image}
                     alt={speakers[currentSpeaker].name}
@@ -540,7 +471,6 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
           </div>
         </div>
       </section>
-      */}
 
       {/* News and Updates Section */}
       <section className="border-b py-16 bg-gradient-to-br from-background via-background to-secondary/5">
@@ -558,25 +488,25 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
           <div className="grid gap-6 md:grid-cols-3">
             {[
               {
-                title: "Early Bird Passes Available",
-                date: "Jan 12, 2026",
+                title: "Keynote Speakers Confirmed",
+                date: "Jan 15, 2026",
                 content:
-                  "Secure discounted passes for the first 120 registrations! Early bird pricing available for a limited time - don't miss out on the inaugural edition.",
-                icon: Trophy,
+                  "Exciting news! We've confirmed our keynote speakers including Devang Raja from Venture Wolf and Nikhil Jadhav from The Ten Minute Deal. Don't miss their insights on startup growth and investment strategies.",
+                icon: Users,
               },
               {
-                title: "New Pitching Events",
-                date: "Jan 08, 2026",
+                title: "Major Sponsors Onboarded",
+                date: "Jan 16, 2026",
                 content:
-                  "Pitch to VCs and Angel Investors at exclusive events. Secure seed funding for your startup & Don't forget to check out the events page for registration!",
+                  "We're thrilled to announce partnerships with leading sponsors including Venture Loop (Co-powered by), Hire Helmet (Support Sponsor), Mad Over Donuts, 99Pancakes, Nissin, and Red Bull. Their support will enhance the event experience.",
                 icon: Building2,
               },
               {
-                title: "Prize Pool Updated",
-                date: "Jan 09, 2026",
+                title: "AI Innovation Workshop Added",
+                date: "Jan 14, 2026",
                 content:
-                  "Total prize money exceeds ₹1.5 Lakhs with additional funding opportunities from investors!",
-                icon: Users,
+                  "New hands-on workshop on AI applications in business added to the schedule. Learn practical skills in machine learning and data analytics from expert instructors at this TCET AXIOS EDIC event.",
+                icon: Trophy,
               },
             ].map((news, index) => (
               <motion.div
