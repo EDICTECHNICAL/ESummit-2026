@@ -4,38 +4,93 @@ import { Request, Response, NextFunction } from 'express';
  * Vercel Web Analytics Middleware
  * 
  * This middleware enables Vercel Web Analytics tracking for the Express backend.
- * It injects the necessary tracking metadata into responses for Vercel's analytics
- * service to collect insights about API usage and performance.
+ * It captures request/response timing and metadata for Vercel's analytics service
+ * to collect insights about API usage and performance.
  * 
- * Note: The @vercel/analytics package for Node.js works best when used with the
- * inject() function on the client-side. This middleware supports analytics tracking
- * by ensuring proper headers and timing information are available.
+ * Features:
+ * - Tracks response times for all API endpoints
+ * - Records HTTP status codes and methods
+ * - Supports Vercel's analytics infrastructure
+ * - Non-blocking operation to minimize performance impact
+ * 
+ * Note: The @vercel/analytics package for Node.js/Express works best when:
+ * 1. Web Analytics is enabled in the Vercel dashboard
+ * 2. The app is deployed to Vercel
+ * 3. The client-side inject() function is used for full tracking
  */
 export const analyticsMiddleware = (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
   // Store the start time for calculating response time
   const startTime = Date.now();
 
-  // Intercept the res.send method to inject analytics tracking
+  // Store route information for analytics
+  const method = req.method;
+  const path = req.path;
+
+  // Intercept the res.send method to capture response information
   const originalSend = res.send;
 
   res.send = function (data: any) {
     // Calculate response time in milliseconds
     const responseTime = Date.now() - startTime;
+    const statusCode = res.statusCode;
 
     // Add custom headers for analytics tracking
     res.set('X-Response-Time', `${responseTime}ms`);
+    res.set('X-Request-Method', method);
+    res.set('X-Request-Path', path);
     
     // Set cache headers appropriately (helpful for analytics data)
     if (!res.get('Cache-Control')) {
-      res.set('Cache-Control', 'public, max-age=3600');
+      // Cache GET requests, don't cache others
+      if (method === 'GET') {
+        res.set('Cache-Control', 'public, max-age=3600');
+      } else {
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+    }
+
+    // Log analytics data in development for debugging
+    if (process.env.NODE_ENV === 'development' && process.env.DEBUG_ANALYTICS === 'true') {
+      console.log(`📊 [Analytics] ${method} ${path} - ${statusCode} (${responseTime}ms)`);
     }
 
     // Call the original send method
     return originalSend.call(this, data);
+  };
+
+  // Also intercept json method for JSON responses
+  const originalJson = res.json;
+  
+  res.json = function (body: any) {
+    // Calculate response time in milliseconds
+    const responseTime = Date.now() - startTime;
+    const statusCode = res.statusCode;
+
+    // Add custom headers for analytics tracking
+    res.set('X-Response-Time', `${responseTime}ms`);
+    res.set('X-Request-Method', method);
+    res.set('X-Request-Path', path);
+
+    // Set cache headers appropriately
+    if (!res.get('Cache-Control')) {
+      if (method === 'GET') {
+        res.set('Cache-Control', 'public, max-age=3600');
+      } else {
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+    }
+
+    // Log analytics data in development for debugging
+    if (process.env.NODE_ENV === 'development' && process.env.DEBUG_ANALYTICS === 'true') {
+      console.log(`📊 [Analytics] ${method} ${path} - ${statusCode} (${responseTime}ms)`);
+    }
+
+    // Call the original json method
+    return originalJson.call(this, body);
   };
 
   next();
@@ -52,20 +107,31 @@ export const injectAnalyticsScript = (
   res: Response,
   next: NextFunction
 ): void => {
-  // Store the original json method
-  const originalJson = res.json;
+  // Store the original send method
+  const originalSend = res.send;
 
-  res.json = function (body: any) {
+  res.send = function (data: any) {
     // Only process HTML content types
     const contentType = res.get('Content-Type') || '';
     
-    if (contentType.includes('text/html')) {
-      // Analytics script would be injected here if serving HTML
-      // For API responses (JSON), no injection is needed
+    if (contentType.includes('text/html') && typeof data === 'string') {
+      // Inject the Vercel analytics script before closing body tag
+      const analyticsScript = `
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+`;
+      
+      if (data.includes('</body>')) {
+        data = data.replace('</body>', `${analyticsScript}</body>`);
+      } else {
+        data += analyticsScript;
+      }
     }
 
-    // Call the original json method
-    return originalJson.call(this, body);
+    // Call the original send method
+    return originalSend.call(this, data);
   };
 
   next();
@@ -87,9 +153,19 @@ export const trackAnalyticsEvent = (
   eventName: string,
   eventData?: Record<string, any>
 ): void => {
-  // In a real implementation, this would send events to Vercel's analytics service
-  // For now, we log the event for monitoring purposes
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`📊 Analytics Event: ${eventName}`, eventData);
+  // For backend tracking, we log the event for monitoring purposes
+  // Client-side analytics are collected via @vercel/analytics on frontend
+  try {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`📊 Analytics Event: ${eventName}`, eventData || {});
+    }
+
+    // Future: Implement server-side event tracking to Vercel analytics service
+    // This could be extended to send events to a custom endpoint or third-party service
+  } catch (error) {
+    // Silently fail analytics tracking to not disrupt application
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️ Analytics event tracking failed:', error);
+    }
   }
 };
