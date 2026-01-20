@@ -414,11 +414,8 @@ router.post('/events/register', async (req: Request, res: Response) => {
       return;
     }
 
-    // Get pass type from active passes or user booking
-    let userPassType = userWithBooking?.bookedPassType;
-    if (!userPassType && activePasses.length > 0) {
-      userPassType = activePasses[0].passType;
-    }
+    // Get pass type from active passes
+    let userPassType = activePasses.length > 0 ? activePasses[0].passType : null;
     
     if (!userPassType) {
       sendError(res, 'NO_PASS_TYPE', 403, {
