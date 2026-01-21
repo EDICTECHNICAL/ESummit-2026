@@ -131,7 +131,7 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     {
       id: 6,
-      title: "AI Build-A-Thon: The Innovation Challenge",
+      title: "AI Contest: The Innovation Challenge",
       category: "competitions",
       description: "Push the boundaries of AI. Tackle a real-world problem by designing and presenting an innovative, AI-driven solution. Showcase your technical skills and creativity to win the challenge.",
       date: "February 2-3, 2026",
@@ -150,7 +150,7 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     {
       id: 7,
-      title: "Startup League Game: Build Your Empire",
+      title: "Biz Arena League: Build Your Empire",
       category: "competitions",
       description: "Step into the founder's seat. Run a virtual startup in this fast-paced simulation. Make critical decisions on product, marketing, and funding to outmaneuver competitors and dominate the market.",
       date: "February 2-3, 2026",
@@ -171,9 +171,9 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     // WORKSHOPS
     {
       id: 8,
-      title: "Design Thinking & Innovation Strategy",
+      title: "Design Thinking & Innovation Strategy Workshop",
       category: "workshops",
-      description: "Hands-on workshop on design thinking and innovation for building successful ventures. 3-hour interactive sessions throughout the day.",
+      description: "Unlock Your Creative Potential. Master the tools to solve complex problems and generate groundbreaking ideas. This hands-on workshop will equip you with a powerful framework for innovation.",
       date: "February 2-3, 2026",
       time: "10:00 - 17:00 (3 Hours Sessions)",
       venue: "Lab 522 & 523",
@@ -187,9 +187,9 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     {
       id: 9,
-      title: "Finance & Marketing for Startups",
+      title: "Finance & Marketing for Startups Workshop",
       category: "workshops",
-      description: "Build a solid foundation for your venture. Get essential, practical knowledge on managing your startup's finances and crafting marketing strategies that actually convert. 3-hour interactive sessions.",
+      description: "Build a Solid Foundation for Your Venture. Get essential, practical knowledge on managing your startup's finances and crafting marketing strategies that actually convert.",
       date: "February 2-3, 2026",
       time: "10:00 - 17:00 (3 Hours Sessions)",
       venue: "Lab 524 & 525",
@@ -203,12 +203,12 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     {
       id: 10,
-      title: "Data Analytics & Business Development Essentials",
+      title: "Data Analytics & Business Development Essentials Workshop",
       category: "workshops",
-      description: "Make smarter decisions with data. Learn to analyze market trends, track key metrics, and use data-driven insights to fuel your business growth and strategy. 3-hour interactive sessions.",
+      description: "Make Smarter Decisions with Data. Learn to analyze market trends, track key metrics, and use data-driven insights to fuel your business growth and strategy.",
       date: "February 2-3, 2026",
       time: "10:00 - 17:00 (3 Hours Sessions)",
-      venue: "Lab 526 / 527 / 528 / 529",
+      venue: "Lab 526 & 527",
       eligibility: "Silicon & Quantum Pass holders",
       objective: "Hands-on Data Analysis Tools",
       outcome: "Get insights about how data analysis help in startup growth",

@@ -29,7 +29,7 @@ export function Venue() {
     {
       name: "SH 3 (Seminar Hall 3)",
       capacity: "Seminar Hall",
-      events: ["Pitch Arena: Idea to Reality (Day 1)"],
+      events: ["AI Contest: The Innovation Challenge (Day 1 & 2)"],
       features: ["Mentor feedback zones", "Pitch presentation areas", "Interactive seating"],
       floor: "Seminar Hall",
     },
@@ -48,7 +48,7 @@ export function Venue() {
       floor: "Convocation Area",
     },
     {
-      name: "Multipurpose Hall 2nd Floor and Multipurpose Hall Ground Floor",
+      name: "Multipurpose Hall 2nd Floor and Architecture Ground Floor",
       capacity: "Open spaces",
       events: ["Informals: Connect Beyond the Stage (Day 1)", "Networking Arena (Lunch Hours, Day 1 & 2)"],
       features: ["Informal seating", "Refreshment areas", "Networking zones"],
@@ -71,7 +71,7 @@ export function Venue() {
     {
       name: "301 TIMSR",
       capacity: "Classroom",
-      events: ["Startup League Game: Build Your Empire (Day 1 & 2)"],
+      events: ["Biz Arena League: Build Your Empire (Day 1 & 2)"],
       features: ["Computer workstations", "Simulation software", "Team zones"],
       floor: "3rd Floor TIMSR",
     },
@@ -90,7 +90,7 @@ export function Venue() {
       floor: "Workshop Area",
     },
     {
-      name: "Lab 526 / 527 / 528 / 529",
+      name: "Lab 526 & 527",
       capacity: "Workshop Lab",
       events: ["Data Analytics & Business Development Essentials Workshop (Day 1 & 2)"],
       features: ["Analytics software", "Data visualization tools", "Computing resources"],
