@@ -308,21 +308,6 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     // Additional workshops and pre-summit events
     {
-      id: 16,
-      title: "AI for Early Stage Startups",
-      category: "workshops",
-      description: "Explore how AI can be leveraged in early-stage startups to accelerate growth. Hands-on and practical insights for founders.",
-      date: "February 3, 2026",
-      time: "2:00 PM – 4:30 PM",
-      venue: "Workshop Hall B",
-      eligibility: "All pass holders",
-      objective: "Use of AI in early stage startups",
-      outcome: "Understand where AI accelerates early-stage traction",
-      prerequisites: "None",
-      icon: Users,
-      color: "muted",
-    },
-    {
       id: 17,
       title: "Roadmap to Entrepreneurship (Pre E-summit Workshop)",
       category: "workshops",
