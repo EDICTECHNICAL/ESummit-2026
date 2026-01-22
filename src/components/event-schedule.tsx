@@ -101,7 +101,7 @@ const EventSchedule = () => {
       {
         id: "d1-ai-buildathon-start",
         time: "10:00 - 17:00",
-        title: "AI Contest: The Innovation Challenge (Day 1)",
+        title: "AI Buildathon: The Innovation Challenge (Day 1)",
         category: "competitions",
         venue: "SH 3",
         speaker: "Tech Mentors",
@@ -254,7 +254,7 @@ const EventSchedule = () => {
       {
         id: "d2-ai-buildathon-final",
         time: "10:00 - 17:00",
-        title: "AI Contest: The Innovation Challenge (Day 2 Finals)",
+        title: "AI Buildathon: The Innovation Challenge (Day 2 Finals)",
         category: "competitions",
         venue: "SH 3",
         speaker: "Tech Judges",

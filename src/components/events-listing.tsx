@@ -112,7 +112,7 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
     },
     {
       id: 5,
-      title: "AI Contest: The Innovation Challenge",
+      title: "AI Buildathon: The Innovation Challenge",
       category: "competitions",
       description: "Push the boundaries of AI. Tackle a real-world problem by designing and presenting an innovative, AI-driven solution. Showcase your technical skills and creativity to win the challenge.",
       date: "February 2-3, 2026",

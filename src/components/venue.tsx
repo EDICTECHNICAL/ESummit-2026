@@ -22,7 +22,7 @@ export function Venue() {
     {
       name: "SH 3 (Seminar Hall 3)",
       capacity: "Seminar Hall",
-      events: ["AI Contest: The Innovation Challenge (Day 1 & 2)"],
+      events: ["AI Buildathon: The Innovation Challenge (Day 1 & 2)"],
       features: ["Mentor feedback zones", "Pitch presentation areas", "Interactive seating"],
       floor: "Seminar Hall",
     },
