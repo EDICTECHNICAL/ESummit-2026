@@ -181,6 +181,10 @@ export function EventRegistrationModal({
         toast.error("📝 Please enter your startup name.");
         return;
       }
+      if (!tenMinuteMillionForm.cin.trim()) {
+        toast.error("📋 CIN (Corporate Identification Number) is required.");
+        return;
+      }
       if (!tenMinuteMillionForm.problemStatement.trim()) {
         toast.error("Problem statement is required");
         return;
@@ -372,11 +376,12 @@ export function EventRegistrationModal({
               />
             </div>
             <div>
-              <Label htmlFor="cin">CIN (if registered)</Label>
+              <Label htmlFor="cin">CIN (Corporate Identification Number) *</Label>
               <Input
                 id="cin"
                 value={tenMinuteMillionForm.cin}
                 onChange={(e) => setTenMinuteMillionForm(prev => ({ ...prev, cin: e.target.value }))}
+                required
               />
             </div>
           </div>
