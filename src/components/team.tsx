@@ -222,13 +222,6 @@ export function Team() {
     ],
     technical: [
       {
-        name: "Listen Choudhary",
-        year: "SE",
-        branch: "COMP",
-        position: "Please call me at 9PM, ill be having dinner now what to do madharc-",
-        department: "Technical"
-      },
-      {
         name: "Shaleen Singh",
         year: "SE",
         branch: "IT",

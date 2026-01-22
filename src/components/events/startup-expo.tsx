@@ -12,7 +12,6 @@ export function StartupExpoPage() {
     eligibility: "All pass holders",
   };
   const primaryContacts = [
-    { name: "Listen Choudhary", role: "Junior Core Member", phone: "9022514499" },
     { name: "Sankarshan Dwivedi", role: "OC Member", phone: "8208840697" },
     { name: "Aayush Mishra", role: "OC Member", phone: "9987638504" },
     { name: "Khushi Tyagi", role: "OC Member", phone: "8369998587" },
