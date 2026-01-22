@@ -259,31 +259,31 @@ router.get('/profile/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
 
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      select: {
-        id: true,
-        clerkUserId: true,
-        email: true,
-        fullName: true,
-        firstName: true,
-        lastName: true,
-        imageUrl: true,
-        phone: true,
-        college: true,
-        yearOfStudy: true,
-        rollNumber: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const user = await ensureUserExists(clerkUserId);
 
     if (!user) {
       sendError(res, 'User not found', 404);
       return;
     }
 
-    sendSuccess(res, 'User profile fetched successfully', { user });
+    // Select only the fields we want to return
+    const userProfile = {
+      id: user.id,
+      clerkUserId: user.clerkUserId,
+      email: user.email,
+      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      imageUrl: user.imageUrl,
+      phone: user.phone,
+      college: user.college,
+      yearOfStudy: user.yearOfStudy,
+      rollNumber: user.rollNumber,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    sendSuccess(res, 'User profile fetched successfully', { user: userProfile });
   } catch (error: any) {
     logger.error('Get user profile error:', error);
     sendError(res, error.message || 'Failed to fetch user profile', 500);
@@ -298,16 +298,7 @@ router.get('/check-profile/:clerkUserId', async (req: Request, res: Response) =>
   try {
     const { clerkUserId } = req.params;
 
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      select: {
-        phone: true,
-        college: true,
-        yearOfStudy: true,
-        branch: true,
-        rollNumber: true,
-      },
-    });
+    const user = await ensureUserExists(clerkUserId);
 
     if (!user) {
       sendSuccess(res, 'User not found', { isComplete: false, exists: false });
@@ -359,10 +350,8 @@ router.post('/events/register', async (req: Request, res: Response) => {
       return;
     }
 
-    // Get user from database
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-    });
+    // Get user from database (ensure user exists)
+    const user = await ensureUserExists(clerkUserId);
 
     if (!user) {
       sendError(res, 'User not found', 404);
@@ -497,10 +486,31 @@ router.post('/events/register', async (req: Request, res: Response) => {
     // Validate formData if provided
     let validatedFormData = null;
     if (formData) {
+      logger.info('Received formData:', formData); // Debug logging
       try {
         validatedFormData = eventRegistrationFormSchema.parse(formData);
+
+        // Additional validation for pitch arena
+        if (formData.registrationType === 'pitch_arena') {
+          if (formData.attendeeType !== 'audience' && (!formData.ideaBrief || formData.ideaBrief.trim().length === 0)) {
+            sendError(res, 'Invalid form data: Idea brief is required for participants', 400);
+            return;
+          }
+          if (formData.attendeeType !== 'audience' && (!formData.documentLink || formData.documentLink.trim().length === 0)) {
+            sendError(res, 'Invalid form data: Document link is required for participants', 400);
+            return;
+          }
+          if (formData.attendeeType !== 'audience' && (!formData.pitchDeckLink || formData.pitchDeckLink.trim().length === 0)) {
+            sendError(res, 'Invalid form data: Pitch deck link is required for participants', 400);
+            return;
+          }
+        }
       } catch (validationError: any) {
-        logger.error('Form data validation error:', validationError.errors);
+        logger.error('Form data validation error:', {
+          formData,
+          errors: validationError.errors,
+          errorMessage: validationError.errors?.map((e: any) => e.message).join(', ')
+        });
         sendError(res, 'Invalid form data: ' + validationError.errors.map((e: any) => e.message).join(', '), 400);
         return;
       }

@@ -75,7 +75,7 @@ export function EventRegistrationModal({
 
   // Pitch Arena Form
   const [pitchArenaForm, setPitchArenaForm] = useState({
-    attendeeType: "", // student, startup
+    attendeeType: "student", // Default to student, will be updated based on user profile
     ideaBrief: "",
     documentLink: "",
     pitchDeckLink: "",
@@ -270,6 +270,14 @@ export function EventRegistrationModal({
     if (pitchArenaForm.attendeeType !== 'audience') {
       if (!pitchArenaForm.ideaBrief.trim()) {
         toast.error("Idea brief is required");
+        return;
+      }
+      if (!pitchArenaForm.documentLink.trim()) {
+        toast.error("Document link is required");
+        return;
+      }
+      if (!pitchArenaForm.pitchDeckLink.trim()) {
+        toast.error("Pitch deck link is required");
         return;
       }
     }

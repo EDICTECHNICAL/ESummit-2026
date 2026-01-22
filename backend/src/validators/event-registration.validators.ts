@@ -16,8 +16,8 @@ export const tenMinuteMillionSchema = baseRegistrationSchema.extend({
   problemStatement: z.string().min(1, 'Problem statement is required').max(1000).optional(),
   solution: z.string().min(1, 'Solution is required').max(1000).optional(),
   usp: z.string().min(1, 'Unique selling proposition is required').max(500).optional(),
-  demoLink: z.string().url('Invalid demo link').optional().or(z.literal('')),
-  pitchDeckLink: z.string().url('Invalid pitch deck link').optional().or(z.literal('')),
+  demoLink: z.string().optional(),
+  pitchDeckLink: z.string().optional(),
 });
 
 // Angel Roundtable form validation
@@ -28,17 +28,17 @@ export const angelRoundtableSchema = baseRegistrationSchema.extend({
   problemStatement: z.string().min(1, 'Problem statement is required').max(1000).optional(),
   solution: z.string().min(1, 'Solution is required').max(1000).optional(),
   usp: z.string().min(1, 'Unique selling proposition is required').max(500).optional(),
-  demoLink: z.string().url('Invalid demo link').optional().or(z.literal('')),
-  pitchDeckLink: z.string().url('Invalid pitch deck link').optional().or(z.literal('')),
+  demoLink: z.string().optional(),
+  pitchDeckLink: z.string().optional(),
 });
 
-// Pitch Arena form validation
+// Pitch Arena form validation - simplified for discriminated union
 export const pitchArenaSchema = baseRegistrationSchema.extend({
   registrationType: z.literal('pitch_arena'),
   attendeeType: z.enum(['student', 'startup', 'audience']),
-  ideaBrief: z.string().min(1, 'Idea brief is required').max(500).optional(),
-  documentLink: z.string().url('Invalid document link').optional().or(z.literal('')),
-  pitchDeckLink: z.string().url('Invalid pitch deck link').optional().or(z.literal('')),
+  ideaBrief: z.string().optional(),
+  documentLink: z.string().optional(),
+  pitchDeckLink: z.string().optional(),
 });
 
 // Simple registration form validation (for events that don't require detailed forms)

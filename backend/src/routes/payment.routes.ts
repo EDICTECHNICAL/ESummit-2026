@@ -6,8 +6,72 @@ import { generateQRCode } from '../services/qrcode.service';
 import { generateUniqueIdentifiers } from '../utils/identifier.util';
 import { paymentLimiter } from '../middleware/rateLimit.middleware';
 import { konfhubService } from '../services/konfhub.service';
+import { createClerkClient } from '@clerk/backend';
 
 const router = Router();
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
+
+/**
+ * Helper function to ensure user exists in database
+ */
+async function ensureUserExists(clerkUserId: string) {
+  let user = await prisma.user.findUnique({
+    where: { clerkUserId },
+  });
+
+  if (!user) {
+    try {
+      logger.info('User not found in DB, fetching from Clerk:', clerkUserId);
+      const clerkUser = await clerkClient.users.getUser(clerkUserId);
+      
+      const userEmail = clerkUser.emailAddresses?.[0]?.emailAddress;
+      
+      if (!userEmail) {
+        throw new Error('No email address found for Clerk user');
+      }
+      
+      // Check if a user with this email already exists
+      const existingUserByEmail = await prisma.user.findUnique({
+        where: { email: userEmail },
+      });
+      
+      if (existingUserByEmail) {
+        // Update the existing user with Clerk ID
+        user = await prisma.user.update({
+          where: { email: userEmail },
+          data: {
+            clerkUserId: clerkUser.id,
+            fullName: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+            firstName: clerkUser.firstName || existingUserByEmail.firstName,
+            lastName: clerkUser.lastName || existingUserByEmail.lastName,
+            imageUrl: clerkUser.imageUrl || existingUserByEmail.imageUrl,
+          },
+        });
+        logger.info(`User updated with new clerkUserId: ${userEmail}`);
+      } else {
+        // Create new user
+        user = await prisma.user.create({
+          data: {
+            clerkUserId: clerkUser.id,
+            email: userEmail,
+            fullName: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+            firstName: clerkUser.firstName || null,
+            lastName: clerkUser.lastName || null,
+            imageUrl: clerkUser.imageUrl || null,
+          },
+        });
+        logger.info(`New user synced from Clerk: ${userEmail}`);
+      }
+    } catch (error: any) {
+      logger.error('Error ensuring user exists:', error);
+      throw new Error('Failed to sync user from Clerk');
+    }
+  }
+
+  return user;
+}
 
 // Apply payment rate limiter to all payment routes
 router.use(paymentLimiter);
@@ -36,11 +100,8 @@ router.post('/create-order', async (req: Request, res: Response) => {
       return;
     }
 
-    // Find user by Clerk ID
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      select: { id: true, email: true, fullName: true, phone: true },
-    });
+    // Find user by Clerk ID (ensure user exists)
+    const user = await ensureUserExists(clerkUserId);
 
     if (!user) {
       sendError(res, 'User not found', 404);
@@ -543,11 +604,8 @@ router.get('/user/:clerkUserId/transactions', async (req: Request, res: Response
   try {
     const { clerkUserId } = req.params;
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { clerkUserId },
-      select: { id: true },
-    });
+    // Find user (ensure user exists)
+    const user = await ensureUserExists(clerkUserId);
 
     if (!user) {
       sendError(res, 'User not found', 404);
