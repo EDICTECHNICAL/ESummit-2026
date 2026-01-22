@@ -41,19 +41,7 @@ const EventSchedule = () => {
   ];
 
   const events: { preEvent: Event[]; day1: Event[]; day2: Event[] } = {
-    preEvent: [
-      {
-        id: "pre-udaan",
-        time: "TBA",
-        title: "Udaan - Roadmap to Entrepreneurship",
-        category: "workshops",
-        venue: "TBA",
-        speaker: "Prof. Chaitali & Dr. Pankaj Nandurkar",
-        description: "Turn Ideas into Impact. A focused, hands-on workshop designed to help you transform your ideas into actionable business models. Learn practical startup frameworks, gain real-world insights, and take your first confident step into entrepreneurship.",
-        duration: "1 hour",
-        eligibility: "Open to students, aspiring founders, and innovators",
-      },
-    ],
+    preEvent: [],
     day1: [
       {
         id: "d1-registration",
@@ -477,70 +465,11 @@ const EventSchedule = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="preEvent" className="w-full">
-        <TabsList className="grid w-full max-w-2xl grid-cols-3 text-xs sm:text-sm">
-          <TabsTrigger value="preEvent" className="px-2 sm:px-4">Pre Event</TabsTrigger>
+      <Tabs defaultValue="day1" className="w-full">
+        <TabsList className="grid w-full max-w-2xl grid-cols-2 text-xs sm:text-sm">
           <TabsTrigger value="day1" className="px-2 sm:px-4">Day 1 - Feb 2</TabsTrigger>
           <TabsTrigger value="day2" className="px-2 sm:px-4">Day 2 - Feb 3</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="preEvent" className="mt-6">
-          <Alert className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              Pre-summit workshops will be scheduled before the main event. Stay tuned for exact dates and registration details.
-            </AlertDescription>
-          </Alert>
-          <div className="space-y-4">
-            {filterEvents(events.preEvent).map((event) => (
-              <Card key={event.id}>
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div className="flex-1">
-                      <div className="mb-3 flex flex-wrap items-center gap-2">
-                        <Badge variant={getCategoryColor(event.category) as any} className="text-xs">
-                          {categories.find((c) => c.id === event.category)?.label}
-                        </Badge>
-                      </div>
-
-                      <h3 className="mb-2 text-lg sm:text-xl font-semibold">{event.title}</h3>
-
-                      <div className="mb-3 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 flex-shrink-0" />
-                          <span className="truncate">{event.time}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4 flex-shrink-0" />
-                          <span className="truncate">{event.venue}</span>
-                        </div>
-                        {event.speaker && (
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4 flex-shrink-0" />
-                            <span className="truncate">{event.speaker}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <p className="mb-2 text-sm leading-relaxed">{event.description}</p>
-
-                      {(event.eligibility || event.prerequisite) && (
-                        <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          {event.eligibility && <span>• {event.eligibility}</span>}
-                          {event.prerequisite && <span>• {event.prerequisite}</span>}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col gap-2 md:min-w-[120px]">
-                      {/* Register button removed - registration handled in individual event pages */}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
 
         <TabsContent value="day1" className="mt-6">
           <div className="space-y-4">
