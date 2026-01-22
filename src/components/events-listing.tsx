@@ -238,7 +238,7 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
       date: "February 2, 2026",
       time: "5 PM to 5:30 PM",
       venue: "Multipurpose Hall 2nd Floor & Architecture Ground Floor",
-      eligibility: "Silicon & Quantum Pass holders",
+      eligibility: "Quantum Pass holders only",
       objective: "Facilitate meaningful connections",
       outcome: "Expand your professional network",
       icon: Coffee,

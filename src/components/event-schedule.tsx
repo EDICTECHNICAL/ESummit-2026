@@ -213,7 +213,7 @@ const EventSchedule = () => {
         speaker: null,
         description: "Connect beyond the stage. An informal session for founders to mingle with judges, speakers, and mentors, turning conversations into valuable connections.",
         duration: "30 min",
-        eligibility: "All pass holders",
+        eligibility: "Quantum Pass holders only",
       },
 
     ],

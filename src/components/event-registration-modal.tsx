@@ -611,6 +611,30 @@ export function EventRegistrationModal({
       );
     }
 
+    // Special validation for Informals - requires Quantum Pass only
+    if (eventId === 'd1-informals') {
+      const hasQuantumPass = userProfile?.passes?.some((pass: any) =>
+        pass.type?.toLowerCase() === 'quantum' && pass.status === 'Active'
+      );
+
+      if (!hasQuantumPass) {
+        return (
+          <div className="space-y-4">
+            <div className="text-center py-8">
+              <div className="text-amber-500 text-4xl mb-4">🚫</div>
+              <h3 className="text-lg font-semibold mb-2">Quantum Pass Required</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                The Informals event is exclusively for Quantum Pass holders. Please upgrade to a Quantum Pass to register for this event.
+              </p>
+              <Button onClick={onClose} className="w-full">
+                Close
+              </Button>
+            </div>
+          </div>
+        );
+      }
+    }
+
     if (eventId.includes("ten-minute-million")) {
       return renderTenMinuteMillionForm();
     } else if (eventId.includes("pitch-arena")) {

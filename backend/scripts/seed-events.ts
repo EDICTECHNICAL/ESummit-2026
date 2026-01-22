@@ -210,7 +210,7 @@ const events = [
     startTime: new Date('2026-02-02T17:00:00'),
     endTime: new Date('2026-02-02T17:30:00'),
     venue: 'Multipurpose Hall 2nd Floor and TSAP ground floor',
-    eligibility: 'All pass holders',
+    eligibility: 'Quantum Pass holders only',
     status: 'upcoming',
   },
   

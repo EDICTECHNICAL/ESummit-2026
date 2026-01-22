@@ -613,7 +613,7 @@ export const PassBooking = memo(function PassBooking({
                     { name: "Pitch Arena", included: ["silicon", "quantum", "thakur_student"] },
                     { name: "Startup Youth Conclave", included: ["silicon", "quantum", "thakur_student"] },
                     { name: "All 3 Workshops", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "Networking Arena", included: ["silicon", "quantum", "thakur_student"] },
+                    { name: "Networking Arena", included: ["quantum"] },
                     { name: "Lunch included", included: ["silicon", "quantum", "thakur_student"] },
                     { name: "The Ten Minute Deal", included: ["quantum", "thakur_student"] },
                     { name: "Incubator Summit", included: ["quantum", "thakur_student"] },

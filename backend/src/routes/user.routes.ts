@@ -442,6 +442,7 @@ router.post('/events/register', async (req: Request, res: Response) => {
       'd1-angel-roundtable': ['Quantum Pass', 'TCET Student Pass'],
       'd1-mentor-connect': ['Quantum Pass', 'TCET Student Pass'],
       'd2-investor-meet': ['Quantum Pass', 'TCET Student Pass'],
+      'd1-informals': ['Quantum Pass'], // Quantum Pass only for Informals
       
       // Competitions
       'd1-hackathon': ['Pixel Pass', 'Silicon Pass', 'Quantum Pass', 'TCET Student Pass'],
