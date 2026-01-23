@@ -3,7 +3,7 @@ export interface TenMinuteMillionForm {
   registrationType: 'ten_minute_million';
   attendeeType: 'participant' | 'audience';
   startupName?: string;
-  cin?: string;
+  udhyamRegistrationNumber: string;
   dpiitCertified?: 'yes' | 'no' | 'applied';
   startupStage?: 'idea' | 'mvp' | 'early_revenue' | 'growth' | 'mature';
   problemStatement?: string;

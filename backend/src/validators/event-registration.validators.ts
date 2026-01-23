@@ -10,7 +10,7 @@ export const tenMinuteMillionSchema = baseRegistrationSchema.extend({
   registrationType: z.literal('ten_minute_million'),
   attendeeType: z.enum(['participant', 'audience']),
   startupName: z.string().min(1, 'Startup name is required').max(255).optional(),
-  cin: z.string().optional(),
+  udhyamRegistrationNumber: z.string().min(1, 'UDHYAM Registration Number is required'),
   dpiitCertified: z.enum(['yes', 'no', 'applied']).optional(),
   startupStage: z.enum(['idea', 'mvp', 'early_revenue', 'growth', 'mature']).optional(),
   problemStatement: z.string().min(1, 'Problem statement is required').max(1000).optional(),

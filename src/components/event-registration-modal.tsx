@@ -63,7 +63,7 @@ export function EventRegistrationModal({
   const [tenMinuteMillionForm, setTenMinuteMillionForm] = useState({
     attendeeType: "", // participant, audience
     startupName: "",
-    cin: "",
+    udhyamRegistrationNumber: "",
     dpiitCertified: "",
     startupStage: "",
     problemStatement: "",
@@ -146,7 +146,7 @@ export function EventRegistrationModal({
     if (isOpen) {
       setTenMinuteMillionForm({
         startupName: userProfile?.startup_name || "",
-        cin: "",
+        udhyamRegistrationNumber: "",
         dpiitCertified: "",
         startupStage: userProfile?.startup_stage || "",
         problemStatement: "",
@@ -181,8 +181,8 @@ export function EventRegistrationModal({
         toast.error("📝 Please enter your startup name.");
         return;
       }
-      if (!tenMinuteMillionForm.cin.trim()) {
-        toast.error("📋 CIN (Corporate Identification Number) is required.");
+      if (!tenMinuteMillionForm.udhyamRegistrationNumber.trim()) {
+        toast.error("📋 UDHYAM Registration Number is required.");
         return;
       }
       if (!tenMinuteMillionForm.problemStatement.trim()) {
@@ -210,7 +210,7 @@ export function EventRegistrationModal({
       // Only include pitcher fields if registering as participant
       if (tenMinuteMillionForm.attendeeType === 'participant') {
         formData.startupName = tenMinuteMillionForm.startupName;
-        formData.cin = tenMinuteMillionForm.cin;
+        formData.udhyamRegistrationNumber = tenMinuteMillionForm.udhyamRegistrationNumber;
         formData.dpiitCertified = tenMinuteMillionForm.dpiitCertified;
         formData.startupStage = tenMinuteMillionForm.startupStage;
         formData.problemStatement = tenMinuteMillionForm.problemStatement;
@@ -400,11 +400,11 @@ export function EventRegistrationModal({
               />
             </div>
             <div>
-              <Label htmlFor="cin">CIN (Corporate Identification Number) *</Label>
+              <Label htmlFor="udhyamRegistrationNumber">UDHYAM Registration Number *</Label>
               <Input
-                id="cin"
-                value={tenMinuteMillionForm.cin}
-                onChange={(e) => setTenMinuteMillionForm(prev => ({ ...prev, cin: e.target.value }))}
+                id="udhyamRegistrationNumber"
+                value={tenMinuteMillionForm.udhyamRegistrationNumber}
+                onChange={(e) => setTenMinuteMillionForm(prev => ({ ...prev, udhyamRegistrationNumber: e.target.value }))}
                 required
               />
             </div>
