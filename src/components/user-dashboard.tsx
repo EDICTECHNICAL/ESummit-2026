@@ -232,7 +232,7 @@ export function UserDashboard({
               description: event.description,
               date: event.date,
               time: event.time,
-              venue: event.venue,
+              venue: normalizeVenue(event.venue),
               category: event.category,
               speaker: event.speaker,
             }));
@@ -423,7 +423,7 @@ export function UserDashboard({
                   const eventDate = new Date(event.date);
                   const isValidDate = !isNaN(eventDate.getTime());
                   
-                  return {
+                    return {
                     id: event.eventId || event.id,
                     title: event.title,
                     description: event.description || '',
@@ -440,7 +440,7 @@ export function UserDashboard({
                       hour: '2-digit',
                       minute: '2-digit'
                     })}` : 'Time TBA',
-                    venue: event.venue,
+                    venue: normalizeVenue(event.venue),
                     category: event.category,
                     speaker: event.speakerName || null,
                   };
@@ -555,6 +555,21 @@ export function UserDashboard({
     
     const passTypeId = passTypeMap[normalizedName] || "pixel";
     return passTypeId;
+  };
+
+  // Normalize venue strings to canonical display values
+  const normalizeVenue = (venue?: string | null) => {
+    if (!venue) return venue || '';
+    const v = venue.trim().toLowerCase();
+
+    if (v.includes('convocation')) return 'Convocation Hall';
+    if (v === 'sh-3' || v.includes('sh-3')) return 'SH-3';
+    if (v.includes('classroom 601') || v.includes('601')) return 'Classroom 601 TIMSR';
+    if (v.includes('classroom 301') || v.includes('301')) return 'Classroom 301 TIMSR';
+    if (v.includes('networking arena')) return 'Networking Arena';
+
+    // Fallback: title case each word
+    return venue.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
 
   // Use the fetched registered event details directly

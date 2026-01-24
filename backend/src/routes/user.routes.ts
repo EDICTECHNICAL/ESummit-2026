@@ -427,7 +427,8 @@ router.post('/events/register', async (req: Request, res: Response) => {
       'd2-pitch-arena': ['Pixel Pass', 'Silicon Pass', 'Quantum Pass', 'TCET Student Pass', 'Thakur Student Pass'],
       
       // Quantum Pass Exclusive Events
-      'd1-ten-minute-million': ['Quantum Pass', 'TCET Student Pass', 'Thakur Student Pass'],
+      'd1-ten-minute-deal': ['Quantum Pass', 'TCET Student Pass', 'Thakur Student Pass'],
+      'd2-ten-minute-deal': ['Quantum Pass', 'TCET Student Pass', 'Thakur Student Pass'],
       'd1-angel-roundtable': ['Quantum Pass', 'TCET Student Pass'],
       'd1-mentor-connect': ['Quantum Pass', 'TCET Student Pass'],
       'd2-investor-meet': ['Quantum Pass', 'TCET Student Pass'],
@@ -572,6 +573,7 @@ router.post('/events/register', async (req: Request, res: Response) => {
             data: baseRegistrationData,
           });
           break;
+        case 'd1-ai-buildathon':
         case 'd1-ai-buildathon-start':
           registration = await prisma.aIBuildathonStartRegistration.create({
             data: baseRegistrationData,

@@ -702,7 +702,7 @@ export function EventRegistrationModal({
       }
     }
 
-    if (eventId.includes("ten-minute-million")) {
+    if (eventId.includes("ten-minute-deal")) {
       return renderTenMinuteMillionForm();
     } else if (eventId.includes("pitch-arena")) {
       return renderPitchArenaForm();

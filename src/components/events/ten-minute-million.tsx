@@ -7,8 +7,8 @@ export function TenMinuteMillionPage() {
     tagline: "Pitch Your Vision, Secure Your Future",
     description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
     date: "February 2-3, 2026",
-    time: "10:00 AM – 5:00 PM (Both days)",
-    venue: "SH-1 (Seminar Hall 1)",
+    time: "11:30 AM – 1:30 PM (Day 1), 9:30 AM – 1:30 PM (Day 2), afternoon sessions 14:30–17:00",
+    venue: "Convocation Hall",
     eligibility: "Quantum Pass or Thakur Student Pass required",
   };
 
@@ -72,7 +72,7 @@ export function TenMinuteMillionPage() {
   return (
     <EventPageTemplate
       event={eventData}
-      eventId="d1-ten-minute-million"
+      eventId="d1-ten-minute-deal"
       perks={perks}
       panelTitle="Meet the VCs"
       panelSubtitle="Pitch to leading Venture Capitalists"

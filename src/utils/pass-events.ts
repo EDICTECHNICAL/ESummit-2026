@@ -28,257 +28,51 @@ export interface PassData {
 // Event data - centralized source of truth
 export const eventSchedule = {
   day1: [
-    // Registration & Opening
-    {
-      id: "d1-registration",
-      time: "09:00 - 09:30",
-      title: "Registration & Welcome",
-      category: "networking",
-      venue: "Main Entrance",
-      speaker: null,
-      description: "Check-in and receive your welcome kit",
-      duration: "30 min",
-    },
-    {
-      id: "d1-inaugural",
-      time: "09:30 - 10:30",
-      title: "Inaugural Ceremony",
-      category: "networking",
-      venue: "Main Auditorium",
-      speaker: "Chief Guest",
-      description: "Official opening of E-Summit 2026",
-      duration: "1 hour",
-    },
-    // Pitching Events - Day 1
-    {
-      id: "d1-ten-minute-million",
-      time: "10:00 - 13:00",
-      title: "The Ten Minute Deal",
-      category: "pitching",
-      venue: "Main Auditorium",
-      speaker: "Venture Capitalists",
-      description: "Pitch your startup to Venture Capitalists and compete for seed funding opportunities",
-      duration: "3 hours",
-      prize: "Seed Funding",
-      eligibility: "TRL 4+",
-    },
-    {
-      id: "d1-angel-roundtable",
-      time: "14:00 - 17:00",
-      title: "The Angel Investors Roundtable",
-      category: "pitching",
-      venue: "Conference Hall A",
-      speaker: "Angel Investors",
-      description: "Present your early-stage startup to angel investors and secure pre-seed funding",
-      duration: "3 hours",
-      prize: "Pre-Seed Funding",
-      eligibility: "Early stage Startups",
-    },
-    // Competitions - Day 1
-    {
-      id: "d1-ipl-auction",
-      time: "11:00 - 13:00",
-      title: "IPL Auction: The Bid for Brilliance",
-      category: "competitions",
-      venue: "Competition Arena A",
-      speaker: "Business Strategy Experts",
-      description: "Learn about capital allocation and customer acquisition through an interactive auction simulation (Both Days)",
-      duration: "2 days",
-      prize: "₹50,000",
-      eligibility: "Teams of 3-5 members",
-    },
-    {
-      id: "d1-ai-buildathon-start",
-      time: "09:00 - 18:00",
-      title: "AI Build-A-Thon: The Innovation Challenge",
-      category: "competitions",
-      venue: "Tech Lab",
-      speaker: "AI/ML Experts",
-      description: "Build innovative AI solutions for early-stage startups (Both Days)",
-      duration: "2 days",
-      prize: "₹1,50,000",
-      eligibility: "Teams of 2-4 members",
-    },
-    // Workshops - Day 1
-    {
-      id: "d1-design-thinking",
-      time: "10:00 - 12:30",
-      title: "Design Thinking & Innovation Strategy",
-      category: "workshops",
-      venue: "Workshop Hall A",
-      speaker: "Innovation Expert",
-      description: "Hands-on workshop on design thinking and innovation for building successful ventures",
-      duration: "2.5 hours",
-      eligibility: "All participants (Limited seats: 50)",
-      prerequisite: "Laptop required",
-    },
-    {
-      id: "d1-finance-marketing",
-      time: "13:00 - 15:30",
-      title: "Finance & Marketing for Startups",
-      category: "workshops",
-      venue: "Workshop Hall B",
-      speaker: "Finance & Marketing Expert",
-      description: "Hands-on workshop covering finance and marketing essentials for startups",
-      duration: "2.5 hours",
-      eligibility: "All participants (Limited seats: 50)",
-    },
-    // Networking - Day 1
-    {
-      id: "d1-startup-expo",
-      time: "09:00 - 18:00",
-      title: "The Startup Expo",
-      category: "networking",
-      venue: "Exhibition Hall",
-      speaker: null,
-      description: "Showcase your startup and connect with investors, mentors, and fellow entrepreneurs (Both Days)",
-      duration: "2 days",
-      eligibility: "All participants",
-    },
-    {
-      id: "d1-panel-discussion",
-      time: "15:00 - 17:00",
-      title: "The Panel Discussion",
-      category: "networking",
-      venue: "Main Auditorium",
-      speaker: "Panel of Industry Experts",
-      description: "Engage with industry leaders in panel discussions on entrepreneurship and innovation",
-      duration: "2 hours",
-      eligibility: "All participants",
-    },
-    {
-      id: "d1-networking-arena",
-      time: "10:00 - 18:00",
-      title: "Networking Arena",
-      category: "networking",
-      venue: "Networking Lounge",
-      speaker: null,
-      description: "Dedicated networking space to connect with investors, mentors, and startup enthusiasts",
-      duration: "8 hours",
-      eligibility: "All participants",
-    },
+    { id: "d1-registration", time: "08:30 - 09:30", title: "Registration Starts", category: "networking", venue: "Main Entrance", speaker: null, description: "Check-in and receive your welcome kit", duration: "1 hour" },
+    { id: "d1-assembling", time: "09:30 - 10:00", title: "Assembling in Auditorium", category: "networking", venue: "Convocation Hall", speaker: null, description: "Assemble in auditorium", duration: "30 min" },
+    { id: "d1-inaugural", time: "10:00 - 11:30", title: "Inauguration", category: "networking", venue: "Convocation Hall", speaker: null, description: "Official inauguration", duration: "1.5 hours" },
+
+    // Mid-morning sessions (11:30 - 13:30)
+    { id: "d1-ten-minute-deal", time: "11:30 - 13:30", title: "The Ten Minute Deal", category: "pitching", venue: "Convocation Hall", speaker: null, description: "Rapid pitch sessions", duration: "2 hours" },
+    { id: "d1-pitch-arena", time: "11:30 - 13:30", title: "Pitch Arena - Idea to Reality", category: "pitching", venue: "Lab 314, 315, 316", speaker: null, description: "Idea-stage pitches and mentorship", duration: "2 hours" },
+    { id: "d1-incubator-summit", time: "11:30 - 13:30", title: "The Incubator's Summit", category: "pitching", venue: "SSC TIMSR", speaker: null, description: "Incubator engagement and pitches", duration: "2 hours" },
+    { id: "d1-internships-jobfair", time: "11:30 - 13:30", title: "Internships & Job fair", category: "networking", venue: "Lobby Area", speaker: null, description: "Connect with companies for internships and jobs", duration: "2 hours" },
+    { id: "d1-informals", time: "11:30 - 13:30", title: "Informals", category: "networking", venue: "Multipurpose Hall 2nd floor & Ground floor", speaker: null, description: "Informal networking", duration: "2 hours" },
+    { id: "d1-startup-expo", time: "11:30 - 13:30", title: "StartUp Expo", category: "networking", venue: "Lobby Area", speaker: null, description: "Startup exhibition", duration: "2 hours" },
+    { id: "d1-ipl-auction", time: "11:30 - 13:30", title: "Competition - IPL Auction", category: "competitions", venue: "Classroom 601 TIMSR", speaker: null, description: "IPL Auction competition", duration: "2 hours" },
+    { id: "d1-biz-arena", time: "11:30 - 13:30", title: "Competition - Biz Arena Startup League", category: "competitions", venue: "Classroom 301 TIMSR", speaker: null, description: "Biz Arena competition", duration: "2 hours" },
+    { id: "d1-ai-buildathon", time: "11:30 - 13:30", title: "Competition - AI Build-A-Thon", category: "competitions", venue: "SH-3", speaker: null, description: "AI buildathon sessions", duration: "2 hours" },
+    { id: "d1-workshop-design", time: "11:30 - 13:30", title: "Workshop - Design Thinking & Innovation Strategy", category: "workshops", venue: "Lab 528 & 529", speaker: null, description: "Design thinking workshop", duration: "2 hours" },
+    { id: "d1-workshop-finance", time: "11:30 - 13:30", title: "Workshop - Finance & Marketing", category: "workshops", venue: "Lab 524 & 525", speaker: null, description: "Finance & marketing workshop", duration: "2 hours" },
+    { id: "d1-workshop-data", time: "11:30 - 13:30", title: "Workshop - Data Analytics & BDM", category: "workshops", venue: "Lab 526 & 527", speaker: null, description: "Data analytics workshop", duration: "2 hours" },
+
+    { id: "d1-lunch", time: "13:30 - 14:30", title: "Lunch", category: "networking", venue: "Dining Area", speaker: null, description: "Lunch break", duration: "1 hour" },
+
+    // Afternoon sessions (14:30 - 17:00)
+    { id: "d1-ten-minute-deal-afternoon", time: "14:30 - 17:00", title: "The Ten Minute Deal", category: "pitching", venue: "Convocation Hall", speaker: null, description: "Afternoon pitching sessions", duration: "2.5 hours" },
+    { id: "d1-incubator-summit-afternoon", time: "14:30 - 17:00", title: "The Incubator's Summit", category: "pitching", venue: "SSC TIMSR", speaker: null, description: "Afternoon incubator engagements", duration: "2.5 hours" },
+    { id: "d1-internships-jobfair-afternoon", time: "14:30 - 17:00", title: "Internships & Job fair", category: "networking", venue: "Lobby Area", speaker: null, description: "Afternoon job fair", duration: "2.5 hours" },
+    { id: "d1-startup-expo-afternoon", time: "14:30 - 17:00", title: "StartUp Expo", category: "networking", venue: "Lobby Area", speaker: null, description: "Expo continues in afternoon", duration: "2.5 hours" },
+    { id: "d1-ai-buildathon-afternoon", time: "14:30 - 17:00", title: "Competition - AI Build-A-Thon", category: "competitions", venue: "SH-3", speaker: null, description: "AI buildathon continues", duration: "2.5 hours" },
+    { id: "d1-ipl-auction-afternoon", time: "14:30 - 17:00", title: "Competition - IPL Auction", category: "competitions", venue: "Classroom 601 TIMSR", speaker: null, description: "IPL Auction continues", duration: "2.5 hours" },
+    { id: "d1-pitch-arena-afternoon", time: "14:30 - 17:00", title: "Pitch Arena - Idea to Reality", category: "pitching", venue: "Lab 314, 315, 316", speaker: null, description: "Afternoon pitch arena sessions", duration: "2.5 hours" },
+
+    { id: "d1-hightea", time: "17:00 - 17:30", title: "High Tea", category: "networking", venue: "Lobby Area", speaker: null, description: "High tea and refreshments", duration: "30 min" },
+    { id: "d1-dispersal", time: "17:30", title: "Dispersal", category: "networking", venue: "Campus", speaker: null, description: "End of Day 1", duration: "" },
   ],
   day2: [
-    // Pitching Events - Day 2
-    {
-      id: "d2-pitch-arena",
-      time: "10:00 - 13:00",
-      title: "Pitch Arena - Idea to Reality",
-      category: "pitching",
-      venue: "Conference Hall B",
-      speaker: "Industry Experts",
-      description: "Platform for first-time founders to pitch their ideas and get shortlisted for the next round (Both Days)",
-      duration: "2 days",
-      prize: "Shortlisting for Round 2",
-      eligibility: "Early stage Startups",
-    },
-    {
-      id: "d2-incubator-summit",
-      time: "14:00 - 17:00",
-      title: "The Incubator Summit",
-      category: "pitching",
-      venue: "Conference Hall C",
-      speaker: "Incubation Centres",
-      description: "Pitch to leading incubation centers and secure incubation support for your startup (Both Days)",
-      duration: "2 days",
-      prize: "Incubation Support",
-      eligibility: "Early Stage Startups",
-    },
-    // Competitions - Day 2
-    {
-      id: "d2-ai-buildathon-final",
-      time: "09:00 - 18:00",
-      title: "AI Buildathon - Day 2 Finals",
-      category: "competitions",
-      venue: "Tech Lab",
-      speaker: "AI/ML Experts & Tech Leaders",
-      description: "Final presentations and judging for AI Buildathon",
-      duration: "9 hours",
-      prize: "₹1,50,000",
-      eligibility: "AI Buildathon participants only",
-    },
-    {
-      id: "d2-startup-league",
-      time: "10:00 - 14:00",
-      title: "Startup League Game: Build Your Empire",
-      category: "competitions",
-      venue: "Competition Arena B",
-      speaker: "Startup Founders",
-      description: "Navigate startup challenges through strategic gameplay covering team, market, and capital management",
-      duration: "4 hours",
-      prize: "₹75,000",
-      eligibility: "Teams of 3-4 members",
-    },
-    // Workshops - Day 2
-    {
-      id: "d2-data-analytics",
-      time: "11:00 - 13:30",
-      title: "Data Analytics & Business Development Essentials",
-      category: "workshops",
-      venue: "Workshop Hall A",
-      speaker: "Data Analytics Expert",
-      description: "Learn hands-on data analysis tools and techniques to drive startup growth",
-      duration: "2.5 hours",
-      eligibility: "All participants (Limited seats: 50)",
-      prerequisite: "Laptop required",
-    },
-    // Networking - Day 2
-    {
-      id: "d2-startup-expo",
-      time: "09:00 - 18:00",
-      title: "Startup Expo - Day 2",
-      category: "networking",
-      venue: "Exhibition Hall",
-      speaker: null,
-      description: "Continued startup showcase and networking opportunities",
-      duration: "9 hours",
-      eligibility: "All participants",
-    },
-    {
-      id: "d2-networking-arena",
-      time: "10:00 - 18:00",
-      title: "Networking Arena - Day 2",
-      category: "networking",
-      venue: "Networking Lounge",
-      speaker: null,
-      description: "Final day networking space to solidify connections",
-      duration: "8 hours",
-      eligibility: "All participants",
-    },
-    {
-      id: "d2-internship-fair",
-      time: "11:00 - 16:00",
-      title: "Internship Fair",
-      category: "networking",
-      venue: "Career Zone",
-      speaker: null,
-      description: "Connect with startups and companies looking for talented interns and fresh graduates",
-      duration: "5 hours",
-      eligibility: "Students and recent graduates",
-    },
-    {
-      id: "d2-youth-conclave",
-      time: "16:00 - 18:00",
-      title: "Startup Youth Conclave",
-      category: "networking",
-      venue: "Conclave Hall",
-      speaker: "Young Entrepreneurs",
-      description: "Exclusive conclave bringing together young entrepreneurs, students, and startup enthusiasts",
-      duration: "2 hours",
-      eligibility: "Students and young entrepreneurs",
-    },
-    // Closing
-    {
-      id: "d2-closing",
-      time: "18:00 - 19:00",
-      title: "Closing Ceremony & Prize Distribution",
-      category: "networking",
-      venue: "Main Auditorium",
-      speaker: "Organizing Committee",
-      description: "Award ceremony and closing remarks for E-Summit 2026",
-      duration: "1 hour",
-      eligibility: "All participants",
-    },
+    { id: "d2-registration", time: "08:30 - 09:30", title: "Registration", category: "networking", venue: "Main Entrance", speaker: null, description: "Day 2 check-in", duration: "1 hour" },
+    { id: "d2-ten-minute-deal", time: "09:30 - 13:30", title: "The Ten Minute Deal", category: "pitching", venue: "Convocation Hall", speaker: null, description: "Morning pitch sessions", duration: "4 hours" },
+    { id: "d2-incubator-summit", time: "09:30 - 13:30", title: "The Incubator's Summit", category: "pitching", venue: "SSC TIMSR", speaker: null, description: "Incubator engagements", duration: "4 hours" },
+    { id: "d2-internships-jobfair", time: "09:30 - 13:30", title: "Internships & Job fair", category: "networking", venue: "Lobby Area", speaker: null, description: "Job fair and internships", duration: "4 hours" },
+    { id: "d2-startup-expo", time: "09:30 - 13:30", title: "StartUp Expo", category: "networking", venue: "Lobby Area", speaker: null, description: "Expo continues", duration: "4 hours" },
+    { id: "d2-ai-buildathon", time: "09:30 - 13:30", title: "Competition - AI Build-A-Thon", category: "competitions", venue: "SH-3", speaker: null, description: "AI buildathon sessions", duration: "4 hours" },
+    { id: "d2-ipl-auction", time: "09:30 - 13:30", title: "Competition - IPL Auction", category: "competitions", venue: "Classroom 601 TIMSR", speaker: null, description: "IPL Auction session", duration: "4 hours" },
+    { id: "d2-ai-for-atmanirbhar", time: "11:30 - 13:30", title: "AI for Atmanirbhar Bharat: HEI Pre-Summit Engagements towards IndiaAI Impact Summit 2026", category: "networking", venue: "SH-I", speaker: null, description: "AI for Atmanirbhar Bharat session", duration: "2 hours" },
+    { id: "d2-lunch", time: "13:30 - 14:30", title: "Lunch", category: "networking", venue: "Dining Area", speaker: null, description: "Lunch break", duration: "1 hour" },
+    { id: "d2-panel-discussion", time: "14:30 - 15:30", title: "Panel Discussion", category: "networking", venue: "SSC TIMSR", speaker: null, description: "Panel discussion", duration: "1 hour" },
+    { id: "d2-valedictory", time: "15:30 - 16:30", title: "Valedictory", category: "networking", venue: "SSC TIMSR", speaker: null, description: "Valedictory and closing remarks", duration: "1 hour" },
+    { id: "d2-dispersal", time: "16:30", title: "Dispersal", category: "networking", venue: "Campus", speaker: null, description: "End of Day 2", duration: "" },
   ],
 };
 
@@ -289,36 +83,57 @@ export function getEligibleEvents(passType: string): Event[] {
   const allEvents = [...eventSchedule.day1, ...eventSchedule.day2];
   
   // Exclude administrative/automatic events that users don't register for
-  const excludedEvents = ["d1-registration", "d1-inaugural", "d2-closing", "d1-networking-arena", "d2-networking-arena"];
-  
-  // Thakur Student Pass (TCET/TGBS/TIMSR) / Pixel Pass events (FREE pass)
-  const pixelEvents = [
-    "d1-startup-expo", "d1-panel-discussion", "d1-ipl-auction", 
-    "d1-ai-buildathon-start", "d2-startup-league",
-    // Pitching events - accessible as audience for pixel pass holders
-    "d1-ten-minute-million", "d1-angel-roundtable", 
-    "d2-pitch-arena", "d2-incubator-summit"
+  const excludedEvents = [
+    "d1-registration",
+    "d1-assembling",
+    "d1-lunch",
+    "d1-hightea",
+    "d1-dispersal",
+    "d2-registration",
+    "d2-lunch",
+    "d2-dispersal",
   ];
-  
-  // Silicon Pass events (Pixel + extras)
+
+  // Pixel Pass events (free/audience-accessible)
+  const pixelEvents = [
+    "d1-startup-expo",
+    "d1-ipl-auction",
+    "d1-ai-buildathon",
+    "d1-pitch-arena",
+    "d1-ten-minute-deal",
+    "d2-startup-expo",
+    "d2-ipl-auction",
+    "d2-ai-buildathon",
+    "d2-pitch-arena",
+    "d2-ten-minute-deal",
+  ];
+
+  // Silicon Pass events (Pixel + workshops + extras)
   const siliconEvents = [
     ...pixelEvents,
-    "d2-pitch-arena", "d2-youth-conclave",
-    "d1-design-thinking", "d1-finance-marketing", "d2-data-analytics",
-    // Lunch included with Silicon Pass
+    "d1-workshop-design",
+    "d1-workshop-finance",
+    "d1-workshop-data",
+    "d2-design-thinking",
+    "d2-finance-marketing",
+    "d2-data-analytics",
   ];
-  
-  // Quantum Pass events (Silicon + premium pitching events)
+
+  // Quantum Pass events (Silicon + premium pitching slots)
   const quantumEvents = [
     ...siliconEvents,
-    "d1-ten-minute-million", "d1-angel-roundtable", 
-    "d2-incubator-summit", "d2-internship-fair", "d2-ai-workshop"
+    "d1-ten-minute-deal",
+    "d1-ten-minute-deal-afternoon",
+    "d2-ten-minute-deal",
+    "d2-incubator-summit",
+    "d1-incubator-summit",
   ];
 
   // Exhibitors Pass events (focus on expo and networking)
   const exhibitorsEvents = [
-    "d1-startup-expo", "d2-internship-fair", "d1-panel-discussion",
-    "d1-networking-arena", "d2-networking-arena"
+    "d1-startup-expo",
+    "d1-startup-expo-afternoon",
+    "d2-startup-expo",
   ];
   
   switch (passType) {

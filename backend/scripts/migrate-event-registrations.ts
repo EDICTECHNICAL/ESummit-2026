@@ -123,6 +123,7 @@ async function migrateEventRegistrations() {
                   data: baseData,
                 });
                 break;
+              case 'd1-ai-buildathon':
               case 'd1-ai-buildathon-start':
                 await prisma.aIBuildathonStartRegistration.create({
                   data: baseData,

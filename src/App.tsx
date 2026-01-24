@@ -185,7 +185,7 @@ export default function App() {
       case "event-16":
         return <RoadmapToEntrepreneurshipPage />;
       // Handle d1- and d2- prefixed event IDs
-      case "event-d1-ten-minute-million":
+      case "event-d1-ten-minute-deal":
         return <TenMinuteMillionPage />;
       case "event-d1-pitch-arena":
         return <PitchArenaPage />;
@@ -195,19 +195,31 @@ export default function App() {
         return <IplAuctionPage />;
       case "event-d1-ai-buildathon-start":
         return <AiBuildathonPage />;
+      case "event-d1-ai-buildathon":
+        return <AiBuildathonPage />;
+      case "event-d1-biz-arena":
+        return <StartupLeaguePage />;
       case "event-d1-biz-arena":
         return <StartupLeaguePage />;
       case "event-d1-design-thinking":
         return <DesignThinkingPage />;
+      case "event-d1-workshop-design":
+        return <DesignThinkingPage />;
       case "event-d1-finance-marketing":
         return <FinanceMarketingPage />;
+      case "event-d1-workshop-finance":
+        return <FinanceMarketingPage />;
       case "event-d1-data-analytics":
+        return <DataAnalyticsBdmPage />;
+      case "event-d1-workshop-data":
         return <DataAnalyticsBdmPage />;
       case "event-d1-startup-expo":
         return <StartupExpoPage />;
       case "event-d1-networking-arena":
         return <NetworkingArenaPage />;
       case "event-d1-internship-fair":
+        return <InternshipFairPage />;
+      case "event-d1-internships-jobfair":
         return <InternshipFairPage />;
       case "event-d2-pitch-arena":
         return <PitchArenaPage />;
