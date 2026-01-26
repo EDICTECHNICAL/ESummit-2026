@@ -37,30 +37,19 @@ app.use(helmet({
 // CORS configuration
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      const allowedOrigins = [
-        'https://tcetesummit.in',
-        'https://www.tcetesummit.in',
-        'https://api.tcetesummit.in',
-        'http://localhost:5173',
-        'http://localhost:5174',
-        'http://localhost:3000',
-        'http://localhost:5000',
-        'http://127.0.0.1:5173',
-        'http://127.0.0.1:5174',
-        'http://127.0.0.1:3000',
-        'http://127.0.0.1:5000',
-      ];
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error('Not allowed by CORS'));
-    },
+    origin: [
+      'https://tcetesummit.in',
+      'https://www.tcetesummit.in',
+      'https://api.tcetesummit.in',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:3000',
+      'http://localhost:5000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5000',
+    ],
     credentials: true,
     allowedHeaders: ['x-admin-secret', 'content-type', 'authorization', 'x-requested-with', 'accept', 'cache-control', 'origin'],
     exposedHeaders: ['x-admin-secret', 'authorization'],
