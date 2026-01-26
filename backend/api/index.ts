@@ -4,20 +4,37 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const isOriginAllowed = (origin: string | undefined): boolean => {
   if (!origin) return true; // Allow requests with no origin (postman, mobile apps, etc.)
 
+  const normalizeHostname = (input: string): string => {
+    try {
+      return new URL(input).hostname.replace(/^www\./i, '').toLowerCase();
+    } catch {
+      // Fallback: strip protocol and port
+      return input.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split(':')[0].toLowerCase();
+    }
+  };
+
+  let originHost: string;
+  try {
+    originHost = normalizeHostname(origin);
+  } catch (_) {
+    return false;
+  }
+
   // Allow all Vercel deployments (*.vercel.app)
-  if (origin.endsWith('.vercel.app')) {
+  if (originHost.endsWith('.vercel.app')) {
     return true;
   }
 
-  // Allow localhost for development
-  if (origin.startsWith('http://localhost:')) {
+  // Allow localhost for development (includes ports)
+  if (originHost === 'localhost' || originHost.startsWith('localhost')) {
     return true;
   }
 
-  // Allow explicit frontend URL from env
+  // Allow explicit frontend URL from env (normalize and compare without www)
   const frontendUrl = process.env.FRONTEND_URL;
-  if (frontendUrl && origin === frontendUrl) {
-    return true;
+  if (frontendUrl) {
+    const frontendHost = normalizeHostname(frontendUrl);
+    if (frontendHost && originHost === frontendHost) return true;
   }
 
   return false;
