@@ -78,7 +78,7 @@ export function TermsOfService() {
                       <li>All registrations must be completed through our official website</li>
                       <li>You must provide accurate personal and contact information</li>
                       <li>Registration is complete only upon receipt of payment confirmation</li>
-                      <li>You will receive a QR code pass via email after successful payment</li>
+                      <li>You will receive a pass confirmation via email after successful payment</li>
                     </ul>
 
                     <h4 className="mb-2 text-sm">3.2 Pass Types and Pricing</h4>

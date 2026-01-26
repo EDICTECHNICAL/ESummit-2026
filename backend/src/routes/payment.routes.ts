@@ -2,7 +2,6 @@ import { Router, Request, Response } from 'express';
 import prisma from '../config/database';
 import { sendSuccess, sendError } from '../utils/response.util';
 import logger from '../utils/logger.util';
-import { generateQRCode } from '../services/qrcode.service';
 import { generateUniqueIdentifiers } from '../utils/identifier.util';
 import { paymentLimiter } from '../middleware/rateLimit.middleware';
 import { konfhubService } from '../services/konfhub.service';
@@ -279,9 +278,6 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
     // Generate unique pass ID
     const { passId } = generateUniqueIdentifiers();
 
-    // Generate QR code
-    const qrCodeUrl = await generateQRCode(passId);
-
     // Create pass and update transaction in a single transaction
     const result = await prisma.$transaction(async (tx) => {
       // Create the pass
@@ -292,7 +288,6 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
           passId,
           price: transaction.amount,
           status: 'Active',
-          qrCodeUrl,
         },
       });
 
@@ -421,7 +416,6 @@ router.post('/webhook', async (req: Request, res: Response) => {
           const metadata = transaction.metadata as any;
           const passType = metadata.passType;
           const { passId } = generateUniqueIdentifiers();
-          const qrCodeUrl = await generateQRCode(passId);
 
           await prisma.$transaction(async (tx) => {
             const pass = await tx.pass.create({
@@ -432,7 +426,6 @@ router.post('/webhook', async (req: Request, res: Response) => {
                 price: transaction.amount,
                 hasWorkshopAccess: metadata.hasWorkshopAccess || false,
                 status: 'Active',
-                qrCodeUrl,
               },
             });
 
@@ -506,9 +499,10 @@ router.post('/webhook', async (req: Request, res: Response) => {
 router.get('/transaction/:transactionId', async (req: Request, res: Response) => {
   try {
     const { transactionId } = req.params;
+    const transactionIdStr = Array.isArray(transactionId) ? transactionId[0] : transactionId;
 
     const transaction = await prisma.transaction.findUnique({
-      where: { id: transactionId },
+      where: { id: transactionIdStr },
       include: {
         user: {
           select: {
@@ -521,7 +515,6 @@ router.get('/transaction/:transactionId', async (req: Request, res: Response) =>
             passId: true,
             passType: true,
             status: true,
-            qrCodeUrl: true,
           },
         },
       },
@@ -603,9 +596,10 @@ router.post('/cancel', async (req: Request, res: Response) => {
 router.get('/user/:clerkUserId/transactions', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
     // Find user (ensure user exists)
-    const user = await ensureUserExists(clerkUserId);
+    const user = await ensureUserExists(clerkUserIdStr);
 
     if (!user) {
       sendError(res, 'User not found', 404);

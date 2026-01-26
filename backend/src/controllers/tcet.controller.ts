@@ -9,8 +9,9 @@ import logger from '../utils/logger.util';
 export const assignTcetCode = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    const userIdStr = Array.isArray(userId) ? userId[0] : userId;
 
-    if (!userId) {
+    if (!userIdStr) {
       return res.status(400).json({
         success: false,
         error: 'User ID is required'
@@ -20,7 +21,7 @@ export const assignTcetCode = async (req: Request, res: Response) => {
     // Check if user already has a code assigned
     const existingCode = await prisma.tcetCode.findFirst({
       where: {
-        assignedTo: userId,
+        assignedTo: userIdStr,
         isAssigned: true
       }
     });
@@ -60,7 +61,7 @@ export const assignTcetCode = async (req: Request, res: Response) => {
       },
       data: {
         isAssigned: true,
-        assignedTo: userId,
+        assignedTo: userIdStr,
         assignedAt: new Date()
       }
     });
@@ -89,8 +90,9 @@ export const assignTcetCode = async (req: Request, res: Response) => {
 export const getUserTcetCode = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    const userIdStr = Array.isArray(userId) ? userId[0] : userId;
 
-    if (!userId) {
+    if (!userIdStr) {
       return res.status(400).json({
         success: false,
         error: 'User ID is required'
@@ -99,7 +101,7 @@ export const getUserTcetCode = async (req: Request, res: Response) => {
 
     const code = await prisma.tcetCode.findFirst({
       where: {
-        assignedTo: userId,
+        assignedTo: userIdStr,
         isAssigned: true
       }
     });

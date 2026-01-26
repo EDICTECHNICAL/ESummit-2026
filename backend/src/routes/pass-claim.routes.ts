@@ -2,55 +2,24 @@ import { Router, Request, Response } from 'express';
 import prisma from '../config/database';
 import { sendSuccess, sendError } from '../utils/response.util';
 import logger from '../utils/logger.util';
-import multer, { FileFilterCallback } from 'multer';
-import { put } from '@vercel/blob';
 
 /**
  * Pass Claim Routes
- * 
- * File uploads are handled using Vercel Blob storage for persistent, scalable file storage.
- * Required environment variable: BLOB_READ_WRITE_TOKEN
- * 
- * To set up Vercel Blob:
- * 1. Go to Vercel Dashboard → Your Project → Storage
- * 2. Click "Connect Store" → "Create Blob Store"
- * 3. Copy the BLOB_READ_WRITE_TOKEN from the dashboard
- * 4. Add it to your .env file locally or Vercel environment variables
- * 
- * The token is automatically available in production deployments.
+ *
+ * Routes for handling pass claim submissions and approvals.
  */
 
 const router = Router();
-
-// Configure multer for PDF upload (in memory)
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB max
-  },
-  fileFilter: (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
-    if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF and image files are allowed'));
-    }
-  },
-});
 
 // 32 hours in milliseconds
 const CLAIM_EXPIRY_HOURS = 32;
 const CLAIM_EXPIRY_MS = CLAIM_EXPIRY_HOURS * 60 * 60 * 1000;
 
-// Extend Request type to include file from multer
-interface MulterRequest extends Request {
-  file?: Express.Multer.File;
-}
-
 /**
  * Submit a pass claim with manual details
  * POST /api/v1/pass-claims/submit
  */
-router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, res: Response) => {
+router.post('/submit', async (req: Request, res: Response) => {
   try {
     const {
       clerkUserId,
@@ -60,7 +29,6 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
       bookingId,
       konfhubOrderId,
       ticketNumber,
-      qrCodeData,
     } = req.body;
 
     // Validate required fields
@@ -69,14 +37,8 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
       return;
     }
 
-    // Make ticket file upload MANDATORY
-    if (!req.file) {
-      sendError(res, 'Ticket PDF/image file is required for verification', 400);
-      return;
-    }
-
-    if (!bookingId && !konfhubOrderId && !ticketNumber) {
-      sendError(res, 'At least one identifier (bookingId, konfhubOrderId, or ticketNumber) is required', 400);
+    if (!bookingId) {
+      sendError(res, 'Booking ID is required', 400);
       return;
     }
 
@@ -137,35 +99,6 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
     // Calculate expiry time (32 hours from now)
     const expiresAt = new Date(Date.now() + CLAIM_EXPIRY_MS);
 
-    // Upload file to Vercel Blob storage
-    const path = require('path');
-    const fileExtension = path.extname(req.file.originalname);
-    const uniqueFilename = `pass-claims/${clerkUserId}-${Date.now()}${fileExtension}`;
-    
-    let fileUrl: string;
-    try {
-      const blob = await put(uniqueFilename, req.file.buffer, {
-        access: 'public',
-        contentType: req.file.mimetype,
-      });
-      fileUrl = blob.url;
-      logger.info(`Ticket file uploaded to Vercel Blob: ${fileUrl}`);
-    } catch (uploadError: any) {
-      logger.error('Vercel Blob upload error:', uploadError);
-      sendError(res, 'Failed to upload ticket file', 500);
-      return;
-    }
-
-    // Store file info and URL
-    const extractedData: any = {
-      fileName: req.file.originalname,
-      fileSize: req.file.size,
-      mimeType: req.file.mimetype,
-      uploadedAt: new Date().toISOString(),
-      fileUrl: fileUrl,
-      blobPath: uniqueFilename,
-    };
-
     // Create pending claim
     const claim = await prisma.pendingPassClaim.create({
       data: {
@@ -176,8 +109,7 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
         bookingId: bookingId || null,
         konfhubOrderId: konfhubOrderId || null,
         ticketNumber: ticketNumber || null,
-        qrCodeData: qrCodeData || null,
-        extractedData,
+        extractedData: undefined,
         status: 'pending',
         expiresAt,
       },
@@ -214,13 +146,14 @@ router.post('/submit', upload.single('ticketFile'), async (req: MulterRequest, r
 router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
     // Clean up expired claims first
-    await cleanupExpiredClaims(clerkUserId);
+    await cleanupExpiredClaims(clerkUserIdStr);
 
     const claims = await prisma.pendingPassClaim.findMany({
       where: {
-        clerkUserId,
+        clerkUserId: clerkUserIdStr,
         status: { in: ['pending', 'verified'] },
       },
       orderBy: { createdAt: 'desc' },
@@ -253,9 +186,10 @@ router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
 router.get('/:claimId/status', async (req: Request, res: Response) => {
   try {
     const { claimId } = req.params;
+    const claimIdStr = Array.isArray(claimId) ? claimId[0] : claimId;
 
     const claim = await prisma.pendingPassClaim.findUnique({
-      where: { id: claimId },
+      where: { id: claimIdStr },
     });
 
     if (!claim) {
@@ -266,7 +200,7 @@ router.get('/:claimId/status', async (req: Request, res: Response) => {
     // Check if expired
     if (claim.status === 'pending' && new Date() > claim.expiresAt) {
       await prisma.pendingPassClaim.update({
-        where: { id: claimId },
+        where: { id: claimIdStr },
         data: { status: 'expired' },
       });
       
@@ -317,10 +251,11 @@ router.get('/:claimId/status', async (req: Request, res: Response) => {
 router.delete('/:claimId', async (req: Request, res: Response) => {
   try {
     const { claimId } = req.params;
+    const claimIdStr = Array.isArray(claimId) ? claimId[0] : claimId;
     const { clerkUserId } = req.body;
 
     const claim = await prisma.pendingPassClaim.findUnique({
-      where: { id: claimId },
+      where: { id: claimIdStr },
     });
 
     if (!claim) {
@@ -339,7 +274,7 @@ router.delete('/:claimId', async (req: Request, res: Response) => {
     }
 
     await prisma.pendingPassClaim.delete({
-      where: { id: claimId },
+      where: { id: claimIdStr },
     });
 
     sendSuccess(res, 'Claim cancelled successfully');
@@ -386,13 +321,6 @@ async function verifyClaimAgainstDatabase(claim: any): Promise<{ verified: boole
             { bookingId: { contains: claim.ticketNumber } },
           ],
         },
-      });
-    }
-
-    // Try by QR code data
-    if (!existingPass && claim.qrCodeData) {
-      existingPass = await prisma.pass.findFirst({
-        where: { qrCodeData: claim.qrCodeData },
       });
     }
 

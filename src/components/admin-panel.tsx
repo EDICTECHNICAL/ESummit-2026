@@ -45,8 +45,58 @@ interface DashboardStats {
   unverifiedPasses: number;
   totalEvents: number;
   totalRegistrations: number;
-  checkInsToday: number;
   passTypeBreakdown: { [key: string]: number };
+  overview: {
+    totalPasses: number;
+    activePasses: number;
+    usedPasses: number;
+    pendingPasses: number;
+    totalRevenue: number;
+  };
+  byPassType: Array<{
+    passType: string;
+    count: number;
+    revenue: number;
+  }>;
+  recentPasses: Array<{
+    passType: string;
+    status: string;
+    price: number | null;
+    createdAt: string;
+    user: {
+      email: string;
+      fullName: string | null;
+    };
+  }>;
+}
+
+// Pagination interface
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+// Bundled dashboard response
+interface DashboardResponse {
+  stats: DashboardStats;
+  users: {
+    data: UserData[];
+    pagination: PaginationInfo;
+  };
+  passes: {
+    data: PassData[];
+    pagination: PaginationInfo;
+  };
+  eventRegistrations: {
+    data: EventRegistrationData[];
+    pagination: PaginationInfo;
+  };
+  claims: {
+    data: PassClaimData[];
+    pagination: PaginationInfo;
+  };
 }
 
 // User interface
@@ -77,7 +127,6 @@ interface PassData {
   price: number | null;
   createdAt: string;
   purchaseDate?: string;
-  pdfUrl?: string | null;
   ticketDetails?: {
     attendeeName?: string;
     email?: string;
@@ -89,8 +138,6 @@ interface PassData {
     paymentMethod?: string;
     ticketUrl?: string;
     invoiceUrl?: string;
-    checkInStatus?: string;
-    checkInTime?: string;
     whatsappNumber?: string;
     buyerName?: string;
     buyerEmail?: string;
@@ -151,15 +198,12 @@ interface PassClaimData {
   bookingId: string | null;
   konfhubOrderId: string | null;
   ticketNumber: string | null;
-  qrCodeData: string | null;
   extractedData: any;
   status: 'pending' | 'approved' | 'rejected' | 'expired' | 'verified';
   verifiedAt: string | null;
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
-  pdfFileUrl: string | null;
-  pdfFileName: string | null;
   user: {
     id: string;
     email: string;
@@ -199,12 +243,9 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<AdminRole>(null);
   
-  // Data states
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [passes, setPasses] = useState<PassData[]>([]);
-  const [eventRegistrations, setEventRegistrations] = useState<EventRegistrationData[]>([]);
-  const [claims, setClaims] = useState<PassClaimData[]>([]);
+  // Data states - now using bundled dashboard data
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   
   // Modal states
   const [selectedRegistration, setSelectedRegistration] = useState<EventRegistrationData | null>(null);
@@ -302,119 +343,40 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
     return ROLE_PERMISSIONS[userRole]?.includes(feature) || false;
   };
 
-  // Fetch dashboard stats
-  const fetchStats = useCallback(async () => {
+  // Fetch complete dashboard data in a single API call
+  const fetchDashboardData = useCallback(async (page: number = 1) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/stats`, { 
-        headers: await getAuthHeaders() 
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${API_BASE_URL}/admin/dashboard?page=${page}&limit=${itemsPerPage}`, {
+        headers
       });
-      const data = await response.json();
+
       if (response.status === 403) {
-        logger.error("Admin access denied. Please ensure your Clerk account has adminRole metadata set.");
-        toast.error("Access denied. Your account does not have admin permissions. Contact an administrator.");
+        logger.error("Admin access denied for dashboard endpoint");
+        toast.error("Access denied. Your account does not have admin permissions.");
         return;
       }
+
+      const data = await response.json();
       if (data.success) {
-        setStats(data.data);
+        setDashboardData(data.data);
       } else {
-        logger.error("Stats fetch failed:", data.message);
+        logger.error("Dashboard fetch failed:", data.message);
       }
     } catch (error) {
-      // Log error, do not set mock stats in production
-      logger.error("Error fetching stats:", error);
-    }
-  }, []);
-
-  // Fetch all users
-  const fetchUsers = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/users`, { 
-        headers: await getAuthHeaders() 
-      });
-      if (response.status === 403) {
-        logger.error("Admin access denied for users endpoint");
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        setUsers(data.data.users || []);
-      }
-    } catch (error) {
-      logger.error("Error fetching users:", error);
-      setUsers([]);
-    }
-  }, []);
-
-  // Fetch all passes
-  const fetchPasses = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/passes`, { 
-        headers: await getAuthHeaders() 
-      });
-      if (response.status === 403) {
-        logger.error("Admin access denied for passes endpoint");
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        setPasses(data.data.passes || []);
-      }
-    } catch (error) {
-      logger.error("Error fetching passes:", error);
-      setPasses([]);
-    }
-  }, []);
-
-  // Fetch event registrations
-  const fetchEventRegistrations = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/registrations`, { 
-        headers: await getAuthHeaders() 
-      });
-      if (response.status === 403) {
-        logger.error("Admin access denied for registrations endpoint");
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        setEventRegistrations(data.data.registrations || []);
-      }
-    } catch (error) {
-      logger.error("Error fetching registrations:", error);
-      setEventRegistrations([]);
-    }
-  }, []);
-
-  // Fetch pass claims
-  const fetchClaims = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/claims`, { 
-        headers: await getAuthHeaders() 
-      });
-      if (response.status === 403) {
-        logger.error("Admin access denied for claims endpoint");
-        return;
-      }
-      const data = await response.json();
-      if (data.success) {
-        setClaims(data.data.claims || []);
-      }
-    } catch (error) {
-      logger.error("Error fetching claims:", error);
-      setClaims([]);
+      logger.error("Error fetching dashboard data:", error);
+      toast.error("Failed to load dashboard data");
+    } finally {
+      setIsLoadingData(false);
     }
   }, []);
 
   // Initial data fetch
   useEffect(() => {
     if (userRole) {
-      fetchStats();
-      if (hasPermission("users")) fetchUsers();
-      if (hasPermission("passes")) fetchPasses();
-      if (hasPermission("events")) fetchEventRegistrations();
-      if (hasPermission("claims")) fetchClaims();
+      fetchDashboardData();
     }
-  }, [userRole, fetchStats, fetchUsers, fetchPasses, fetchEventRegistrations, fetchClaims]);
+  }, [userRole, fetchDashboardData]);
 
   // Check Clerk-admin status by calling backend debug endpoint (no adminSecret)
   const checkClerkAdmin = async () => {
@@ -588,7 +550,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
   });
 
   // Loading state
-  if (!isLoaded || isLoading) {
+  if (!isLoaded || isLoading || isLoadingData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
         <div className="text-center space-y-4">
@@ -723,11 +685,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                 size="icon"
                 className="rounded-lg border-muted h-9 w-9 flex-shrink-0"
                 onClick={() => {
-                  fetchStats();
-                  if (hasPermission("users")) fetchUsers();
-                  if (hasPermission("passes")) fetchPasses();
-                  if (hasPermission("events")) fetchEventRegistrations();
-                  if (hasPermission("claims")) fetchClaims();
+                  fetchDashboardData();
                   toast.success("Data refreshed");
                 }}
               >
@@ -801,7 +759,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-primary" />
                     <span className="text-2xl font-bold">
-                      {stats?.totalUsers || 0}
+                      {dashboardData?.stats.totalUsers || 0}
                     </span>
                   </div>
                 </CardContent>
@@ -817,7 +775,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                   <div className="flex items-center gap-2">
                     <Ticket className="h-5 w-5 text-green-600" />
                     <span className="text-2xl font-bold">
-                      {stats?.totalPasses || 0}
+                      {dashboardData?.stats.totalPasses || 0}
                     </span>
                   </div>
                 </CardContent>
@@ -833,23 +791,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-blue-600" />
                     <span className="text-2xl font-bold">
-                      {stats?.totalRegistrations || 0}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Check-ins Today
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-purple-600" />
-                    <span className="text-2xl font-bold">
-                      {stats?.checkInsToday || 0}
+                      {dashboardData?.stats.totalRegistrations || 0}
                     </span>
                   </div>
                 </CardContent>
@@ -857,14 +799,14 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
             </div>
 
             {/* Pass Type Breakdown */}
-            {stats?.passTypeBreakdown && Object.keys(stats.passTypeBreakdown).length > 0 && (
+            {dashboardData?.stats.passTypeBreakdown && Object.keys(dashboardData.stats.passTypeBreakdown).length > 0 && (
               <Card className="mt-6">
                 <CardHeader>
                   <CardTitle className="text-lg">Pass Type Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    {Object.entries(stats.passTypeBreakdown).map(([type, count]) => (
+                    {Object.entries(dashboardData.stats.passTypeBreakdown).map(([type, count]) => (
                       <div
                         key={type}
                         className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
@@ -888,7 +830,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                     <div>
                       <CardTitle>User Management</CardTitle>
                       <CardDescription>
-                        {filteredUsers.length} users found
+                        {dashboardData?.users.data.length || 0} users found
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -946,7 +888,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                             </tr>
                           </thead>
                           <tbody>
-                            {paginatedUsers.map((user) => (
+                            {dashboardData?.users.data.map((user) => (
                               <>
                                 <tr key={user.id} className="border-b hover:bg-muted/50">
                                   <td className="p-4 align-middle">
@@ -1050,25 +992,29 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                     </div>
 
                     {/* Pagination */}
-                    {filteredUsers.length > itemsPerPage && (
+                    {dashboardData?.users.pagination && dashboardData.users.pagination.totalPages > 1 && (
                       <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">
-                          Showing {paginatedUsers.length} of {filteredUsers.length} users
+                          Showing {dashboardData.users.data.length} of {dashboardData.users.pagination.totalItems} users
                         </p>
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
                             size="sm"
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                            disabled={dashboardData.users.pagination.currentPage === 1}
+                            onClick={() => {
+                              // TODO: Implement pagination with API call
+                            }}
                           >
                             Previous
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
-                            disabled={currentPage * itemsPerPage >= filteredUsers.length}
-                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={dashboardData.users.pagination.currentPage === dashboardData.users.pagination.totalPages}
+                            onClick={() => {
+                              // TODO: Implement pagination with API call
+                            }}
                           >
                             Next
                           </Button>
@@ -1090,7 +1036,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                     <div>
                       <CardTitle>Event Registrations</CardTitle>
                       <CardDescription>
-                        {filteredRegistrations.length} registrations found
+                        {dashboardData?.eventRegistrations.data.length || 0} registrations found
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -1137,14 +1083,14 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedRegistrations.length === 0 ? (
+                        {dashboardData?.eventRegistrations.data.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="text-center py-8 text-muted-foreground">
                               No registrations found
                             </td>
                           </tr>
                         ) : (
-                          paginatedRegistrations.map((reg) => (
+                          dashboardData.eventRegistrations.data.map((reg) => (
                             <tr key={reg.id} className="border-b hover:bg-muted/50">
                               <td className="py-3 px-4 break-words max-w-[220px]">
                                 <div>
@@ -1196,25 +1142,29 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                   </div>
 
                   {/* Pagination */}
-                  {totalPages > 1 && (
+                  {dashboardData?.eventRegistrations.pagination && dashboardData.eventRegistrations.pagination.totalPages > 1 && (
                     <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t gap-2">
                       <p className="text-sm text-muted-foreground">
-                        Page {currentPage} of {totalPages}
+                        Page {dashboardData.eventRegistrations.pagination.currentPage} of {dashboardData.eventRegistrations.pagination.totalPages}
                       </p>
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                          disabled={currentPage === 1}
+                          onClick={() => {
+                            // TODO: Implement pagination with API call
+                          }}
+                          disabled={dashboardData.eventRegistrations.pagination.currentPage === 1}
                         >
                           Previous
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                          disabled={currentPage === totalPages}
+                          onClick={() => {
+                            // TODO: Implement pagination with API call
+                          }}
+                          disabled={dashboardData.eventRegistrations.pagination.currentPage === dashboardData.eventRegistrations.pagination.totalPages}
                         >
                           Next
                         </Button>
@@ -1235,7 +1185,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                     <div>
                       <CardTitle>Pass Details</CardTitle>
                       <CardDescription>
-                        {filteredPasses.length} passes found
+                        {dashboardData?.passes.data.length || 0} passes found
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -1286,14 +1236,14 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                         </tr>
                       </thead>
                       <tbody>
-                        {paginatedPasses.length === 0 ? (
+                        {dashboardData?.passes.data.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="text-center py-8 text-muted-foreground">
                               No passes found
                             </td>
                           </tr>
                         ) : (
-                          paginatedPasses.map((pass) => (
+                          dashboardData.passes.data.map((pass) => (
                             <>
                               <tr key={pass.id} className="border-b hover:bg-muted/50">
                                 <td className="py-3 px-4">
@@ -1402,18 +1352,8 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                       )}
                                       
                                       {/* Links */}
-                                      {(pass.pdfUrl || pass.ticketDetails?.ticketUrl || pass.ticketDetails?.invoiceUrl) && (
+                                      {(pass.ticketDetails?.ticketUrl || pass.ticketDetails?.invoiceUrl) && (
                                         <div className="col-span-full flex gap-2 pt-2 border-t">
-                                          {pass.pdfUrl && (
-                                            <a 
-                                              href={pass.pdfUrl} 
-                                              target="_blank" 
-                                              rel="noopener noreferrer"
-                                              className="text-xs text-primary hover:underline flex items-center gap-1"
-                                            >
-                                              <Eye className="h-3 w-3" /> View Pass PDF
-                                            </a>
-                                          )}
                                           {pass.ticketDetails?.ticketUrl && (
                                             <a 
                                               href={pass.ticketDetails.ticketUrl} 
@@ -1448,25 +1388,29 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                   </div>
 
                   {/* Pagination */}
-                  {totalPages > 1 && (
+                  {dashboardData?.passes.pagination && dashboardData.passes.pagination.totalPages > 1 && (
                     <div className="flex items-center justify-between mt-4 pt-4 border-t">
                       <p className="text-sm text-muted-foreground">
-                        Page {currentPage} of {totalPages}
+                        Page {dashboardData.passes.pagination.currentPage} of {dashboardData.passes.pagination.totalPages}
                       </p>
                       <div className="flex gap-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                          disabled={currentPage === 1}
+                          onClick={() => {
+                            // TODO: Implement pagination with API call
+                          }}
+                          disabled={dashboardData.passes.pagination.currentPage === 1}
                         >
                           Previous
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                          disabled={currentPage === totalPages}
+                          onClick={() => {
+                            // TODO: Implement pagination with API call
+                          }}
+                          disabled={dashboardData.passes.pagination.currentPage === dashboardData.passes.pagination.totalPages}
                         >
                           Next
                         </Button>
@@ -1487,7 +1431,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                     <div>
                       <CardTitle>Pass Claims</CardTitle>
                       <CardDescription>
-                        {filteredClaims.length} claims found
+                        {dashboardData?.claims.data.length || 0} claims found
                       </CardDescription>
                     </div>
                     <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -1527,13 +1471,13 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                 <CardContent>
                   <div className="space-y-4">
                     {/* Claims List */}
-                    {filteredClaims.length === 0 ? (
+                    {dashboardData?.claims.data.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
                         <FileCheck className="h-12 w-12 mx-auto mb-4 opacity-50" />
                         <p>No pass claims found</p>
                       </div>
                     ) : (
-                      filteredClaims.map((claim) => (
+                      dashboardData.claims.data.map((claim) => (
                         <Card key={claim.id} className="border-l-4 border-l-amber-500">
                           <CardHeader>
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -1598,27 +1542,8 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                                     <p className="text-sm text-muted-foreground">Booking ID</p>
                                     <p className="font-mono text-sm">{claim.bookingId || 'N/A'}</p>
                                   </div>
-                                  <div>
-                                    <p className="text-sm text-muted-foreground">KonfHub Order ID</p>
-                                    <p className="font-mono text-sm">{claim.konfhubOrderId || 'N/A'}</p>
-                                  </div>
                                 </div>
                               </div>
-
-                              {/* Ticket File */}
-                              {claim.pdfFileUrl && (
-                                <div>
-                                  <p className="text-sm text-muted-foreground mb-1">Uploaded Ticket File</p>
-                                  <a
-                                    href={claim.pdfFileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:underline text-sm"
-                                  >
-                                    View Uploaded File ({claim.pdfFileName || 'ticket.pdf'})
-                                  </a>
-                                </div>
-                              )}
 
                               {/* Action Buttons */}
                               {claim.status === 'pending' && (

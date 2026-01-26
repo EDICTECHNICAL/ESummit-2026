@@ -93,13 +93,12 @@ After migrations, you can view your database tables in Supabase:
 1. Go to your [Supabase Dashboard](https://supabase.com/dashboard)
 2. Select your project
 3. Click **Table Editor** in the sidebar
-4. You'll see all 10 tables:
+4. You'll see all 9 tables:
    - users
    - passes
    - transactions
    - events
    - event_registrations
-   - check_ins
    - admin_users
    - audit_logs
    - notifications (if created)

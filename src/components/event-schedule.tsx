@@ -73,7 +73,7 @@ const EventSchedule = () => {
         description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
         duration: "7 hours",
         eligibility: "TRL 4+ startups",
-        prerequisite: "Pitch deck required (PDF, max 15 slides)",
+        prerequisite: "Pitch deck required (max 15 slides)",
       },
 
       {
@@ -238,7 +238,7 @@ const EventSchedule = () => {
         description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
         duration: "7 hours",
         eligibility: "TRL 4+ startups",
-        prerequisite: "Pitch deck required (PDF, max 15 slides)",
+        prerequisite: "Pitch deck required (max 15 slides)",
       },
       {
         id: "d2-incubator-summit",

@@ -17,7 +17,7 @@ E-Summit 2026 is TCET's inaugural Entrepreneurship Summit, organized by Axios ED
 - **QR Code Check-in:** Encrypted QR codes for event entry with real-time validation
 - **Admin Dashboard:** Real-time analytics, participant management, and QR scanning
 - **Event Management:** Browse events, register, and view schedules
-- **User Dashboard:** Personal pass access, PDF downloads, and event registrations
+- **User Dashboard:** Personal pass access and event registrations
 
 ## 🛠 Tech Stack
 

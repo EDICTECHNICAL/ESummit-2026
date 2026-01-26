@@ -35,7 +35,6 @@ model User {
   bookingId          String?             @unique @map("booking_id") @db.VarChar(255)
   bookingVerified    Boolean             @default(false) @map("booking_verified")
   clerkUserId        String?             @unique @map("clerk_user_id") @db.VarChar(255)
-  checkIns           CheckIn[]
   eventRegistrations EventRegistration[]
   passes             Pass[]
   transactions       Transaction[]
@@ -47,7 +46,7 @@ model User {
   @@map("users")
 }
 
-/// Event passes with QR codes and access control
+/// Event passes with access control
 model Pass {
   id                String        @id @default(uuid()) @db.Uuid
   userId            String        @map("user_id") @db.Uuid
@@ -60,13 +59,9 @@ model Pass {
   purchaseDate      DateTime?     @map("purchase_date") @db.Timestamptz(6)
   ticketDetails     Json?         @map("ticket_details")
   status            String        @default("Active")
-  qrCodeUrl         String?       @map("qr_code_url")
-  qrCodeData        String?       @map("qr_code_data")
-  pdfUrl            String?       @map("pdf_url")
   hasWorkshopAccess Boolean?      @map("has_workshop_access")
   createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  checkIns          CheckIn[]
   transaction       Transaction?
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   eventRegistrations EventRegistration[]
@@ -130,7 +125,6 @@ model Event {
   createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
   eventId              String?             @unique @map("event_id") @db.VarChar(100)
-  checkIns             CheckIn[]
   registrations        EventRegistration[]
 
   @@index([category])
@@ -755,31 +749,6 @@ model YouthConclaveRegistration {
 
 /// (Closing ceremony registrations removed - not stored separately)
 
-/// Check-in records for events and venue entry
-model CheckIn {
-  id          String   @id @default(uuid()) @db.Uuid
-  passId      String   @map("pass_id") @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  eventId     String?  @map("event_id") @db.Uuid
-  checkInTime DateTime @default(now()) @map("check_in_time") @db.Timestamptz(6)
-  checkInType String   @map("check_in_type") @db.VarChar(50)
-  scannedBy   String?  @map("scanned_by") @db.VarChar(255)
-  location    String?  @db.VarChar(255)
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  event       Event?   @relation(fields: [eventId], references: [id])
-  pass        Pass     @relation(fields: [passId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
-
-  @@index([passId])
-  @@index([userId])
-  @@index([eventId])
-  @@index([checkInTime(sort: Desc)])
-  @@index([scannedBy])
-  @@index([userId, eventId])
-  @@index([passId, checkInTime(sort: Desc)])
-  @@map("check_ins")
-}
-
 /// TCET Student Pass Codes - Pool of unique 6-digit codes for TCET students
 model TcetCode {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -795,7 +764,7 @@ model TcetCode {
   @@map("tcet_codes")
 }
 
-/// Pending pass claims - Users who uploaded ticket PDF but not yet verified
+/// Pending pass claims - Users who uploaded ticket files but not yet verified
 model PendingPassClaim {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   clerkUserId     String    @map("clerk_user_id") @db.VarChar(255)
@@ -805,7 +774,6 @@ model PendingPassClaim {
   bookingId       String?   @map("booking_id") @db.VarChar(255)
   konfhubOrderId  String?   @map("konfhub_order_id") @db.VarChar(255)
   ticketNumber    String?   @map("ticket_number") @db.VarChar(255)
-  qrCodeData      String?   @map("qr_code_data")
   extractedData   Json?     @map("extracted_data")
   status          String    @default("pending") @db.VarChar(50) // pending, verified, expired, rejected
   verifiedAt      DateTime? @map("verified_at") @db.Timestamptz(6)

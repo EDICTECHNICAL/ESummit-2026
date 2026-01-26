@@ -86,7 +86,7 @@ export function PrivacyPolicy() {
                       <li>To process your registration and event participation</li>
                       <li>To communicate event updates, schedules, and important notifications</li>
                       <li>To facilitate networking opportunities with other participants</li>
-                      <li>To process payments and issue QR code passes</li>
+                      <li>To process payments and issue event passes</li>
                       <li>To improve our event experience and services</li>
                       <li>To comply with legal obligations under Indian law</li>
                       <li>To prevent fraud and ensure event security</li>

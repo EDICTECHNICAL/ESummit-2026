@@ -1,26 +1,3 @@
-// Initialize Sentry FIRST, before any other imports
-import * as Sentry from '@sentry/node';
-
-// Read Sentry configuration from environment variables
-const SENTRY_DSN = process.env.SENTRY_DSN || '';
-const SENTRY_TRACES_SAMPLE_RATE = parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '0.1');
-const SENTRY_PROFILES_SAMPLE_RATE = parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '0.1');
-
-if (SENTRY_DSN) {
-  try {
-    Sentry.init({
-      dsn: SENTRY_DSN,
-      tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
-      profilesSampleRate: SENTRY_PROFILES_SAMPLE_RATE as any,
-      environment: process.env.NODE_ENV || 'development',
-    });
-    
-    // Sentry initialized
-  } catch (error) {
-    console.warn('⚠️ Sentry initialization failed:', error);
-  }
-}
-
 // Now import Express and other modules
 import express, { Application } from 'express';
 import cors from 'cors';
@@ -127,16 +104,6 @@ app.get('/favicon.png', (_req, res) => res.status(204).end());
 
 // 404 handler
 app.use(notFound);
-
-// Sentry error handler (must be before other error handlers)
-if (SENTRY_DSN) {
-  try {
-    // Use Sentry's error handler middleware - pass app to setup
-    Sentry.setupExpressErrorHandler(app);
-  } catch (error) {
-    console.warn('⚠️ Sentry error handler setup failed:', error);
-  }
-}
 
 // Error handler (must be last)
 app.use(errorHandler);

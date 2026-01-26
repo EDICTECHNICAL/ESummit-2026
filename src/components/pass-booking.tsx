@@ -284,7 +284,7 @@ export const PassBooking = memo(function PassBooking({
                 >
                   dashboard
                 </button>{" "}
-                to view your existing pass and QR code.
+                to view your existing pass.
               </p>
             </AlertDescription>
           </Alert>

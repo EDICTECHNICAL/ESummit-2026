@@ -613,7 +613,6 @@ router.get('/stats', async (req: Request, res: Response) => {
       totalRevenue,
       totalEvents,
       totalRegistrations,
-      checkInsToday,
       recentPasses,
     ] = await Promise.all([
       prisma.user.count(),
@@ -631,14 +630,6 @@ router.get('/stats', async (req: Request, res: Response) => {
       }),
       prisma.event.count(),
       prisma.eventRegistration.count(),
-      prisma.checkIn.count({
-        where: {
-          checkInTime: {
-            gte: todayStart,
-            lte: todayEnd,
-          },
-        },
-      }),
       prisma.pass.findMany({
         take: 10,
         orderBy: { createdAt: 'desc' },
@@ -677,7 +668,6 @@ router.get('/stats', async (req: Request, res: Response) => {
       unverifiedPasses: totalUsers - verifiedUsers,
       totalEvents,
       totalRegistrations,
-      checkInsToday,
       passTypeBreakdown,
       overview: {
         totalPasses,
@@ -711,9 +701,10 @@ router.delete('/passes/:passId', async (req: Request, res: Response) => {
     }
 
     const { passId } = req.params;
+    const passIdStr = Array.isArray(passId) ? passId[0] : passId;
 
     const pass = await prisma.pass.delete({
-      where: { id: passId },
+      where: { id: passIdStr },
     });
 
     logger.info('Pass deleted by admin', { passId, passType: pass.passType });
@@ -887,8 +878,6 @@ router.post('/capture-ticket', async (req: Request, res: Response) => {
           price: 0,
           purchaseDate: new Date(),
           status: 'Active',
-          qrCodeUrl: ticketUrl,
-          qrCodeData: bookingId,
           ticketDetails: {
             attendeeName: attendee.name,
             email: attendee.email,
@@ -1033,7 +1022,6 @@ router.get('/passes', async (req: Request, res: Response) => {
         price: true,
         createdAt: true,
         purchaseDate: true,
-        pdfUrl: true,
         ticketDetails: true,
         user: {
           select: {
@@ -1159,18 +1147,8 @@ router.get('/claims', async (req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Add PDF file URLs to claims for admin viewing
-    const claimsWithFiles = claims.map(claim => {
-      const extractedData = claim.extractedData as any;
-      return {
-        ...claim,
-        pdfFileUrl: extractedData?.fileUrl || null,
-        pdfFileName: extractedData?.fileName || null,
-      };
-    });
-
     // Get unique clerk user IDs
-    const clerkUserIds = [...new Set(claimsWithFiles.map(c => c.clerkUserId))];
+    const clerkUserIds = [...new Set(claims.map(c => c.clerkUserId))];
     
     // Fetch all users in one query
     const users = await prisma.user.findMany({
@@ -1213,7 +1191,7 @@ router.get('/claims', async (req: Request, res: Response) => {
     });
     
     // Merge claims with user data and passes
-    const claimsWithUserData = claimsWithFiles.map(claim => {
+    const claimsWithUserData = claims.map(claim => {
       const user = userMap.get(claim.clerkUserId);
       return {
         ...claim,
@@ -1254,6 +1232,7 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
     }
 
     const { claimId } = req.params;
+    const claimIdStr = Array.isArray(claimId) ? claimId[0] : claimId;
     const { action, adminNotes } = req.body; // action: 'approve' | 'reject'
 
     if (!['approve', 'reject'].includes(action)) {
@@ -1262,7 +1241,7 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
 
     // Get the claim and associated user
     const claim = await prisma.pendingPassClaim.findUnique({
-      where: { id: claimId },
+      where: { id: claimIdStr },
     });
 
     if (!claim) {
@@ -1307,8 +1286,6 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
           data: {
             userId: user.id,
             status: 'Active',
-            pdfUrl: extractedData.fileUrl || extractedData.filePath || existingPass.pdfUrl,
-            qrCodeUrl: extractedData.ticketUrl || existingPass.qrCodeUrl,
             ticketDetails: {
               ...(existingPass.ticketDetails as object || {}),
               attendeeName: claim.fullName || extractedData.attendeeName || user.fullName,
@@ -1353,9 +1330,6 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
             price: extractedData.price || 0,
             purchaseDate: new Date(),
             status: 'Active',
-            pdfUrl: extractedData.fileUrl || extractedData.filePath || null,
-            qrCodeUrl: extractedData.ticketUrl || null,
-            qrCodeData: claim.qrCodeData || claim.bookingId || uniquePassId,
             ticketDetails: {
               attendeeName: claim.fullName || extractedData.attendeeName || user.fullName,
               email: claim.email,
@@ -1375,7 +1349,7 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
 
       // Update claim status
       await prisma.pendingPassClaim.update({
-        where: { id: claimId },
+        where: { id: claimIdStr },
         data: {
           status: 'approved',
           verifiedAt: new Date(),
@@ -1400,7 +1374,7 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
     } else if (action === 'reject') {
       // Update claim status to rejected
       const updatedClaim = await prisma.pendingPassClaim.update({
-        where: { id: claimId },
+        where: { id: claimIdStr },
         data: {
           status: 'rejected',
           verifiedAt: new Date(),
@@ -1424,64 +1398,329 @@ router.post('/claims/:claimId/action', async (req: Request, res: Response) => {
 });
 
 /**
- * Download PDF uploaded by user during claim verification
- * GET /api/v1/admin/claims/:claimId/pdf
+ * Cleanup old uploaded files (older than 24 hours)
+
+/**
+ * Get complete admin dashboard data in a single call
+ * GET /api/v1/admin/dashboard
  */
-router.get('/claims/:claimId/pdf', async (req: Request, res: Response) => {
+router.get('/dashboard', async (req: Request, res: Response) => {
+  // Set CORS headers explicitly
+  const origin = req.headers.origin;
+  const allowedOrigins = ['https://tcetesummit.in', 'https://www.tcetesummit.in'];
+
+  if (allowedOrigins.includes(origin || '') || !origin) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-admin-secret, content-type, authorization, x-requested-with');
+  res.header('Access-Control-Allow-Credentials', 'true');
+
   try {
     if (!(await isAdminAuthorized(req))) {
-      return sendError(res, 'Unauthorized: Admin access required', 403);
+      logger.warn('Unauthorized admin access attempt to /dashboard', {
+        hasAuthHeader: !!req.headers.authorization,
+        origin: req.headers.origin,
+      });
+      return sendError(res, 'Unauthorized: Admin access required. Please ensure your Clerk account has adminRole set to "core", "jc", or "oc" in public metadata.', 403);
     }
 
-    const { claimId } = req.params;
+    // Get query parameters for pagination and filtering
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const offset = (page - 1) * limit;
 
-    // Get the claim
-    const claim = await prisma.pendingPassClaim.findUnique({
-      where: { id: claimId },
+    // Get today's date range for any time-based stats
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    // Execute all dashboard queries in parallel for better performance
+    const [
+      // Stats data
+      totalUsers,
+      totalPasses,
+      verifiedUsers,
+      activePasses,
+      usedPasses,
+      passesByType,
+      totalRevenue,
+      totalEvents,
+      totalRegistrations,
+      passTypeBreakdown,
+
+      // Lists data (with pagination)
+      users,
+      passes,
+      eventRegistrations,
+      claims,
+
+      // Recent activity
+      recentPasses,
+    ] = await Promise.all([
+      // Stats queries
+      prisma.user.count(),
+      prisma.pass.count(),
+      prisma.user.count({ where: { bookingVerified: true } }),
+      prisma.pass.count({ where: { status: 'Active' } }),
+      prisma.pass.count({ where: { status: 'Used' } }),
+      prisma.pass.groupBy({
+        by: ['passType'],
+        _count: true,
+        _sum: { price: true },
+      }),
+      prisma.pass.aggregate({
+        _sum: { price: true },
+      }),
+      prisma.event.count(),
+      prisma.eventRegistration.count(),
+      prisma.pass.groupBy({
+        by: ['passType'],
+        _count: true,
+      }),
+
+      // Paginated lists
+      prisma.user.findMany({
+        take: limit,
+        skip: offset,
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          college: true,
+          yearOfStudy: true,
+          rollNumber: true,
+          branch: true,
+          createdAt: true,
+          bookingVerified: true,
+          is_active: true,
+          clerkUserId: true,
+          passes: {
+            select: {
+              id: true,
+              passId: true,
+              passType: true,
+              status: true,
+              bookingId: true,
+              konfhubOrderId: true,
+              price: true,
+              createdAt: true,
+              purchaseDate: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+
+      prisma.pass.findMany({
+        take: limit,
+        skip: offset,
+        select: {
+          id: true,
+          passId: true,
+          passType: true,
+          status: true,
+          bookingId: true,
+          konfhubOrderId: true,
+          price: true,
+          createdAt: true,
+          purchaseDate: true,
+          ticketDetails: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+              fullName: true,
+              phone: true,
+              college: true,
+              bookingVerified: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+
+      prisma.eventRegistration.findMany({
+        take: limit,
+        skip: offset,
+        select: {
+          id: true,
+          eventId: true,
+          userId: true,
+          passId: true,
+          status: true,
+          registrationDate: true,
+          formData: true,
+          event: {
+            select: {
+              id: true,
+              title: true,
+              date: true,
+              venue: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              fullName: true,
+            },
+          },
+          pass: {
+            select: {
+              id: true,
+              passId: true,
+              passType: true,
+              bookingId: true,
+            },
+          },
+        },
+        orderBy: { registrationDate: 'desc' },
+      }),
+
+      prisma.pendingPassClaim.findMany({
+        take: limit,
+        skip: offset,
+        where: {
+          status: { in: ['pending', 'verified'] },
+        },
+        select: {
+          id: true,
+          clerkUserId: true,
+          email: true,
+          fullName: true,
+          passType: true,
+          bookingId: true,
+          konfhubOrderId: true,
+          ticketNumber: true,
+          extractedData: true,
+          status: true,
+          verifiedAt: true,
+          expiresAt: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+
+      // Recent passes for activity feed
+      prisma.pass.findMany({
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          passType: true,
+          status: true,
+          price: true,
+          createdAt: true,
+          user: {
+            select: {
+              email: true,
+              fullName: true,
+            },
+          },
+        },
+      }),
+    ]);
+
+    // Build pass type breakdown object
+    const passTypeBreakdownObj: Record<string, number> = {};
+
+    // Helper function to normalize pass type names to title case
+    const toTitleCase = (str: string): string => {
+      return str.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    };
+
+    passTypeBreakdown.forEach(p => {
+      const normalizedType = toTitleCase(p.passType);
+      passTypeBreakdownObj[normalizedType] = (passTypeBreakdownObj[normalizedType] || 0) + p._count;
     });
 
-    if (!claim) {
-      return sendError(res, 'Claim not found', 404);
-    }
+    // Get total counts for pagination info
+    const [totalUsersCount, totalPassesCount, totalRegistrationsCount, totalClaimsCount] = await Promise.all([
+      prisma.user.count(),
+      prisma.pass.count(),
+      prisma.eventRegistration.count(),
+      prisma.pendingPassClaim.count({
+        where: {
+          status: { in: ['pending', 'verified'] },
+        },
+      }),
+    ]);
 
-    const extractedData = claim.extractedData as any;
-    const filePath = extractedData?.filePath;
+    // Return bundled dashboard data
+    return sendSuccess(res, 'Dashboard data fetched successfully', {
+      // Stats
+      stats: {
+        totalUsers,
+        totalPasses,
+        verifiedPasses: verifiedUsers,
+        unverifiedPasses: totalUsers - verifiedUsers,
+        totalEvents,
+        totalRegistrations,
+        passTypeBreakdown: passTypeBreakdownObj,
+        overview: {
+          totalPasses,
+          activePasses,
+          usedPasses,
+          pendingPasses: totalPasses - activePasses - usedPasses,
+          totalRevenue: totalRevenue._sum.price || 0,
+        },
+        byPassType: passesByType.map(p => ({
+          passType: p.passType,
+          count: p._count,
+          revenue: p._sum.price || 0,
+        })),
+        recentPasses,
+      },
 
-    if (!filePath) {
-      return sendError(res, 'No PDF file found for this claim', 404);
-    }
+      // Paginated data
+      users: {
+        data: users,
+        pagination: {
+          page,
+          limit,
+          total: totalUsersCount,
+          totalPages: Math.ceil(totalUsersCount / limit),
+        },
+      },
 
-    // Construct full file path
-    const path = require('path');
-    const fs = require('fs');
-    const fullFilePath = path.join(__dirname, '../../', filePath);
+      passes: {
+        data: passes,
+        pagination: {
+          page,
+          limit,
+          total: totalPassesCount,
+          totalPages: Math.ceil(totalPassesCount / limit),
+        },
+      },
 
-    // Check if file exists
-    if (!fs.existsSync(fullFilePath)) {
-      return sendError(res, 'PDF file not found on server', 404);
-    }
+      eventRegistrations: {
+        data: eventRegistrations,
+        pagination: {
+          page,
+          limit,
+          total: totalRegistrationsCount,
+          totalPages: Math.ceil(totalRegistrationsCount / limit),
+        },
+      },
 
-    // Set response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="${extractedData.fileName || 'ticket.pdf'}"`
-    );
-
-    // Stream the PDF file
-    const fileStream = fs.createReadStream(fullFilePath);
-    fileStream.pipe(res);
-
-    fileStream.on('error', (error: any) => {
-      console.error('Error streaming PDF:', error);
-      if (!res.headersSent) {
-        sendError(res, 'Error serving PDF', 500);
-      }
+      claims: {
+        data: claims,
+        pagination: {
+          page,
+          limit,
+          total: totalClaimsCount,
+          totalPages: Math.ceil(totalClaimsCount / limit),
+        },
+      },
     });
-    return; // Explicit return after streaming
 
   } catch (error: any) {
-    logger.error('Download claim PDF error:', error);
+    logger.error('Get dashboard data error:', error);
     return sendError(res, error.message, 500);
   }
 });

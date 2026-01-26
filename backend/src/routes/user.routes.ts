@@ -258,8 +258,9 @@ router.post('/complete-profile', async (req: Request, res: Response) => {
 router.get('/profile/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
-    const user = await ensureUserExists(clerkUserId);
+    const user = await ensureUserExists(clerkUserIdStr);
 
     if (!user) {
       sendError(res, 'User not found', 404);
@@ -297,8 +298,9 @@ router.get('/profile/:clerkUserId', async (req: Request, res: Response) => {
 router.get('/check-profile/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
-    const user = await ensureUserExists(clerkUserId);
+    const user = await ensureUserExists(clerkUserIdStr);
 
     if (!user) {
       sendSuccess(res, 'User not found', { isComplete: false, exists: false });
@@ -757,12 +759,13 @@ router.post('/events/register', async (req: Request, res: Response) => {
 router.get('/events/registered/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
     // Ensure user exists
-    await ensureUserExists(clerkUserId);
+    await ensureUserExists(clerkUserIdStr);
 
     const user = await prisma.user.findUnique({
-      where: { clerkUserId },
+      where: { clerkUserId: clerkUserIdStr },
       include: {
         eventRegistrations: {
           where: { status: 'registered' },

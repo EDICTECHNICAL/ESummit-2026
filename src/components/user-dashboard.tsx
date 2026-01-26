@@ -8,7 +8,6 @@ import {
   Loader2,
   UserPlus,
   CheckCircle2,
-  Copy,
   X,
   Upload,
   Clock,
@@ -47,8 +46,6 @@ interface Pass {
     [key: string]: any;
   };
   status: string;
-  qrCodeUrl?: string;
-  qrCodeData?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,28 +98,18 @@ export function UserDashboard({
   const [isCheckingProfile, setIsCheckingProfile] = useState(true);
   const [myPasses, setMyPasses] = useState<Pass[]>([]);
   const [isLoadingPasses, setIsLoadingPasses] = useState(true);
-  const [downloadingPassId, setDownloadingPassId] = useState<string | null>(null);
-  const [registeredEvents, setRegisteredEvents] = useState<Set<string>>(new Set());
-  const [registeredEventDetails, setRegisteredEventDetails] = useState<Event[]>([]);
-  const [eligibleEventsFromPass, setEligibleEventsFromPass] = useState<Event[]>([]);
   const [registeringEventId, setRegisteringEventId] = useState<string | null>(null);
-  const [isLoadingRegistrations, setIsLoadingRegistrations] = useState(true);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [tcetCode, setTcetCode] = useState<string | null>(null);
-  const [isAssigningCode, setIsAssigningCode] = useState(false);
   const [showKonfHubWidget, setShowKonfHubWidget] = useState(false);
   
   // Pass claim states
   const [showPassClaimModal, setShowPassClaimModal] = useState(false);
   const [pendingClaims, setPendingClaims] = useState<PendingPassClaim[]>([]);
   const [isSubmittingClaim, setIsSubmittingClaim] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [claimFormData, setClaimFormData] = useState({
     bookingId: '',
-    konfhubOrderId: '',
-    ticketNumber: '',
     passType: 'Pixel Pass',
   });
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   // Check if user is a Thakur student (TCET, TGBS, TIMSR, Thakur Education) based on email domain
   const userName = user?.fullName || userData?.name || "User";
@@ -135,28 +122,6 @@ export function UserDashboard({
   // Set initial tab to My Passes for all users
   const [activeTab, setActiveTab] = useState("mypasses");
 
-  // Fetch TCET code for Thakur students (TCET, TGBS, TIMSR, Thakur Education)
-  useEffect(() => {
-    const fetchTcetCode = async () => {
-      if (!isTCETStudent || !user?.id) return;
-
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/tcet/code/${user.id}`
-        );
-        const data = await response.json();
-
-        if (data.success && data.data.code) {
-          setTcetCode(data.data.code);
-        }
-      } catch (error) {
-        // Error handled by toast notification
-      }
-    };
-
-    fetchTcetCode();
-  }, [isTCETStudent, user?.id]);
-
   // Handle Thakur Student pass booking
   const handleTcetPassBooking = async () => {
     if (!user?.id) {
@@ -164,37 +129,11 @@ export function UserDashboard({
       return;
     }
 
-    setIsAssigningCode(true);
-
     try {
-      // Assign a code if not already assigned
-      if (!tcetCode) {
-        const response = await fetch(
-          `${API_BASE_URL}/tcet/assign/${user.id}`,
-          { method: 'POST' }
-        );
-        const data = await response.json();
-
-        if (!data.success) {
-          toast.error(data.error || "❌ Unable to apply this code. Please verify the code and try again.");
-          setIsAssigningCode(false);
-          return;
-        }
-
-        setTcetCode(data.data.code);
-        toast.success(`Your unique code: ${data.data.code}`, {
-          description: "Please use this code when booking on KonfHub",
-          duration: 10000,
-        });
-      }
-
       // Open KonfHub widget
       setShowKonfHubWidget(true);
     } catch (error) {
-      // Error already handled by toast notification
       toast.error("⚠️ Something went wrong. Please refresh the page and try again.");
-    } finally {
-      setIsAssigningCode(false);
     }
   };
 
@@ -218,32 +157,6 @@ export function UserDashboard({
             return pass.status === 'Active';
           });
           setMyPasses(confirmedPasses);
-          
-          // Auto-populate schedule with eligible events based on purchased passes
-          if (confirmedPasses.length > 0) {
-            const passTypeId = getPassTypeId(confirmedPasses[0].passType);
-            
-            const eligibleEvents = getFormattedEventsForPass(passTypeId);
-            
-            // Convert to the Event interface format used by the component
-            const formattedEvents: Event[] = eligibleEvents.map(event => ({
-              id: event.id,
-              title: event.title,
-              description: event.description,
-              date: event.date,
-              time: event.time,
-              venue: event.venue,
-              category: event.category,
-              speaker: event.speaker,
-            }));
-            
-            console.log('[Dashboard] Formatted events for schedule:', formattedEvents.length);
-            
-            // Store eligible events separately
-            setEligibleEventsFromPass(formattedEvents);
-          } else {
-            setEligibleEventsFromPass([]);
-          }
         }
       } catch (error) {
         console.error("Error fetching passes:", error);
@@ -292,69 +205,48 @@ export function UserDashboard({
       return;
     }
 
-    if (!claimFormData.bookingId && !claimFormData.konfhubOrderId && !claimFormData.ticketNumber) {
-      toast.error("📋 Please provide at least one identifier from your booking confirmation (Booking ID, Order ID, or Ticket Number).");
+    if (!claimFormData.bookingId) {
+      toast.error("📋 Please provide your Booking ID from your booking confirmation.");
       return;
     }
 
     setIsSubmittingClaim(true);
 
     try {
-      const formData = new FormData();
-      formData.append('clerkUserId', user.id);
-      formData.append('email', userEmail);
-      formData.append('fullName', userName);
-      formData.append('passType', claimFormData.passType);
-      
-      if (claimFormData.bookingId) {
-        formData.append('bookingId', claimFormData.bookingId);
-      }
-      if (claimFormData.konfhubOrderId) {
-        formData.append('konfhubOrderId', claimFormData.konfhubOrderId);
-      }
-      if (claimFormData.ticketNumber) {
-        formData.append('ticketNumber', claimFormData.ticketNumber);
-      }
-      if (uploadedFile) {
-        formData.append('ticketFile', uploadedFile);
-      }
-
-      const response = await fetch(`${API_BASE_URL}/pass-claims/submit`, {
+      // Create pass directly with immediate approval
+      const response = await fetch(`${API_BASE_URL}/passes/create`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clerkUserId: user.id,
+          email: userEmail,
+          fullName: userName,
+          passType: claimFormData.passType,
+          bookingId: claimFormData.bookingId,
+          status: 'Active', // Immediately approve
+        }),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        if (data.data.pass) {
-          // Pass was immediately verified
-          toast.success("🎉 Pass verified!", {
-            description: "Your pass has been added to your account.",
-          });
-          // Refresh passes
-          window.location.reload();
-        } else {
-          // Pending verification
-          toast.success("Claim submitted!", {
-            description: "We'll verify your pass within 32 hours. Check back for updates.",
-          });
-          setPendingClaims(prev => [...prev, data.data.claim]);
-        }
+        toast.success("🎉 Pass approved!", {
+          description: "Your pass has been added to your account immediately.",
+        });
+        // Refresh passes to show the new pass
+        window.location.reload();
         setShowPassClaimModal(false);
         setClaimFormData({
           bookingId: '',
-          konfhubOrderId: '',
-          ticketNumber: '',
           passType: 'Pixel Pass',
         });
         setUploadedFile(null);
       } else {
-        toast.error(data.error || "Failed to submit claim");
+        toast.error(data.error || "Failed to create pass");
       }
     } catch (error) {
-      console.error("Error submitting pass claim:", error);
-      toast.error("⚠️ Couldn't submit your claim. Please check your information and try again. Contact support if the issue persists.");
+      console.error("Error creating pass:", error);
+      toast.error("⚠️ Couldn't create your pass. Please check your information and try again. Contact support if the issue persists.");
     } finally {
       setIsSubmittingClaim(false);
     }
@@ -390,96 +282,6 @@ export function UserDashboard({
     const now = Date.now();
     return Math.max(0, Math.round((expiry - now) / (60 * 60 * 1000)));
   };
-
-  // Fetch user's registered events
-  useEffect(() => {
-    const fetchRegisteredEvents = async () => {
-      if (!user?.id) {
-        setIsLoadingRegistrations(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/users/events/registered/${user.id}`
-        );
-        const data = await response.json();
-
-        if (data.success && data.data.registeredEventIds) {
-          setRegisteredEvents(new Set(data.data.registeredEventIds));
-          
-          // Fetch full event details for each registered event
-          const eventIds = data.data.registeredEventIds;
-          if (eventIds.length > 0) {
-            const eventDetailsPromises = eventIds.map(async (eventId: string) => {
-              try {
-                const eventResponse = await fetch(
-                  `${API_BASE_URL}/events/${eventId}`
-                );
-                const eventData = await eventResponse.json();
-                if (eventData.success && eventData.data && eventData.data.event) {
-                  const event = eventData.data.event;
-                  // Parse date safely
-                  const eventDate = new Date(event.date);
-                  const isValidDate = !isNaN(eventDate.getTime());
-                  
-                  return {
-                    id: event.eventId || event.id,
-                    title: event.title,
-                    description: event.description || '',
-                    date: isValidDate ? eventDate.toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }) : event.date || 'Date TBA',
-                    time: event.startTime && event.endTime ? `${new Date(event.startTime).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })} - ${new Date(event.endTime).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}` : 'Time TBA',
-                    venue: event.venue,
-                    category: event.category,
-                    speaker: event.speakerName || null,
-                  };
-                }
-              } catch (err) {
-                console.error(`Error fetching event ${eventId}:`, err);
-              }
-              return null;
-            });
-            
-            const events = await Promise.all(eventDetailsPromises);
-            setRegisteredEventDetails(events.filter((e): e is Event => e !== null));
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching registered events:", error);
-      } finally {
-        setIsLoadingRegistrations(false);
-      }
-    };
-
-    fetchRegisteredEvents();
-  }, [user?.id, refreshTrigger]);
-
-  // Refresh events when user navigates to dashboard or when tab becomes visible
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && user?.id) {
-        // Refresh registered events when user comes back to the page
-        setRefreshTrigger(prev => prev + 1);
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [user?.id]);
 
   // Check if user profile is complete
   useEffect(() => {
@@ -557,9 +359,6 @@ export function UserDashboard({
     return passTypeId;
   };
 
-  // Use the fetched registered event details directly
-  const registeredSchedule = registeredEventDetails;
-
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -568,36 +367,6 @@ export function UserDashboard({
       month: 'short',
       day: 'numeric'
     });
-  };
-
-  // Download pass PDF
-  const downloadPassPDF = async (passId: string) => {
-    try {
-      setDownloadingPassId(passId);
-      const response = await fetch(
-        `${API_BASE_URL}/pdf/pass/${passId}`
-      );
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to download pass PDF');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ESUMMIT-2026-${passId}-Pass.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error downloading pass PDF:', error);
-      toast.error(error instanceof Error ? error.message : '⚠️ Unable to download your pass. Please check your internet connection and try again.');
-    } finally {
-      setDownloadingPassId(null);
-    }
   };
 
   // Handle event registration
@@ -669,9 +438,6 @@ export function UserDashboard({
       >
         <TabsList className="mb-6">
           <TabsTrigger value="mypasses">My Passes</TabsTrigger>
-          <TabsTrigger value="schedule">
-            My Schedule
-          </TabsTrigger>
         </TabsList>
 
         {/* My Passes Tab - For all users */}
@@ -745,21 +511,7 @@ export function UserDashboard({
                           </div>
 
                           <div className="flex gap-2">
-                            {pass.status === 'Active' && (pass.qrCodeUrl || pass.bookingId || pass.konfhubTicketId) ? (
-                              <Button
-                                variant="outline"
-                                className="flex-1"
-                                onClick={() => downloadPassPDF(pass.passId)}
-                                disabled={downloadingPassId === pass.passId}
-                              >
-                                {downloadingPassId === pass.passId ? (
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Ticket className="mr-2 h-4 w-4" />
-                                )}
-                                Download Pass
-                              </Button>
-                            ) : pass.status === 'Active' ? (
+                            {pass.status === 'Active' ? (
                               <Button
                                 variant="outline"
                                 className="flex-1"
@@ -922,189 +674,6 @@ export function UserDashboard({
             </div>
           )}
         </TabsContent>
-
-
-        <TabsContent value="schedule">{isLoadingPasses || isLoadingRegistrations ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Loading your schedule...</span>
-            </div>
-          ) : (
-          <div className="space-y-4">
-            {myPasses.length > 0 && (
-              <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
-                    <div className="flex-1">
-                      <h4 className="mb-1 font-semibold">Events Included with Your Pass</h4>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {eligibleEventsFromPass.length === 0 ? '⏳ Loading your eligible events...' : `🎉 You have access to ${eligibleEventsFromPass.length} event${eligibleEventsFromPass.length > 1 ? 's' : ''} with your ${myPasses[0]?.passType}!`}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {myPasses.map((pass) => (
-                          <Badge key={pass.passId} variant="default">
-                            {pass.passType}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {registeredSchedule.length > 0 ? (
-              <>
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2 text-foreground">Your Registered Events</h3>
-                  <p className="text-sm text-muted-foreground">
-                    You have registered for {registeredSchedule.length} event{registeredSchedule.length > 1 ? 's' : ''}
-                  </p>
-                </div>
-                {registeredSchedule.map((event) => (
-                  <Card key={event.id} className="border-primary/20">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-start gap-3 mb-3">
-                            <Badge variant="outline" className="mt-1">
-                              {event.category}
-                            </Badge>
-                            <Badge variant="default" className="mt-1 bg-green-600">
-                              <CheckCircle2 className="h-3 w-3 mr-1" />
-                              Registered
-                            </Badge>
-                            <div className="flex-1">
-                              <h3 className="mb-2">{event.title}</h3>
-                              {event.speaker && (
-                                <p className="text-sm text-muted-foreground mb-2">
-                                  Speaker: {event.speaker}
-                                </p>
-                              )}
-                              <p className="text-sm text-muted-foreground">
-                                {event.description}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {event.date}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {event.time}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Ticket className="h-4 w-4" />
-                              {event.venue}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </>
-            ) : (
-              <Card className="border-dashed">
-                <CardContent className="p-6 text-center">
-                  <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                  <h3 className="mb-2">No registered events yet</h3>
-                  <p className="mb-4 text-sm text-muted-foreground">
-                    {myPasses.length > 0
-                      ? "Register for events to see them in your schedule"
-                      : "Purchase a pass to access E-Summit events"}
-                  </p>
-                  <Button onClick={() => onNavigate(myPasses.length > 0 ? "events" : "booking")}>
-                    {myPasses.length > 0 ? "Browse Events" : "Book Pass"}
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Show all eligible events from pass */}
-            {myPasses.length > 0 && eligibleEventsFromPass.length > 0 && (
-              <>
-                <div className="mb-4 mt-6">
-                  <h3 className="text-lg font-semibold mb-2 text-foreground">All Events Available with Your Pass</h3>
-                  <p className="text-sm text-muted-foreground">
-                    These are all the events you can attend with your {myPasses[0]?.passType}. Register for events to add them to your schedule.
-                  </p>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {eligibleEventsFromPass.map((event) => {
-                    const isRegistered = registeredEvents.has(event.id);
-                    return (
-                      <Card key={event.id} className={isRegistered ? "border-green-500/30 bg-green-50/30" : "border-muted"}>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <Badge variant="outline" className="shrink-0">
-                              {event.category}
-                            </Badge>
-                            {isRegistered && (
-                              <Badge variant="default" className="bg-green-600 shrink-0">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Registered
-                              </Badge>
-                            )}
-                          </div>
-                          <h4 className="font-semibold mb-2 break-words">{event.title}</h4>
-                          {event.speaker && (
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Speaker: {event.speaker}
-                            </p>
-                          )}
-                          <div className="space-y-1 text-sm text-muted-foreground mb-3">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{event.date}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{event.time}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Ticket className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{event.venue}</span>
-                            </div>
-                          </div>
-                          {!isRegistered && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => onNavigate("events")}
-                            >
-                              View & Register
-                            </Button>
-                          )}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-
-            {registeredSchedule.length > 0 && (
-              <Card className="border-dashed">
-                <CardContent className="p-6 text-center">
-                  <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                  <h3 className="mb-2">View complete schedule</h3>
-                  <p className="mb-4 text-sm text-muted-foreground">
-                    See the full E-Summit schedule and plan your day
-                  </p>
-                  <Button onClick={() => onNavigate("schedule")}>
-                    View Full Schedule
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-          )}
-        </TabsContent>
       </Tabs>
 
       {/* Profile Completion Modal */}
@@ -1117,38 +686,13 @@ export function UserDashboard({
       {showKonfHubWidget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-2 sm:p-4">
           <div className="relative w-full max-w-5xl max-h-[95vh] bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-2xl border-2 border-primary/20">
-            {/* Header with TCET Code Highlight */}
+            {/* Header */}
             <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-purple-500/10 p-3 sm:p-6 border-b-2 border-primary/20">
               <div className="flex items-start justify-between gap-2 sm:gap-4">
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg sm:text-2xl font-bold mb-2 flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                    🎓 <span className="truncate">Book TCET Student Pass</span>
+                    🎓 <span className="truncate">Book Thakur Student Pass</span>
                   </h3>
-                  {tcetCode && (
-                    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border-2 border-dashed border-primary shadow-sm">
-                      <p className="text-[10px] sm:text-xs uppercase tracking-wide mb-1 font-semibold" style={{ color: 'var(--foreground)' }}>Your Thakur Student Access Code</p>
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                        <span className="font-mono text-2xl sm:text-4xl font-bold tracking-widest break-all" style={{ color: 'var(--foreground)' }}>{tcetCode}</span>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            navigator.clipboard.writeText(tcetCode);
-                            toast.success("Code copied!", {
-                              description: "Thakur Student access code copied to clipboard"
-                            });
-                          }}
-                          className="w-full sm:w-auto"
-                        >
-                          <Copy className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          <span className="text-xs sm:text-sm font-medium" style={{ color: 'var(--foreground)' }}>Copy</span>
-                        </Button>
-                      </div>
-                      <p className="text-[10px] sm:text-xs mt-2 font-semibold" style={{ color: 'var(--foreground)' }}>
-                        ⚠️ Use this code in the booking form to access your Thakur Student pass
-                      </p>
-                    </div>
-                  )}
                 </div>
                 <Button
                   variant="ghost"
@@ -1246,102 +790,11 @@ export function UserDashboard({
                   <p className="text-[10px] sm:text-xs text-muted-foreground">Found in your confirmation email from KonfHub</p>
                 </div>
 
-                {/* Collapsible Optional Fields */}
-                <div className="space-y-3 pt-1">
-                  <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider font-medium">Additional Details (Optional)</p>
-                  
-                  {/* KonfHub Order ID */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs sm:text-sm font-medium text-foreground/80">
-                      KonfHub Order ID
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g., ORD-XXXXXXXXXX"
-                      className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/60"
-                      value={claimFormData.konfhubOrderId}
-                      onChange={(e) => setClaimFormData(prev => ({ ...prev, konfhubOrderId: e.target.value }))}
-                    />
-                  </div>
-
-                  {/* Ticket Number */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs sm:text-sm font-medium text-foreground/80">
-                      Ticket Number
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g., TKT-123456"
-                      className="w-full h-11 sm:h-10 px-3 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-muted-foreground/60"
-                      value={claimFormData.ticketNumber}
-                      onChange={(e) => setClaimFormData(prev => ({ ...prev, ticketNumber: e.target.value }))}
-                    />
-                  </div>
-                </div>
-
-                {/* File Upload */}
-                <div className="space-y-1.5 pt-1">
-                  <label className="text-xs sm:text-sm font-medium text-foreground/80">
-                    Upload Ticket (Optional)
-                  </label>
-                  <div className="border-2 border-dashed rounded-xl p-4 sm:p-5 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer active:scale-[0.99]">
-                    <input
-                      type="file"
-                      accept=".pdf,image/*"
-                      className="hidden"
-                      id="ticket-upload"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setUploadedFile(file);
-                          toast.success(`File selected: ${file.name}`);
-                        }
-                      }}
-                    />
-                    <label htmlFor="ticket-upload" className="cursor-pointer block">
-                      {uploadedFile ? (
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-green-600">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-5 w-5 shrink-0" />
-                            <span className="text-sm font-medium truncate max-w-[180px] sm:max-w-[250px]">{uploadedFile.name}</span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e: MouseEvent) => {
-                              e.preventDefault();
-                              setUploadedFile(null);
-                            }}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 px-2"
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            <span className="text-xs">Remove</span>
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-muted/50 flex items-center justify-center">
-                            <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
-                          </div>
-                          <div>
-                            <p className="text-xs sm:text-sm text-muted-foreground font-medium">
-                              Tap to upload ticket PDF or screenshot
-                            </p>
-                            <p className="text-[10px] sm:text-xs text-muted-foreground/70 mt-0.5">
-                              PDF, PNG, JPG • Max 10MB
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </label>
-                  </div>
-                </div>
-
                 {/* Info Alert */}
                 <Alert className="bg-blue-50/80 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800/50 rounded-xl">
                   <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
                   <AlertDescription className="text-[10px] sm:text-xs text-blue-800 dark:text-blue-200 leading-relaxed">
-                    <strong>How it works:</strong> We'll verify your details against our records. If found, your pass activates instantly! Otherwise, verification takes up to 32 hours.
+                    <strong>Important:</strong> Your pass will be approved immediately. Any data mismatch will result in no entry to events and cancellation of your existing pass. Valid ID is required for entry. College ID is mandatory for Thakur student pass holders.
                   </AlertDescription>
                 </Alert>
               </div>
@@ -1360,7 +813,7 @@ export function UserDashboard({
                 <Button
                   className="flex-1 h-11 sm:h-10 text-sm font-medium"
                   onClick={handleSubmitPassClaim}
-                  disabled={isSubmittingClaim || (!claimFormData.bookingId && !claimFormData.konfhubOrderId && !claimFormData.ticketNumber)}
+                  disabled={isSubmittingClaim || !claimFormData.bookingId}
                 >
                   {isSubmittingClaim ? (
                     <>

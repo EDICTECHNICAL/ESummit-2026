@@ -66,27 +66,6 @@ export const paymentLimiter = rateLimit({
 });
 
 /**
- * QR Code scanning rate limiter
- * 50 scans per minute per IP (for busy check-in counters)
- */
-export const scannerLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 50, // Limit each IP to 50 scans per minute
-  message: {
-    success: false,
-    error: 'Too many scan requests, please slow down.',
-  },
-  skipSuccessfulRequests: true, // Don't count successful scans
-  handler: (req, res) => {
-    logger.warn(`Scanner rate limit exceeded for IP: ${req.ip}`);
-    res.status(429).json({
-      success: false,
-      error: 'Too many scan requests, please slow down.',
-    });
-  },
-});
-
-/**
  * Webhook rate limiter
  * 100 webhooks per minute (for high-volume events)
  */

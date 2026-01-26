@@ -32,20 +32,21 @@ router.get('/', async (_req: Request, res: Response) => {
 router.get('/:identifier', async (req: Request, res: Response) => {
   try {
     const { identifier } = req.params;
+    const identifierStr = Array.isArray(identifier) ? identifier[0] : identifier;
 
     // Check if identifier is a valid UUID format
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifierStr);
 
     // Try to find by UUID or eventId
     const event = await prisma.event.findFirst({
       where: isUUID
         ? {
             OR: [
-              { id: identifier },
-              { eventId: identifier },
+              { id: identifierStr },
+              { eventId: identifierStr },
             ],
           }
-        : { eventId: identifier },
+        : { eventId: identifierStr },
       include: {
         registrations: {
           include: {
@@ -165,13 +166,14 @@ router.put('/:identifier', async (req: Request, res: Response) => {
     // For now, this endpoint should be protected by API gateway or firewall rules
     
     const { identifier } = req.params;
+    const identifierStr = Array.isArray(identifier) ? identifier[0] : identifier;
 
     // Find event first
     const existingEvent = await prisma.event.findFirst({
       where: {
         OR: [
-          { id: identifier },
-          { eventId: identifier },
+          { id: identifierStr },
+          { eventId: identifierStr },
         ],
       },
     });
@@ -215,13 +217,14 @@ router.delete('/:identifier', async (req: Request, res: Response) => {
     // For now, this endpoint should be protected by API gateway or firewall rules
     
     const { identifier } = req.params;
+    const identifierStr = Array.isArray(identifier) ? identifier[0] : identifier;
 
     // Find event first
     const existingEvent = await prisma.event.findFirst({
       where: {
         OR: [
-          { id: identifier },
-          { eventId: identifier },
+          { id: identifierStr },
+          { eventId: identifierStr },
         ],
       },
     });

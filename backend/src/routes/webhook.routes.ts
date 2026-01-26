@@ -255,8 +255,6 @@ router.post('/konfhub', async (req: Request, res: Response) => {
           order: orderData,
           syncedAt: new Date().toISOString(),
         },
-        qrCodeUrl: ticketData.qrCode || ticketData.qrCodeUrl || null,
-        qrCodeData: ticketData.qrCodeData || ticketId,
         status: 'Active',
       };
 

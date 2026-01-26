@@ -93,7 +93,6 @@ export interface KonfHubOrderResponse {
   tickets?: Array<{
     id: string;
     ticketNumber: string;
-    qrCode?: string;
   }>;
   paymentUrl?: string;
   checkoutUrl?: string;
@@ -363,8 +362,6 @@ class KonfHubService {
             price: 0,
             purchaseDate: new Date(),
             status: 'Active',
-            qrCodeUrl: ticketUrl,
-            qrCodeData: bookingId,
             ticketDetails: {
               attendeeName: params.name,
               email: params.email,
@@ -729,7 +726,6 @@ class KonfHubService {
             price: parseFloat(attendee.amount_paid) || parseFloat(attendee.ticket_price) || 0,
             purchaseDate,
             ticketDetails,
-            qrCodeData: bookingId || null,
             status,
           };
 

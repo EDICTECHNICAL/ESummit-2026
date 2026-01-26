@@ -2,9 +2,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { sendError, sendSuccess } from '../utils/response.util';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
 import logger from '../utils/logger.util';
 import { createClerkClient } from '@clerk/backend';
 
@@ -15,119 +12,26 @@ const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
 });
 
-// Configure multer for PDF uploads
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    // Use /tmp/uploads in serverless/production, otherwise use local uploads
-    const uploadDir =
-      process.env.VERCEL || process.env.NODE_ENV === 'production'
-        ? '/tmp/uploads/passes'
-        : path.join(__dirname, '../../uploads/passes');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, _file, cb) => {
-    // Generate filename: ESUMMIT-2026-{passId}.pdf
-    const passId = req.body.passId || `UNKNOWN-${Date.now()}`;
-    cb(null, `ESUMMIT-2026-${passId}.pdf`);
-  }
-});
-
-const upload = multer({
-  storage,
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(new Error('Only PDF files are allowed'));
-    }
-  },
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
-});
-
 /**
- * Upload PDF ticket from KonfHub
- * POST /api/v1/passes/upload
- */
-router.post('/upload', upload.single('pdf'), async (req: Request, res: Response) => {
-  try {
-    const { passId, userId, passType, konfhubOrderId, konfhubTicketId } = req.body;
-
-    if (!req.file) {
-      sendError(res, 'PDF file is required', 400);
-      return;
-    }
-
-    if (!passId || !userId) {
-      sendError(res, 'passId and userId are required', 400);
-      return;
-    }
-
-    // Check if pass already exists
-    const existingPass = await prisma.pass.findUnique({
-      where: { passId }
-    });
-
-    if (existingPass) {
-      // Update existing pass with PDF path
-      await prisma.pass.update({
-        where: { passId },
-        data: {
-          pdfUrl: `/uploads/passes/${req.file.filename}`,
-          konfhubOrderId,
-          konfhubTicketId,
-          updatedAt: new Date()
-        }
-      });
-    } else {
-      // Create new pass record
-      await prisma.pass.create({
-        data: {
-          userId,
-          passType: passType || 'Standard',
-          passId,
-          status: 'Active',
-          pdfUrl: `/uploads/passes/${req.file.filename}`,
-          konfhubOrderId,
-          konfhubTicketId
-        }
-      });
-    }
-
-    sendSuccess(res, 'PDF uploaded successfully', {
-      passId,
-      pdfUrl: `/uploads/passes/${req.file.filename}`,
-      filename: req.file.filename
-    });
-  } catch (error: any) {
-    logger.error('PDF upload error:', error);
-    sendError(res, error.message || 'Failed to upload PDF', 500);
-  }
-});
-
-/**
- * Get user's passes with PDF URLs
+ * Get user's passes
  * GET /api/v1/passes/user/:clerkUserId
  */
 router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
     // Find user
     let user = await prisma.user.findUnique({
-      where: { clerkUserId },
+      where: { clerkUserId: clerkUserIdStr },
       select: { id: true }
     });
 
     // If user doesn't exist, try to create from Clerk data
     if (!user) {
       try {
-        logger.info('User not found in DB, fetching from Clerk:', clerkUserId);
-        const clerkUser = await clerkClient.users.getUser(clerkUserId);
+        logger.info('User not found in DB, fetching from Clerk:', clerkUserIdStr);
+        const clerkUser = await clerkClient.users.getUser(clerkUserIdStr);
         
         // Check if user exists by email
         const existingUser = await prisma.user.findUnique({
@@ -180,7 +84,6 @@ router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
         passType: true,
         status: true,
         bookingId: true,
-        pdfUrl: true,
         createdAt: true
       },
       orderBy: { createdAt: 'desc' }
@@ -200,10 +103,11 @@ router.get('/user/:clerkUserId', async (req: Request, res: Response) => {
 router.get('/stats/:clerkUserId', async (req: Request, res: Response) => {
   try {
     const { clerkUserId } = req.params;
+    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { clerkUserId },
+      where: { clerkUserId: clerkUserIdStr },
       select: { id: true }
     });
 
@@ -235,6 +139,98 @@ router.get('/stats/:clerkUserId', async (req: Request, res: Response) => {
 });
 
 // Note: Pass purchases are handled through KonfHub.
-// This API only handles PDF storage and retrieval for dashboard display.
+// This API handles pass retrieval for dashboard display.
+
+/**
+ * Create a pass directly (for immediate approval)
+ * POST /api/v1/passes/create
+ */
+router.post('/create', async (req: Request, res: Response) => {
+  try {
+    const {
+      clerkUserId,
+      email,
+      fullName,
+      passType,
+      bookingId,
+      status = 'Active'
+    } = req.body;
+
+    // Validate required fields
+    if (!clerkUserId || !email || !passType || !bookingId) {
+      sendError(res, 'clerkUserId, email, passType, and bookingId are required', 400);
+      return;
+    }
+
+    // Find or create user
+    let user = await prisma.user.findUnique({
+      where: { clerkUserId },
+    });
+
+    if (!user) {
+      // Try to find by email first
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        // Update with Clerk ID
+        user = await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { clerkUserId },
+        });
+      } else {
+        // Create new user
+        user = await prisma.user.create({
+          data: {
+            clerkUserId,
+            email,
+            fullName: fullName || null,
+          },
+        });
+      }
+    }
+
+    // Check if user already has an active pass
+    const existingPass = await prisma.pass.findFirst({
+      where: { userId: user.id, status: 'Active' },
+    });
+
+    if (existingPass) {
+      sendError(res, 'You already have an active pass', 400);
+      return;
+    }
+
+    // Check if booking ID is already used
+    const existingBooking = await prisma.pass.findFirst({
+      where: { bookingId },
+    });
+
+    if (existingBooking) {
+      sendError(res, 'This booking ID is already associated with another pass', 400);
+      return;
+    }
+
+    // Generate unique pass ID
+    const passId = `ES26-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+
+    // Create the pass
+    const pass = await prisma.pass.create({
+      data: {
+        userId: user.id,
+        passType,
+        passId,
+        bookingId,
+        status,
+        purchaseDate: new Date(),
+      },
+    });
+
+    sendSuccess(res, 'Pass created successfully', { pass }, 201);
+  } catch (error: any) {
+    logger.error('Create pass error:', error);
+    sendError(res, error.message || 'Failed to create pass', 500);
+  }
+});
 
 export default router;

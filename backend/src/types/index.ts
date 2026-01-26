@@ -23,11 +23,8 @@ export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 
 export type EventRegistrationStatus = 'registered' | 'attended' | 'cancelled';
 
-// Check-in types
-export type CheckInType = 'venue_entry' | 'event_entry';
-
 // Audit log types
-export type AuditAction = 'check_in' | 'refund' | 'edit_pass' | 'create_event' | 'update_event' | 'delete_event';
+export type AuditAction = 'refund' | 'edit_pass' | 'create_event' | 'update_event' | 'delete_event';
 
 export type EntityType = 'pass' | 'user' | 'event' | 'transaction';
 
