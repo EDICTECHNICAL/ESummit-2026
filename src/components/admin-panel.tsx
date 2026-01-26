@@ -578,7 +578,7 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                 variant="outline"
                 size="icon"
                 className="rounded-lg border-muted h-9 w-9 flex-shrink-0"
-                onClick={() => signOut()}
+                onClick={() => clerk?.signOut?.()}
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -589,14 +589,14 @@ export function AdminPanel({ onNavigate }: AdminPanelProps) {
                 onClick={() => onNavigate("home")}
               >
                 <X className="h-4 w-4" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-lg border-muted h-9 w-9 flex-shrink-0"
+                onClick={() => clerk?.signOut?.()}
+              >
+                <LogOut className="h-4 w-4" />
               </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-2 sm:px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 flex-wrap h-auto gap-1">
             <TabsTrigger value="stats" className="gap-2">
