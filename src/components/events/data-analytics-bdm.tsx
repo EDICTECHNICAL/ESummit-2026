@@ -6,8 +6,8 @@ export function DataAnalyticsBdmPage() {
     description:
       "Make smarter decisions with data. Learn to analyze market trends, track key metrics, and use data-driven insights to fuel your business growth and strategy. 3-hour interactive sessions.",
     date: "February 2-3, 2026",
-    time: "10:00 - 17:00 (3 Hours Sessions)",
-    venue: "Lab 526 / 527 / 528 / 529",
+    time: "02:00 PM – 5:00 PM",
+    venue: "Lab 526 & 527",
     eligibility: "Silicon, Quantum & Thakur Student Pass holders",
   };
   const primaryContacts = [

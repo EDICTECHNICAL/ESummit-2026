@@ -6,7 +6,7 @@ export function FinanceMarketingPage() {
     description:
       "Build a solid foundation for your venture. Get essential, practical knowledge on managing your startup's finances and crafting marketing strategies that actually convert. 3-hour interactive sessions.",
     date: "February 2-3, 2026",
-    time: "10:00 - 17:00 (3 Hours Sessions)",
+    time: "02:00 PM – 5:00 PM",
     venue: "Lab 524 / 525",
     eligibility: "Silicon, Quantum & Thakur Student Pass holders",
   };
