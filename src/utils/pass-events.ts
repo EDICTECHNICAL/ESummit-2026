@@ -146,17 +146,6 @@ export const eventSchedule = {
       duration: "2 hours",
       eligibility: "All participants",
     },
-    {
-      id: "d1-networking-arena",
-      time: "10:00 - 18:00",
-      title: "Networking Arena",
-      category: "networking",
-      venue: "Networking Lounge",
-      speaker: null,
-      description: "Dedicated networking space to connect with investors, mentors, and startup enthusiasts",
-      duration: "8 hours",
-      eligibility: "All participants",
-    },
   ],
   day2: [
     // Pitching Events - Day 2
@@ -235,17 +224,6 @@ export const eventSchedule = {
       eligibility: "All participants",
     },
     {
-      id: "d2-networking-arena",
-      time: "10:00 - 18:00",
-      title: "Networking Arena - Day 2",
-      category: "networking",
-      venue: "Networking Lounge",
-      speaker: null,
-      description: "Final day networking space to solidify connections",
-      duration: "8 hours",
-      eligibility: "All participants",
-    },
-    {
       id: "d2-internship-fair",
       time: "11:00 - 16:00",
       title: "Internship Fair",
@@ -289,7 +267,7 @@ export function getEligibleEvents(passType: string): Event[] {
   const allEvents = [...eventSchedule.day1, ...eventSchedule.day2];
   
   // Exclude administrative/automatic events that users don't register for
-  const excludedEvents = ["d1-registration", "d1-inaugural", "d2-closing", "d1-networking-arena", "d2-networking-arena"];
+  const excludedEvents = ["d1-registration", "d1-inaugural", "d2-closing"];
   
   // Thakur Student Pass (TCET/TGBS/TIMSR) / Pixel Pass events (FREE pass)
   const pixelEvents = [
@@ -314,12 +292,6 @@ export function getEligibleEvents(passType: string): Event[] {
     "d1-ten-minute-million", "d1-angel-roundtable", 
     "d2-incubator-summit", "d2-internship-fair", "d2-ai-workshop"
   ];
-
-  // Exhibitors Pass events (focus on expo and networking)
-  const exhibitorsEvents = [
-    "d1-startup-expo", "d2-internship-fair", "d1-panel-discussion",
-    "d1-networking-arena", "d2-networking-arena"
-  ];
   
   switch (passType) {
     case "pixel": // Pixel Pass - Free entry events
@@ -334,10 +306,6 @@ export function getEligibleEvents(passType: string): Event[] {
     
     case "quantum": // Quantum Pass - All events
       return allEvents.filter(e => quantumEvents.includes(e.id) && !excludedEvents.includes(e.id));
-    
-    case "exhibitors": // Exhibitors Pass - Expo and networking focused
-    case "exhibitors pass":
-      return allEvents.filter(e => exhibitorsEvents.includes(e.id) && !excludedEvents.includes(e.id));
     
     // Legacy pass types (for backward compatibility)
     case "day1": // Gold Pass - Day 1 only

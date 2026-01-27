@@ -148,11 +148,6 @@ async function migrateEventRegistrations() {
                   data: baseData,
                 });
                 break;
-              case 'd1-networking-arena':
-                await prisma.networkingArenaRegistration.create({
-                  data: baseData,
-                });
-                break;
               case 'd2-incubator-summit':
                 await prisma.incubatorSummitRegistration.create({
                   data: baseData,
@@ -175,11 +170,6 @@ async function migrateEventRegistrations() {
                 break;
               case 'd2-startup-expo':
                 await prisma.startupExpoRegistration.create({
-                  data: baseData,
-                });
-                break;
-              case 'd2-networking-arena':
-                await prisma.networkingArenaRegistration.create({
                   data: baseData,
                 });
                 break;

@@ -37,7 +37,6 @@ const EventSchedule = () => {
     { id: "pitching", label: "Pitching Events", color: "accent" },
     { id: "competitions", label: "Competitions", color: "primary" },
     { id: "workshops", label: "Workshops", color: "secondary" },
-    { id: "networking", label: "Networking", color: "outline" },
   ];
 
   const events: { preEvent: Event[]; day1: Event[]; day2: Event[] } = {
@@ -193,28 +192,6 @@ const EventSchedule = () => {
         duration: "7 hours",
         eligibility: "All pass holders",
       },
-      {
-        id: "d1-networking-arena",
-        time: "Lunch Hours",
-        title: "Networking Arena (Lunch)",
-        category: "networking",
-        venue: "Multipurpose Hall 2nd Floor & Architecture Ground Floor",
-        speaker: null,
-        description: "Open networking session during lunch - connect with entrepreneurs and investors",
-        duration: "Lunch Break",
-        eligibility: "All pass holders",
-      },
-      {
-        id: "d1-informals",
-        time: "17:00 - 17:30",
-        title: "Informals: Connect Beyond the Stage",
-        category: "networking",
-        venue: "Multipurpose Hall 2nd Floor and TSAP ground floor",
-        speaker: null,
-        description: "Connect beyond the stage. An informal session for founders to mingle with judges, speakers, and mentors, turning conversations into valuable connections.",
-        duration: "30 min",
-        eligibility: "Quantum Pass holders only",
-      },
 
     ],
     day2: [
@@ -332,17 +309,7 @@ const EventSchedule = () => {
         duration: "3 hours",
         eligibility: "All pass holders",
       },
-      {
-        id: "d2-networking-arena",
-        time: "Lunch Hours",
-        title: "Networking Arena (Lunch)",
-        category: "networking",
-        venue: "Multipurpose Hall 2nd Floor & Architecture Ground Floor",
-        speaker: null,
-        description: "Final networking opportunity during lunch with entrepreneurs and investors",
-        duration: "Lunch Break",
-        eligibility: "All pass holders",
-      },
+
       {
         id: "d2-closing",
         time: "Post 5:00 PM",

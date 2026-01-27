@@ -100,8 +100,8 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
       description: "3-hour hands-on workshops in Design Thinking & Innovation Strategy, Finance & Marketing for Startups, and Data Analytics & Business Development Essentials for future-ready entrepreneurs.",
     },
     {
-      title: "Competitions & Networking",
-      description: "Compete in IPL Auction: The Bid for Brilliance, Startup League Game: Build Your Empire, and AI Buildathon: The Innovation Challenge. Network at The Startup Expo, The Internship Fair, Networking Arena, and Startup Youth Conclave with E-Cells from other colleges.",
+      title: "Competitions",
+      description: "Compete in IPL Auction: The Bid for Brilliance, Startup League Game: Build Your Empire, and AI Buildathon: The Innovation Challenge. Network at The Startup Expo, The Internship Fair, and Startup Youth Conclave with E-Cells from other colleges.",
     },
   ];
 

@@ -96,7 +96,6 @@ export const PassBooking = memo(function PassBooking({
         "Pitch Arena",
         "Startup Youth Conclave",
         "All 3 Workshops",
-        "Informals (Networking Arena)",
         "Certificate of participation",
       ],
       badge: "Popular",

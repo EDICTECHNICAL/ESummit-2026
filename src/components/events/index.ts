@@ -9,6 +9,5 @@ export { FinanceMarketingPage } from './finance-marketing';
 export { DataAnalyticsBdmPage } from './data-analytics-bdm';
 export { StartupExpoPage } from './startup-expo';
 export { PanelDiscussionPage } from './panel-discussion';
-export { NetworkingArenaPage } from './networking-arena';
 export { InternshipFairPage } from './internship-fair';
 export { StartupYouthConclavePage } from './startup-youth-conclave';

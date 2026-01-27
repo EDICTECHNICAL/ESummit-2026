@@ -41,13 +41,6 @@ export function Venue() {
       floor: "Convocation Area",
     },
     {
-      name: "Multipurpose Hall 2nd Floor and Architecture Ground Floor",
-      capacity: "Open spaces",
-      events: ["Informals: Connect Beyond the Stage (Day 1)", "Networking Arena (Lunch Hours, Day 1 & 2)"],
-      features: ["Informal seating", "Refreshment areas", "Networking zones"],
-      floor: "2nd Floor & Ground Floor",
-    },
-    {
       name: "Main Lobby",
       capacity: "Exhibition space",
       events: ["The Startup Expo: Display Your First Prototype (Day 1)"],

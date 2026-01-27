@@ -18,7 +18,6 @@ import {
   DataAnalyticsBdmPage,
   StartupExpoPage,
   PanelDiscussionPage,
-  NetworkingArenaPage,
   InternshipFairPage,
   StartupYouthConclavePage,
 } from "./components/events";
@@ -163,14 +162,10 @@ export default function App() {
         return <StartupExpoPage />;
       case "event-11":
         return <PanelDiscussionPage />;
-      case "event-12":
-        return <NetworkingArenaPage />;
       case "event-13":
         return <InternshipFairPage />;
       case "event-14":
         return <StartupYouthConclavePage />;
-      case "event-15":
-        return <NetworkingArenaPage />;
       case "event-16":
         return <RoadmapToEntrepreneurshipPage />;
       // Handle d1- and d2- prefixed event IDs
@@ -194,8 +189,6 @@ export default function App() {
         return <DataAnalyticsBdmPage />;
       case "event-d1-startup-expo":
         return <StartupExpoPage />;
-      case "event-d1-networking-arena":
-        return <NetworkingArenaPage />;
       case "event-d1-internship-fair":
         return <InternshipFairPage />;
       case "event-d2-pitch-arena":
