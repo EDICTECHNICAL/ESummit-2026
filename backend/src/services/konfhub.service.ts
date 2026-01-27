@@ -96,6 +96,7 @@ export interface KonfHubOrderResponse {
   }>;
   paymentUrl?: string;
   checkoutUrl?: string;
+  metadata?: any;
 }
 
 export interface KonfHubWebhookPayload {
@@ -195,6 +196,7 @@ class KonfHubService {
         amount: data.amount,
         currency: data.currency || 'INR',
         tickets: data.tickets,
+        metadata: data.metadata,
       };
     } catch (error) {
       logger.error('KonfHub get order error:', error);

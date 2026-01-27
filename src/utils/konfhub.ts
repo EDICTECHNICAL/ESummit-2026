@@ -14,7 +14,6 @@ export interface KonfHubOrderResponse {
   ticketId?: string;
   amount: number;
   currency: string;
-  transactionId: string;
   invoiceNumber: string;
   transactionNumber: string;
   checkoutUrl?: string;
@@ -26,7 +25,6 @@ export interface KonfHubPaymentResult {
   orderId: string;
   ticketId?: string;
   paymentId?: string;
-  transactionId: string;
   pass?: any;
 }
 
@@ -92,7 +90,6 @@ export const verifyKonfHubPayment = async (
       orderId,
       ticketId,
       paymentId,
-      transactionId: data.data.transaction.id,
       pass: data.data.pass,
     };
   } catch (error: any) {
@@ -170,31 +167,27 @@ export const initiateKonfHubPayment = async (
       // Listen for payment completion via window messages or polling
       const pollInterval = setInterval(async () => {
         try {
-          // Poll for transaction status
-          const statusResponse = await fetch(
-            `${API_BASE_URL}/payment/transaction/${order.transactionId}`,
+          // Poll for pass creation by checking if user has a pass
+          const passResponse = await fetch(
+            `${API_BASE_URL}/pass/user`,
             {
               credentials: 'include',
             }
           );
 
-          const statusData = await statusResponse.json();
+          const passData = await passResponse.json();
 
-          if (statusData.success && statusData.data.transaction.status === 'completed') {
+          if (passData.success && passData.data?.pass) {
             clearInterval(pollInterval);
             onSuccess({
               success: true,
               orderId: order.orderId,
               ticketId: order.ticketId,
-              transactionId: order.transactionId,
-              pass: statusData.data.transaction.pass,
+              pass: passData.data.pass,
             } as KonfHubPaymentResult);
-          } else if (statusData.data.transaction.status === 'failed') {
-            clearInterval(pollInterval);
-            onFailure(new Error('Payment failed'));
           }
         } catch (error) {
-          console.error('Error polling transaction status:', error);
+          console.error('Error polling for pass creation:', error);
         }
       }, 3000); // Poll every 3 seconds
 
@@ -215,52 +208,26 @@ export const initiateKonfHubPayment = async (
 };
 
 /**
- * Cancel an order
+ * Handle payment failure
  */
-export const cancelKonfHubOrder = async (transactionId: string): Promise<void> => {
+export const handleKonfHubPaymentFailure = async (
+  orderId: string,
+  errorMessage?: string
+): Promise<void> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/payment/cancel`, {
+    await fetch(`${API_BASE_URL}/payment/payment-failed`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ transactionId }),
+      body: JSON.stringify({
+        orderId,
+        error: errorMessage || 'Payment cancelled',
+      }),
     });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to cancel order');
-    }
   } catch (error: any) {
-    console.error('KonfHub order cancellation error:', error);
-    throw new Error(error.message || 'Failed to cancel order');
-  }
-};
-
-/**
- * Get user transactions
- */
-export const getUserTransactions = async (clerkUserId: string): Promise<any[]> => {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/payment/user/${clerkUserId}/transactions`,
-      {
-        credentials: 'include',
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to fetch transactions');
-    }
-
-    return data.data.transactions;
-  } catch (error: any) {
-    console.error('Error fetching transactions:', error);
-    throw new Error(error.message || 'Failed to fetch transactions');
+    console.error('Error reporting payment failure:', error);
   }
 };
 

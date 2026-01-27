@@ -247,7 +247,7 @@ router.post('/create', async (req: Request, res: Response) => {
         bookingId: isThakurStudent ? null : bookingId, // No booking ID for Thakur students
         status,
         purchaseDate: new Date(),
-        konfhubData: konfhubData ? JSON.stringify(konfhubData) : null,
+        konfhubData: konfhubData || null,
         isThakurStudent,
       },
     });

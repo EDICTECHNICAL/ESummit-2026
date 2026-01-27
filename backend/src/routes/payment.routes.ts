@@ -140,27 +140,6 @@ router.post('/create-order', async (req: Request, res: Response) => {
       },
     });
 
-    // Create pending transaction in database
-    const transaction = await prisma.transaction.create({
-      data: {
-        userId: user.id,
-        // passId will be set after pass creation in verify-and-create-pass
-        invoiceNumber,
-        transactionNumber,
-        konfhubOrderId: konfhubOrder.orderId,
-        konfhubTicketId: konfhubOrder.ticketId,
-        amount: price,
-        currency: 'INR',
-        status: 'pending',
-        paymentMethod: 'konfhub',
-        metadata: {
-          passType,
-          orderCreatedAt: new Date().toISOString(),
-          checkoutUrl: konfhubOrder.checkoutUrl,
-        },
-      },
-    });
-
     logger.info(`KonfHub order created: ${konfhubOrder.orderId} for user: ${clerkUserId}`);
     logger.info(`Invoice: ${invoiceNumber}, Transaction: ${transactionNumber}`);
 
@@ -172,7 +151,6 @@ router.post('/create-order', async (req: Request, res: Response) => {
         ticketId: konfhubOrder.ticketId,
         amount: price,
         currency: konfhubOrder.currency,
-        transactionId: transaction.id,
         invoiceNumber,
         transactionNumber,
         checkoutUrl: konfhubOrder.checkoutUrl,
@@ -195,7 +173,6 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
     const {
       orderId,
       ticketId,
-      paymentId,
     } = req.body;
 
     // Validate required fields
@@ -209,117 +186,62 @@ router.post('/verify-and-create-pass', async (req: Request, res: Response) => {
 
     if (konfhubOrder.status !== 'completed') {
       logger.error('Payment not completed in KonfHub');
-      
-      // Update transaction status
-      await prisma.transaction.updateMany({
-        where: { konfhubOrderId: orderId },
-        data: {
-          status: 'failed',
-          metadata: {
-            error: 'Payment not completed',
-            failedAt: new Date().toISOString(),
-            konfhubStatus: konfhubOrder.status,
-          },
-        },
-      });
-
       sendError(res, 'Payment verification failed - payment not completed', 400);
       return;
     }
 
-    // Find the transaction
-    const transaction = await prisma.transaction.findFirst({
-      where: { konfhubOrderId: orderId },
-      include: { user: true },
-    });
+    // Get user and pass details from KonfHub order metadata
+    const metadata = konfhubOrder.metadata as any;
+    const clerkUserId = metadata.clerkUserId;
+    const passType = metadata.passType;
 
-    if (!transaction) {
-      sendError(res, 'Transaction not found', 404);
+    if (!clerkUserId || !passType) {
+      sendError(res, 'Order metadata missing required information', 400);
       return;
     }
 
-    // Check if transaction is already completed
-    if (transaction.status === 'completed') {
-      sendError(res, 'This payment has already been processed', 400);
+    // Ensure user exists
+    const user = await ensureUserExists(clerkUserId);
+
+    if (!user) {
+      sendError(res, 'User not found', 404);
       return;
     }
 
-    // Check if user already has a pass (double-check to prevent race conditions)
+    // Check if user already has a pass
     const existingPass = await prisma.pass.findFirst({
-      where: { userId: transaction.userId },
+      where: { userId: user.id },
     });
 
     if (existingPass) {
-      // Mark transaction for manual review
-      await prisma.transaction.update({
-        where: { id: transaction.id },
-        data: {
-          status: 'refund_pending',
-          metadata: {
-            error: 'User already has a pass',
-            needsRefund: true,
-            refundReason: 'Duplicate purchase attempt',
-          },
-        },
-      });
-
-      sendError(
-        res,
-        'You already have a pass. This payment will be refunded.',
-        400
-      );
+      sendError(res, 'You already have a pass.', 400);
       return;
     }
-
-    // Get pass details from transaction metadata
-    const metadata = transaction.metadata as any;
-    const passType = metadata.passType;
 
     // Generate unique pass ID
     const { passId } = generateUniqueIdentifiers();
 
-    // Create pass and update transaction in a single transaction
-    const result = await prisma.$transaction(async (tx) => {
-      // Create the pass
-      const pass = await tx.pass.create({
-        data: {
-          userId: transaction.userId,
-          passType,
-          passId,
-          price: transaction.amount,
-          status: 'Active',
-        },
-      });
-
-      // Update transaction with payment details and link to pass
-      const updatedTransaction = await tx.transaction.update({
-        where: { id: transaction.id },
-        data: {
-          passId: pass.id,
-          konfhubTicketId: ticketId || transaction.konfhubTicketId,
-          konfhubPaymentId: paymentId,
-          status: 'completed',
-          metadata: {
-            ...metadata,
-            completedAt: new Date().toISOString(),
-            passId: pass.passId,
-          },
-        },
-      });
-
-      return { pass, transaction: updatedTransaction };
+    // Create pass
+    const pass = await prisma.pass.create({
+      data: {
+        userId: user.id,
+        passType,
+        passId,
+        konfhubOrderId: orderId,
+        konfhubTicketId: ticketId,
+        konfhubData: konfhubOrder as any,
+        price: konfhubOrder.amount,
+        status: 'Active',
+      },
     });
 
-    logger.info(
-      `✅ Payment verified and pass created: ${passId} for user: ${transaction.user.email}`
-    );
+    logger.info(`✅ Payment verified and pass created: ${passId} for user: ${user.email}`);
 
     sendSuccess(
       res,
       'Payment verified and pass created successfully',
       {
-        pass: result.pass,
-        transaction: result.transaction,
+        pass,
       },
       201
     );
@@ -342,31 +264,9 @@ router.post('/payment-failed', async (req: Request, res: Response) => {
       return;
     }
 
-    // Update transaction status to failed
-    const transaction = await prisma.transaction.findFirst({
-      where: { konfhubOrderId: orderId },
-    });
+    logger.warn(`Payment failed for order: ${orderId} - ${error || 'Payment cancelled by user'}`);
 
-    if (!transaction) {
-      sendError(res, 'Transaction not found', 404);
-      return;
-    }
-
-    await prisma.transaction.update({
-      where: { id: transaction.id },
-      data: {
-        status: 'failed',
-        metadata: {
-          ...((transaction.metadata as any) || {}),
-          error: error || 'Payment cancelled by user',
-          failedAt: new Date().toISOString(),
-        },
-      },
-    });
-
-    logger.warn(`Payment failed for order: ${orderId}`);
-
-    sendSuccess(res, 'Payment failure recorded', { transactionId: transaction.id });
+    sendSuccess(res, 'Payment failure recorded');
   } catch (error: any) {
     logger.error('Payment failure handler error:', error);
     sendError(res, error.message || 'Failed to record payment failure', 500);
@@ -392,93 +292,65 @@ router.post('/webhook', async (req: Request, res: Response) => {
     }
 
     const webhookData = req.body;
-    const { event, orderId, ticketId, paymentId } = webhookData;
+    const { event, orderId, ticketId } = webhookData;
 
     logger.info(`KonfHub webhook received: ${event} for order: ${orderId}`);
 
-    // Find transaction
-    const transaction = await prisma.transaction.findFirst({
-      where: { konfhubOrderId: orderId },
-      include: { user: true },
-    });
+    // Get order details from KonfHub
+    const konfhubOrder = await konfhubService.getOrder(orderId);
+    const metadata = konfhubOrder.metadata as any;
+    const clerkUserId = metadata.clerkUserId;
 
-    if (!transaction) {
-      logger.warn(`Transaction not found for webhook order: ${orderId}`);
-      sendSuccess(res, 'Webhook received but transaction not found');
+    if (!clerkUserId) {
+      logger.warn(`No clerkUserId in webhook metadata for order: ${orderId}`);
+      sendSuccess(res, 'Webhook received but missing user information');
+      return;
+    }
+
+    // Ensure user exists
+    const user = await ensureUserExists(clerkUserId);
+
+    if (!user) {
+      logger.warn(`User not found for webhook: ${clerkUserId}`);
+      sendSuccess(res, 'Webhook received but user not found');
       return;
     }
 
     // Handle different webhook events
     switch (event) {
       case 'order.completed':
-        if (transaction.status !== 'completed') {
-          // Automatically create pass when payment is completed
-          const metadata = transaction.metadata as any;
+        // Check if pass already exists for this order
+        const existingPass = await prisma.pass.findFirst({
+          where: { konfhubOrderId: orderId },
+        });
+
+        if (!existingPass) {
+          // Create pass
           const passType = metadata.passType;
           const { passId } = generateUniqueIdentifiers();
 
-          await prisma.$transaction(async (tx) => {
-            const pass = await tx.pass.create({
-              data: {
-                userId: transaction.userId,
-                passType,
-                passId,
-                price: transaction.amount,
-                hasWorkshopAccess: metadata.hasWorkshopAccess || false,
-                status: 'Active',
-              },
-            });
-
-            await tx.transaction.update({
-              where: { id: transaction.id },
-              data: {
-                passId: pass.id,
-                konfhubTicketId: ticketId,
-                konfhubPaymentId: paymentId,
-                status: 'completed',
-                metadata: {
-                  ...metadata,
-                  completedAt: new Date().toISOString(),
-                  passId: pass.passId,
-                  webhookProcessed: true,
-                },
-              },
-            });
+          await prisma.pass.create({
+            data: {
+              userId: user.id,
+              passType,
+              passId,
+              konfhubOrderId: orderId,
+              konfhubTicketId: ticketId,
+              konfhubData: konfhubOrder as any,
+              price: konfhubOrder.amount,
+              hasWorkshopAccess: metadata.hasWorkshopAccess || false,
+              status: 'Active',
+            },
           });
 
-          logger.info(`✅ Pass auto-created via webhook for order: ${orderId}`);
+          logger.info(`✅ Pass auto-created via webhook: ${passId} for order: ${orderId}`);
+        } else {
+          logger.info(`Pass already exists for order: ${orderId}`);
         }
         break;
 
       case 'order.cancelled':
-        await prisma.transaction.update({
-          where: { id: transaction.id },
-          data: {
-            status: 'cancelled',
-            metadata: {
-              ...((transaction.metadata as any) || {}),
-              cancelledAt: new Date().toISOString(),
-              webhookProcessed: true,
-            },
-          },
-        });
         logger.info(`Order cancelled via webhook: ${orderId}`);
-        break;
-
-      case 'ticket.issued':
-        // Update ticket information
-        await prisma.transaction.update({
-          where: { id: transaction.id },
-          data: {
-            konfhubTicketId: ticketId,
-            metadata: {
-              ...((transaction.metadata as any) || {}),
-              ticketIssuedAt: new Date().toISOString(),
-              webhookProcessed: true,
-            },
-          },
-        });
-        logger.info(`Ticket issued via webhook: ${ticketId} for order: ${orderId}`);
         break;
 
       default:
@@ -489,144 +361,6 @@ router.post('/webhook', async (req: Request, res: Response) => {
   } catch (error: any) {
     logger.error('Webhook processing error:', error);
     sendError(res, error.message || 'Failed to process webhook', 500);
-  }
-});
-
-/**
- * Get Transaction Status
- * GET /api/v1/payment/transaction/:transactionId
- */
-router.get('/transaction/:transactionId', async (req: Request, res: Response) => {
-  try {
-    const { transactionId } = req.params;
-    const transactionIdStr = Array.isArray(transactionId) ? transactionId[0] : transactionId;
-
-    const transaction = await prisma.transaction.findUnique({
-      where: { id: transactionIdStr },
-      include: {
-        user: {
-          select: {
-            email: true,
-            fullName: true,
-          },
-        },
-        pass: {
-          select: {
-            passId: true,
-            passType: true,
-            status: true,
-          },
-        },
-      },
-    });
-
-    if (!transaction) {
-      sendError(res, 'Transaction not found', 404);
-      return;
-    }
-
-    sendSuccess(res, 'Transaction details fetched successfully', { transaction });
-  } catch (error: any) {
-    logger.error('Get transaction error:', error);
-    sendError(res, error.message || 'Failed to fetch transaction', 500);
-  }
-});
-
-/**
- * Cancel Order
- * POST /api/v1/payment/cancel
- */
-router.post('/cancel', async (req: Request, res: Response) => {
-  try {
-    const { transactionId } = req.body;
-
-    if (!transactionId) {
-      sendError(res, 'Transaction ID is required', 400);
-      return;
-    }
-
-    const transaction = await prisma.transaction.findUnique({
-      where: { id: transactionId },
-      include: { pass: true },
-    });
-
-    if (!transaction) {
-      sendError(res, 'Transaction not found', 404);
-      return;
-    }
-
-    if (transaction.status === 'completed') {
-      sendError(res, 'Cannot cancel completed transactions. Request a refund instead.', 400);
-      return;
-    }
-
-    if (!transaction.konfhubOrderId) {
-      sendError(res, 'KonfHub order ID not found', 400);
-      return;
-    }
-
-    // Cancel order in KonfHub
-    await konfhubService.cancelOrder(transaction.konfhubOrderId);
-
-    // Update transaction status
-    await prisma.transaction.update({
-      where: { id: transactionId },
-      data: {
-        status: 'cancelled',
-        metadata: {
-          ...((transaction.metadata as any) || {}),
-          cancelledAt: new Date().toISOString(),
-        },
-      },
-    });
-
-    logger.info(`Order cancelled for transaction: ${transactionId}`);
-
-    sendSuccess(res, 'Order cancelled successfully');
-  } catch (error: any) {
-    logger.error('Cancel order error:', error);
-    sendError(res, error.message || 'Failed to cancel order', 500);
-  }
-});
-
-/**
- * Get all transactions for a user
- * GET /api/v1/payment/user/:clerkUserId/transactions
- */
-router.get('/user/:clerkUserId/transactions', async (req: Request, res: Response) => {
-  try {
-    const { clerkUserId } = req.params;
-    const clerkUserIdStr = Array.isArray(clerkUserId) ? clerkUserId[0] : clerkUserId;
-
-    // Find user (ensure user exists)
-    const user = await ensureUserExists(clerkUserIdStr);
-
-    if (!user) {
-      sendError(res, 'User not found', 404);
-      return;
-    }
-
-    // Get all transactions
-    const transactions = await prisma.transaction.findMany({
-      where: { userId: user.id },
-      include: {
-        pass: {
-          select: {
-            passId: true,
-            passType: true,
-            status: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    sendSuccess(res, 'Transactions fetched successfully', { transactions });
-  } catch (error: any) {
-    logger.error('Get user transactions error:', error);
-    sendError(res, error.message || 'Failed to fetch transactions', 500);
   }
 });
 

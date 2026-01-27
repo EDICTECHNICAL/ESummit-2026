@@ -34,7 +34,6 @@ model User {
   bookingVerified    Boolean             @default(false) @map("booking_verified")
   clerkUserId        String?             @unique @map("clerk_user_id") @db.VarChar(255)
   passes             Pass[]
-  transactions       Transaction[]
 
   @@index([email], type: Hash)
   @@index([phone])
@@ -61,7 +60,6 @@ model Pass {
   hasWorkshopAccess Boolean?      @map("has_workshop_access")
   createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  transaction       Transaction?
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -70,33 +68,6 @@ model Pass {
   @@index([status])
   @@index([passType])
   @@map("passes")
-}
-
-/// Payment transactions for passes (handled by KonfHub)
-model Transaction {
-  id                String   @id @default(uuid()) @db.Uuid
-  userId            String   @map("user_id") @db.Uuid
-  passId            String?  @unique @map("pass_id") @db.Uuid
-  invoiceNumber     String?  @unique @map("invoice_number") @db.VarChar(100)
-  transactionNumber String?  @unique @map("transaction_number") @db.VarChar(100)
-  amount            Decimal  @db.Decimal(10, 2)
-  currency          String   @default("INR") @db.VarChar(10)
-  status            String   @default("pending") @db.VarChar(50)
-  paymentMethod     String?  @default("konfhub") @map("payment_method") @db.VarChar(50)
-  konfhubOrderId    String?  @map("konfhub_order_id") @db.VarChar(255)
-  konfhubTicketId   String?  @map("konfhub_ticket_id") @db.VarChar(255)
-  konfhubPaymentId  String?  @map("konfhub_payment_id") @db.VarChar(255)
-  metadata          Json?
-  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  pass              Pass?    @relation(fields: [passId], references: [id], onDelete: SetNull)
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([passId])
-  @@index([status])
-  @@index([konfhubOrderId])
-  @@map("transactions")
 }
 
 
