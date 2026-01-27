@@ -190,91 +190,12 @@ export const PassBooking = memo(function PassBooking({
       return;
     }
 
-    // Handle Thakur student free pass
-    if (passId === "tcet_student" && isThakurStudent) {
-      handleThakurStudentPass();
-      return;
-    }
-
-    // Set selected pass and open KonfHub widget directly
+    // Open KonfHub widget for all passes (including Thakur student pass)
     setSelectedPass(passId);
     setShowKonfHubWidget(true);
-  }, [isAuthenticated, hasExistingPass, isThakurStudent]);
+  }, [isAuthenticated, hasExistingPass]);
 
-  const handleThakurStudentPass = useCallback(async () => {
-    setIsProcessingPayment(true);
-
-    try {
-      const clerkUserId = user?.id;
-      const selectedPassData = thakurStudentPass;
-
-      const requestBody = {
-        clerkUserId: clerkUserId,
-        email: user?.primaryEmailAddress?.emailAddress,
-        passType: selectedPassData.name,
-        price: 0, // Free pass
-        hasMeals: false,
-        hasMerchandise: false,
-        hasWorkshopAccess: false,
-        konfhubData: null, // No KonfHub data for free passes
-        isThakurStudent: true,
-      };
-
-      const response = await fetch(`${API_BASE_URL}/passes/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        toast.error(`Failed to create pass: ${errorText}`);
-        setIsProcessingPayment(false);
-        return;
-      }
-
-      const result = await response.json();
-
-      if (result.success && result.data.pass) {
-        const createdPass = result.data.pass;
-        const passData = {
-          id: selectedPassData.id,
-          type: selectedPassData.name,
-          passId: createdPass.passId,
-          price: 0,
-          purchaseDate: new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }),
-          status: "Active",
-        };
-        savePurchasedPass(passData);
-
-        toast.success("Thakur Student Pass created successfully!", {
-          description: "Your free pass has been added to your account.",
-        });
-        setIsProcessingPayment(false);
-
-        setTimeout(() => {
-          onNavigate("home");
-        }, 1500);
-      } else {
-        toast.error("⚠️ Couldn't create your pass. Please try again or contact support if the issue continues.");
-        setIsProcessingPayment(false);
-      }
-    } catch (error) {
-      console.error("Pass creation error:", error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "⚠️ Pass creation failed. Please refresh and try again, or contact support for assistance."
-      );
-      setIsProcessingPayment(false);
-    }
-  }, [user?.id, thakurStudentPass, onNavigate]);
+  // NOTE: Thakur student pass is handled via KonfHub widget like other passes.
 
   const handleKonfHubSuccess = useCallback(async (data: any) => {
     // KonfHub purchase completed successfully
@@ -282,7 +203,12 @@ export const PassBooking = memo(function PassBooking({
     
     try {
       const clerkUserId = user?.id;
-      const selectedPassData = passes.find((p) => p.id === selectedPass);
+      let selectedPassData = passes.find((p) => p.id === selectedPass);
+      if (!selectedPassData && selectedPass === thakurStudentPass.id) {
+        // use the tcet/thakur student pass metadata when selected
+        // cast to any to satisfy typing in this component
+        selectedPassData = thakurStudentPass as any;
+      }
       
       const requestBody = {
         clerkUserId: clerkUserId,
@@ -313,12 +239,12 @@ export const PassBooking = memo(function PassBooking({
 
       if (result.success && result.data.pass) {
         const createdPass = result.data.pass;
-        const selectedPassData = passes.find((p) => p.id === selectedPass);
+        const selectedPassDataForSave = passes.find((p) => p.id === selectedPass) || (selectedPass === thakurStudentPass.id ? (thakurStudentPass as any) : undefined);
         const passData = {
-          id: selectedPassData?.id || "",
-          type: selectedPassData?.name || "",
+          id: selectedPassDataForSave?.id || "",
+          type: selectedPassDataForSave?.name || "",
           passId: createdPass.passId,
-          price: selectedPassData?.earlyBirdPrice || selectedPassData?.price || 0,
+          price: selectedPassDataForSave?.earlyBirdPrice || selectedPassDataForSave?.price || 0,
           purchaseDate: new Date().toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -687,19 +613,19 @@ export const PassBooking = memo(function PassBooking({
                 </thead>
                 <tbody>
                   {[
-                    { name: "Startup Expo", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "Panel Discussion", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "IPL Auction", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "AI Build-A-Thon", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "Biz-Arena League", included: ["pixel", "silicon", "quantum", "thakur_student"] },
-                    { name: "Pitch Arena", included: ["silicon", "quantum", "thakur_student"] },
-                    { name: "Startup Youth Conclave", included: ["silicon", "quantum", "thakur_student"] },
-                    { name: "All 3 Workshops", included: ["pixel", "silicon", "quantum", "thakur_student"] },
+                    { name: "Startup Expo", included: ["pixel", "silicon", "quantum", "tcet_student"] },
+                    { name: "Panel Discussion", included: ["pixel", "silicon", "quantum", "tcet_student"] },
+                    { name: "IPL Auction", included: ["pixel", "silicon", "quantum", "tcet_student"] },
+                    { name: "AI Build-A-Thon", included: ["pixel", "silicon", "quantum", "tcet_student"] },
+                    { name: "Biz-Arena League", included: ["pixel", "silicon", "quantum", "tcet_student"] },
+                    { name: "Pitch Arena", included: ["silicon", "quantum", "tcet_student"] },
+                    { name: "Startup Youth Conclave", included: ["silicon", "quantum", "tcet_student"] },
+                    { name: "All 3 Workshops", included: ["pixel", "silicon", "quantum", "tcet_student"] },
                     { name: "Networking Arena", included: ["quantum"] },
-                    { name: "Lunch included", included: ["silicon", "quantum", "thakur_student"] },
-                    { name: "The Ten Minute Deal", included: ["quantum", "thakur_student"] },
-                    { name: "Incubator Summit", included: ["quantum", "thakur_student"] },
-                    { name: "Internship Fair", included: ["quantum", "thakur_student"] },
+                    { name: "Lunch included", included: ["silicon", "quantum", "tcet_student"] },
+                    { name: "The Ten Minute Deal", included: ["quantum", "tcet_student"] },
+                    { name: "Incubator Summit", included: ["quantum", "tcet_student"] },
+                    { name: "Internship Fair", included: ["quantum", "tcet_student"] },
                   ].map((feature) => (
                     <tr key={feature.name} className="border-b">
                       <td className="p-4">{feature.name}</td>
