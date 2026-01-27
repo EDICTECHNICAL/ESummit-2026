@@ -1,6 +1,4 @@
-import { useState, useEffect, type ElementType } from "react";
-import { useUser } from "@clerk/clerk-react";
-import { toast } from "sonner";
+import { type ElementType } from "react";
 import { motion } from "motion/react";
 import { Particles } from "../magicui/particles";
 import { GradientText } from "../magicui/gradient-text";
@@ -8,7 +6,6 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Calendar, Clock, MapPin, Mail, Phone, ArrowRight, ArrowLeft, Trophy, Users, Target, CheckCircle2, MessageCircle } from "lucide-react";
 import { GlassCard } from "../accentricity/glass-card";
-import { API_BASE_URL } from "../../lib/api";
 
 type PrizeObject = {
   first?: string;
@@ -53,6 +50,7 @@ type Sponsor = {
 interface EventPageTemplateProps {
   event: EventData;
   eventId: string; // Add eventId prop
+  registrationUrl: string; // Google Form URL for registration
   perks?: Perk[];
   panelTitle?: string;
   panelSubtitle?: string;
@@ -67,6 +65,7 @@ interface EventPageTemplateProps {
 export function EventPageTemplate({
   event,
   eventId,
+  registrationUrl,
   perks = [],
   panelTitle = "Speakers / Judges",
   panelSubtitle,
@@ -77,35 +76,6 @@ export function EventPageTemplate({
   primaryContacts = [],
   seniorContacts = [],
 }: EventPageTemplateProps) {
-  const { isSignedIn, user } = useUser();
-
-  // Check if user is already registered for this event
-  useEffect(() => {
-    const checkRegistrationStatus = async () => {
-      if (!user?.id || !eventId) {
-        setIsCheckingRegistration(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/users/events/registered/${user.id}`
-        );
-        const data = await response.json();
-
-        if (data.success && data.data.registeredEventIds) {
-          const isRegistered = data.data.registeredEventIds.includes(eventId);
-          setIsAlreadyRegistered(isRegistered);
-        }
-      } catch (error) {
-        console.error("Error checking registration status:", error);
-      } finally {
-        setIsCheckingRegistration(false);
-      }
-    };
-
-    checkRegistrationStatus();
-  }, [user?.id, eventId]);
 
   const handleBackToEvents = () => {
     sessionStorage.setItem('navigateTo', 'events');
@@ -197,8 +167,8 @@ export function EventPageTemplate({
                   asChild
                   className="group relative px-10 py-6 text-lg font-bold bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] border-2 border-primary/30 hover:border-primary/50 transition-all duration-500 inline-flex items-center gap-3 hover:scale-105"
                 >
-                  <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer">
-                    Register via Google Forms
+                  <a href={registrationUrl} target="_blank" rel="noopener noreferrer">
+                    Register Now
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </a>
                 </Button>

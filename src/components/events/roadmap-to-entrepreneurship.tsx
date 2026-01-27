@@ -11,5 +11,5 @@ export function RoadmapToEntrepreneurshipPage() {
     eligibility: "Open to students, aspiring founders, and innovators",
   };
 
-  return <EventPageTemplate event={event} eventId="pre-udaan" panelTitle="Speakers" />;
+  return <EventPageTemplate event={event} eventId="pre-udaan" registrationUrl="https://forms.google.com/roadmap-to-entrepreneurship-registration" panelTitle="Speakers" />;
 }

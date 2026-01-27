@@ -20,5 +20,5 @@ export function AiBuildathonPage() {
     { name: "Prashant Gupta", role: "OC Member", phone: "9373270698" },
   ];
 
-  return <EventPageTemplate event={event} eventId="d1-ai-buildathon-start" panelTitle="Judges & Mentors" primaryContacts={primaryContacts} />;
+  return <EventPageTemplate event={event} eventId="d1-ai-buildathon-start" registrationUrl="https://forms.google.com/ai-buildathon-registration" panelTitle="Judges & Mentors" primaryContacts={primaryContacts} />;
 }

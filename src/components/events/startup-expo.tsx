@@ -17,5 +17,5 @@ export function StartupExpoPage() {
     { name: "Khushi Tyagi", role: "OC Member", phone: "8369998587" },
   ];
 
-  return <EventPageTemplate event={event} eventId="d1-startup-expo" panelTitle="Guests" primaryContacts={primaryContacts} />;
+  return <EventPageTemplate event={event} eventId="d1-startup-expo" registrationUrl="https://forms.google.com/startup-expo-registration" panelTitle="Guests" primaryContacts={primaryContacts} />;
 }

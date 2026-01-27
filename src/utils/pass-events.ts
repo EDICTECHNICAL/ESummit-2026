@@ -14,6 +14,7 @@ export interface Event {
   prize?: string;
   eligibility?: string;
   prerequisite?: string;
+  registrationUrl?: string;
 }
 
 export interface PassData {
@@ -61,6 +62,7 @@ export const eventSchedule = {
       duration: "3 hours",
       prize: "Seed Funding",
       eligibility: "TRL 4+",
+      registrationUrl: "https://forms.gle/pLzKEuzk53XPkyREA",
     },
     {
       id: "d1-angel-roundtable",
@@ -86,6 +88,7 @@ export const eventSchedule = {
       duration: "2 days",
       prize: "₹50,000",
       eligibility: "Teams of 3-5 members",
+      registrationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdDK0Rke1JlV9n74PJ_IJrPMm1Vb-FePtoZ-V5I1TFIJ4gnrg/viewform?usp=publish-editor",
     },
     {
       id: "d1-ai-buildathon-start",
@@ -98,6 +101,7 @@ export const eventSchedule = {
       duration: "2 days",
       prize: "₹1,50,000",
       eligibility: "Teams of 2-4 members",
+      registrationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSf2IwGcR-SfwYWPyyjDN1P6sPR96PDKwf_KkeJ4_6z8_vGr2w/viewform?usp=publish-editor",
     },
     // Workshops - Day 1
     {
@@ -111,6 +115,7 @@ export const eventSchedule = {
       duration: "2.5 hours",
       eligibility: "All participants (Limited seats: 50)",
       prerequisite: "Laptop required",
+      registrationUrl: "https://forms.gle/twLnTyeb4UKBaSBh7",
     },
     {
       id: "d1-finance-marketing",
@@ -160,6 +165,7 @@ export const eventSchedule = {
       duration: "2 days",
       prize: "Shortlisting for Round 2",
       eligibility: "Early stage Startups",
+      registrationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdRZFkaw6QqN6ug4jNdVQDaGK1jQeNcyzOdsrlLFTXmSKMrJA/viewform?usp=dialog",
     },
     {
       id: "d2-incubator-summit",
@@ -172,6 +178,7 @@ export const eventSchedule = {
       duration: "2 days",
       prize: "Incubation Support",
       eligibility: "Early Stage Startups",
+      registrationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeQhu5wIrAJi6ldgcOinOW8QQFWnaxWqEKWyMTjWFFbVFstow/viewform?usp=publish-editor",
     },
     // Competitions - Day 2
     {
@@ -197,6 +204,7 @@ export const eventSchedule = {
       duration: "4 hours",
       prize: "₹75,000",
       eligibility: "Teams of 3-4 members",
+      registrationUrl: "https://forms.gle/dgGMs7rXbT5UpAH56",
     },
     // Workshops - Day 2
     {
@@ -233,6 +241,7 @@ export const eventSchedule = {
       description: "Connect with startups and companies looking for talented interns and fresh graduates",
       duration: "5 hours",
       eligibility: "Students and recent graduates",
+      registrationUrl: "https://forms.gle/jEBsMLqLSwirBvbj9",
     },
     {
       id: "d2-youth-conclave",
