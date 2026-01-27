@@ -15,7 +15,7 @@ export function AuthModal({ onNavigate }: AuthModalProps) {
           <div className="text-center">
             <h2 className="mb-2 text-xl sm:text-2xl font-bold">Welcome to E-Summit 2026</h2>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Sign in to access your dashboard and bookings
+              Sign in to book your pass and access event features
             </p>
           </div>
         </CardHeader>

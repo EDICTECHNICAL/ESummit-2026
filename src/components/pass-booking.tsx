@@ -177,7 +177,7 @@ export const PassBooking = memo(function PassBooking({
     // Check if user already has a pass
     if (hasExistingPass) {
       toast.error("You already have a pass", {
-        description: "Only one pass per user is allowed. Check your dashboard.",
+        description: "Only one pass per user is allowed.",
       });
       return;
     }
@@ -240,13 +240,13 @@ export const PassBooking = memo(function PassBooking({
         savePurchasedPass(passData);
 
         toast.success("Pass purchased successfully!", {
-          description: "Redirecting to your dashboard...",
+          description: "Your pass has been added to your account.",
         });
         setShowKonfHubWidget(false);
         setIsProcessingPayment(false);
         
         setTimeout(() => {
-          onNavigate("dashboard");
+          onNavigate("home");
         }, 1500);
       } else {
         toast.error("⚠️ Couldn't create your pass. Please try again or contact support if the issue continues.");
@@ -277,14 +277,7 @@ export const PassBooking = memo(function PassBooking({
             <AlertDescription className="text-black dark:text-amber-100">
               <strong>You already have a pass!</strong>
               <p className="mt-1 text-sm">
-                Only one pass per user is allowed. Visit your{" "}
-                <button
-                  onClick={() => onNavigate("dashboard")}
-                  className="font-semibold underline underline-offset-2 hover:text-amber-700"
-                >
-                  dashboard
-                </button>{" "}
-                to view your existing pass.
+                Only one pass per user is allowed. You can view your pass details on the home page.
               </p>
             </AlertDescription>
           </Alert>
@@ -370,7 +363,7 @@ export const PassBooking = memo(function PassBooking({
                     <AlertDescription className="text-center text-orange-700 dark:text-orange-300">
                       <p className="text-sm font-bold">⚠️ Important Notice</p>
                       <p className="text-xs mt-1 font-medium">
-                        After pass purchase, please head to your dashboard to add your pass for verification
+                        After pass purchase, your pass will be automatically added to your account
                       </p>
                     </AlertDescription>
                   </Alert>

@@ -380,7 +380,7 @@ export function EventsListing({ onNavigate }: EventsListingProps) {
                       className="mt-auto w-full h-10 sm:h-11"
                       onClick={() => handleViewDetails(event)}
                     >
-                      Register Now
+                      View Details
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardContent>

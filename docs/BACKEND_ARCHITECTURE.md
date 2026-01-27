@@ -2,7 +2,7 @@
 
 ## 🏗️ System Architecture
 
-E-Summit 2026 backend is built with Node.js/Express, PostgreSQL, and Prisma ORM. It handles user authentication, pass booking, QR code generation, admin operations, and real-time check-ins.
+E-Summit 2026 backend is built with Node.js/Express, PostgreSQL, and Prisma ORM. It handles user authentication, pass booking, QR code generation, and real-time check-ins.
 
 ## 🛠 Tech Stack
 
@@ -23,7 +23,6 @@ E-Summit 2026 backend is built with Node.js/Express, PostgreSQL, and Prisma ORM.
 - `events` - Event listings
 - `event_registrations` - User registrations
 - `check_ins` - QR scan records
-- `admin_users` - Admin accounts
 
 ## 🔐 Security Features
 
@@ -38,7 +37,6 @@ E-Summit 2026 backend is built with Node.js/Express, PostgreSQL, and Prisma ORM.
 
 - **Pass Booking**: Multiple types with payment verification
 - **QR System**: Encrypted codes for secure check-ins
-- **Admin Panel**: Real-time analytics and participant management
 - **Event Management**: CRUD operations for events
 - **Check-in System**: Camera/manual scanning with audit trails
 
@@ -74,11 +72,6 @@ backend/
 ### Events
 - `GET /api/v1/events` - List events
 - `POST /api/v1/events/:id/register` - Register for event
-
-### Admin
-- `POST /api/v1/admin/check-in` - QR code check-in
-- `GET /api/v1/admin/dashboard/stats` - Dashboard analytics
-- `GET /api/v1/admin/participants` - Participant management
 
 ## 📋 Environment Variables
 

@@ -1,6 +1,6 @@
 # E-Summit 2026 - The Beginning of Legacy
 
-A full-stack event management platform for E-Summit 2026, TCET Mumbai's first-ever Entrepreneurship Summit. Built to handle pass booking, QR-based check-in, event management, and admin operations for a two-day summit uniting visionaries, investors, and students.
+A full-stack event management platform for E-Summit 2026, TCET Mumbai's first-ever Entrepreneurship Summit. Built to handle pass booking, QR-based check-in, and event management for a two-day summit uniting visionaries, investors, and students.
 
 ## 🎯 Project Overview
 
@@ -15,9 +15,7 @@ E-Summit 2026 is TCET's inaugural Entrepreneurship Summit, organized by Axios ED
 
 - **Pass Booking System:** Multiple pass types with secure payment integration
 - **QR Code Check-in:** Encrypted QR codes for event entry with real-time validation
-- **Admin Dashboard:** Real-time analytics, participant management, and QR scanning
 - **Event Management:** Browse events, register, and view schedules
-- **User Dashboard:** Personal pass access and event registrations
 
 ## 🛠 Tech Stack
 

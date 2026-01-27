@@ -51,8 +51,8 @@ app.use(
       'http://127.0.0.1:5000',
     ],
     credentials: true,
-    allowedHeaders: ['x-admin-secret', 'content-type', 'authorization', 'x-requested-with', 'accept', 'cache-control', 'origin'],
-    exposedHeaders: ['x-admin-secret', 'authorization'],
+    allowedHeaders: ['content-type', 'authorization', 'x-requested-with', 'accept', 'cache-control', 'origin'],
+    exposedHeaders: ['authorization'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     optionsSuccessStatus: 200,
     preflightContinue: false,
@@ -69,23 +69,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Vercel Web Analytics middleware - tracks response times and performance metrics
 app.use(analyticsMiddleware);
 
-// Clerk authentication middleware - run Clerk unless admin-secret is present
-app.use((req, res, next) => {
-  try {
-    const xAdminSecret = (req.headers['x-admin-secret'] as string) || '';
-    const expectedAdminSecret = process.env.ADMIN_IMPORT_SECRET || 'esummit2026-admin-import';
-
-    // If admin secret is present in x-admin-secret, skip Clerk
-    if (xAdminSecret && xAdminSecret === expectedAdminSecret) {
-      return next();
-    }
-
-    // Otherwise, run Clerk middleware
-    return clerkAuth(req, res, next);
-  } catch (e) {
-    return next();
-  }
-});
+// Clerk authentication middleware
+app.use(clerkAuth);
 
 // HTTP request logger
 if (config.env === 'development') {

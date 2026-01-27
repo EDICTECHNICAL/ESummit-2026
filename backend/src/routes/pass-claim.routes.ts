@@ -400,7 +400,7 @@ async function cleanupExpiredClaims(clerkUserId: string): Promise<void> {
 
 /**
  * Global cleanup job - run periodically to expire old claims
- * POST /api/v1/pass-claims/cleanup (admin only)
+ * POST /api/v1/pass-claims/cleanup
  */
 router.post('/cleanup', async (_req: Request, res: Response) => {
   try {

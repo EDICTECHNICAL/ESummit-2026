@@ -28,12 +28,10 @@ import { Venue } from "./components/venue";
 import { Sponsors } from "./components/sponsors";
 import { Team } from "./components/team";
 import { ContactUs } from "./components/contact-us";
-import { UserDashboard } from "./components/user-dashboard";
 import { AuthModal } from "./components/auth-modal";
 import { PrivacyPolicy } from "./components/privacy-policy";
 import { TermsOfService } from "./components/terms-of-service";
 import { CookiePolicy } from "./components/cookie-policy";
-import { AdminPanel } from "./components/admin-panel";
 import { Footer } from "./components/footer";
 import { Toaster } from "./components/ui/sonner";
 import { API_BASE_URL } from "./lib/api";
@@ -77,15 +75,6 @@ export default function App() {
       document.documentElement.classList.add("dark");
     }
   }, []);
-
-  // Redirect to dashboard only on first sign up (not on every login)
-  useEffect(() => {
-    if (isSignedIn && user?.id && currentPage === "auth") {
-      // Only redirect from auth page (after sign up/sign in completion)
-      // But not from home page to preserve normal navigation
-      setCurrentPage("dashboard");
-    }
-  }, [isSignedIn, user?.id, currentPage]);
 
   // Fetch user's pass status
   useEffect(() => {
@@ -223,19 +212,6 @@ export default function App() {
         return <Team />;
       case "contact":
         return <ContactUs />;
-      case "dashboard":
-        return isSignedIn ? (
-          <UserDashboard 
-            onNavigate={handleNavigate}
-            userData={user ? {
-              name: user.fullName || user.firstName || "User",
-              email: user.primaryEmailAddress?.emailAddress || ""
-            } : null}
-            onLogout={handleUserLogout}
-          />
-        ) : (
-          <AuthModal onNavigate={handleNavigate} />
-        );
       case "auth":
         return <AuthModal onNavigate={handleNavigate} />;
       case "privacy-policy":
@@ -244,8 +220,6 @@ export default function App() {
         return <TermsOfService />;
       case "cookie-policy":
         return <CookiePolicy />;
-      case "admin":
-        return <AdminPanel onNavigate={handleNavigate} />;
       default:
         return <HomePage 
           onNavigate={handleNavigate} 

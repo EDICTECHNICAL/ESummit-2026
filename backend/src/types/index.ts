@@ -21,8 +21,6 @@ export type EventCategory = 'pitching' | 'competitions' | 'workshops' | 'network
 
 export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 
-export type EventRegistrationStatus = 'registered' | 'attended' | 'cancelled';
-
 // Audit log types
 export type AuditAction = 'refund' | 'edit_pass' | 'create_event' | 'update_event' | 'delete_event';
 

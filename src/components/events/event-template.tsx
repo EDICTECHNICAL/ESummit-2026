@@ -7,7 +7,6 @@ import { GradientText } from "../magicui/gradient-text";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Calendar, Clock, MapPin, Mail, Phone, ArrowRight, ArrowLeft, Trophy, Users, Target, CheckCircle2, MessageCircle } from "lucide-react";
-import { EventRegistrationModal } from "../event-registration-modal";
 import { GlassCard } from "../accentricity/glass-card";
 import { API_BASE_URL } from "../../lib/api";
 
@@ -79,18 +78,6 @@ export function EventPageTemplate({
   seniorContacts = [],
 }: EventPageTemplateProps) {
   const { isSignedIn, user } = useUser();
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false);
-  const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
-  const [registrationModal, setRegistrationModal] = useState<{
-    isOpen: boolean;
-    eventId: string;
-    eventTitle: string;
-  }>({
-    isOpen: false,
-    eventId: "",
-    eventTitle: "",
-  });
 
   // Check if user is already registered for this event
   useEffect(() => {
@@ -123,31 +110,6 @@ export function EventPageTemplate({
   const handleBackToEvents = () => {
     sessionStorage.setItem('navigateTo', 'events');
     window.location.href = '/';
-  };
-
-  const handleRegistration = async () => {
-    if (!isSignedIn) {
-      toast.error("🔒 Please sign in to secure your spot at this event!");
-      return;
-    }
-
-    if (isAlreadyRegistered) {
-      toast.error("⚠️ You are already registered for this event!", {
-        description: "Check your dashboard to view your registered events.",
-      });
-      return;
-    }
-
-    // Open registration modal
-    setRegistrationModal({
-      isOpen: true,
-      eventId: eventId,
-      eventTitle: event.title,
-    });
-  };
-
-  const handleRegistrationSuccess = () => {
-    setIsAlreadyRegistered(true); // Update state after successful registration
   };
 
   const hasDetailsRow = Boolean(event.date || event.time || event.venue);
@@ -230,28 +192,16 @@ export function EventPageTemplate({
                 transition={{ delay: 0.9, duration: 0.5 }}
                 className="pt-6"
               >
-                {isAlreadyRegistered ? (
-                  <Button
-                    size="lg"
-                    disabled
-                    className="group relative px-10 py-6 text-lg font-bold bg-green-600 text-white rounded-2xl shadow-[0_0_30px_rgba(34,197,94,0.4)] border-2 border-green-500/30 inline-flex items-center gap-3 cursor-not-allowed"
-                  >
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span>Already Registered</span>
-                  </Button>
-                ) : (
-                  <Button
-                    size="lg"
-                    onClick={handleRegistration}
-                    disabled={isRegistering || isCheckingRegistration}
-                    className="group relative px-10 py-6 text-lg font-bold bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] border-2 border-primary/30 hover:border-primary/50 transition-all duration-500 inline-flex items-center gap-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    <span className="flex items-center gap-3">
-                      {isCheckingRegistration ? "Checking..." : isRegistering ? "Registering..." : "Register Now"}
-                      {!isRegistering && !isCheckingRegistration && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />}
-                    </span>
-                  </Button>
-                )}
+                <Button
+                  size="lg"
+                  asChild
+                  className="group relative px-10 py-6 text-lg font-bold bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] border-2 border-primary/30 hover:border-primary/50 transition-all duration-500 inline-flex items-center gap-3 hover:scale-105"
+                >
+                  <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer">
+                    Register via Google Forms
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  </a>
+                </Button>
               </motion.div>
             </motion.div>
           </div>

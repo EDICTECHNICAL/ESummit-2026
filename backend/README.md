@@ -272,10 +272,8 @@ The database includes 10 tables:
 4. **events** - Competitions, workshops, speakers
 5. **event_registrations** - User event registrations
 6. **check_ins** - Entry check-ins via QR scan
-7. **admin_users** - Admin accounts
-8. **audit_logs** - Admin action logs
-9. **notifications** - Email/SMS notifications
-10. **sponsors** - Sponsor information
+7. **notifications** - Email/SMS notifications
+8. **sponsors** - Sponsor information
 
 View schema: `backend/prisma/schema.prisma`
 
@@ -340,7 +338,6 @@ npm run format           # Format code with Prettier
 ### Phase 3 (📅 PLANNED)
 - [ ] Event management
 - [ ] Event registration
-- [ ] Admin panel APIs
 - [ ] Analytics endpoints
 
 ### Phase 4 (📅 PLANNED)

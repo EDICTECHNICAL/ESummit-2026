@@ -8,7 +8,6 @@ interface ImportMetaEnv {
   readonly VITE_EVENT_DATE?: string;
   readonly VITE_KONFHUB_EVENT_ID?: string;
   readonly VITE_KONFHUB_BUTTON_ID?: string;
-  readonly VITE_ADMIN_SECRET?: string;
   readonly MODE: 'development' | 'production';
   readonly PROD: boolean;
   readonly DEV: boolean;

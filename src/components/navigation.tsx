@@ -73,13 +73,7 @@ export function Navigation({
     { id: "contact", label: "Contact", icon: null },
   ];
 
-  // Add Dashboard to nav items if user is signed in
-  const navItems = isSignedIn 
-    ? [
-        ...baseNavItems,
-        { id: "dashboard", label: "Dashboard", icon: User },
-      ]
-    : baseNavItems;
+  const navItems = baseNavItems;
 
   return (
     <motion.nav
@@ -137,19 +131,7 @@ export function Navigation({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {item.id === "dashboard" ? (
-                    <span className="relative z-10">
-                      <AuroraText 
-                        size="sm" 
-                        className="text-sm md:text-base font-semibold"
-                        colors={["#a855f7", "#ec4899", "#3b82f6", "#8b5cf6", "#d946ef"]}
-                      >
-                        {item.label}
-                      </AuroraText>
-                    </span>
-                  ) : (
-                    <span className="relative z-10">{item.label}</span>
-                  )}
+                  <span className="relative z-10">{item.label}</span>
                   <AnimatePresence>
                     {currentPage === item.id && (
                       <motion.div
@@ -213,10 +195,6 @@ export function Navigation({
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => onNavigate("dashboard")}>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
-                    </DropdownMenuItem>
                     {!userHasPass && (
                       <DropdownMenuItem onClick={() => onNavigate("booking")}>
                         <Ticket className="mr-2 h-4 w-4" />
@@ -371,16 +349,6 @@ export function Navigation({
                     <div className="border-t px-4 py-4 flex flex-col gap-2">
                       {isUserAuthenticated ? (
                         <>
-                          <Button
-                            variant="outline"
-                            className="w-full rounded-full h-11"
-                            onClick={() => {
-                              onNavigate("dashboard");
-                              setIsOpen(false);
-                            }}
-                          >
-                            <span>Dashboard</span>
-                          </Button>
                           {!userHasPass && (
                             <Button
                               className="w-full rounded-full h-11 bg-gradient-to-r from-primary to-primary/90"
