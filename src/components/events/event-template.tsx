@@ -639,16 +639,6 @@ export function EventPageTemplate({
         </div>
       </div>
 
-      <EventRegistrationModal
-        isOpen={registrationModal.isOpen}
-        onClose={() => setRegistrationModal({ isOpen: false, eventId: "", eventTitle: "" })}
-        eventId={registrationModal.eventId}
-        eventTitle={registrationModal.eventTitle}
-        onSuccess={() => {
-          handleRegistrationSuccess();
-          setRegistrationModal({ isOpen: false, eventId: "", eventTitle: "" });
-        }}
-      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ interface KonfHubWidgetProps {
   buttonId?: string;
   mode?: 'button' | 'iframe';
   ticketId?: string;
+  iframeUrl?: string; // New prop for custom iframe URL
   onSuccess?: (data: any) => void;
   onClose?: () => void;
   className?: string;
@@ -19,6 +20,7 @@ export function KonfHubWidget({
   buttonId = import.meta.env.VITE_KONFHUB_BUTTON_ID || 'btn_a2352136e92a',
   mode = 'iframe',
   ticketId,
+  iframeUrl, // New prop
   onSuccess,
   onClose,
   className = '',
@@ -178,7 +180,7 @@ export function KonfHubWidget({
   }
 
   // Iframe mode with load/retry handling
-  const iframeSrc = `https://konfhub.com/widget/${eventId}?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=d0021b&fontFamily=Hind&borderRadius=10&widget_type=standard${ticketId ? `&tickets=${ticketId}&ticketId=${ticketId}%7C1` : ''}`;
+  const iframeSrc = iframeUrl || `https://konfhub.com/widget/${eventId}?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=d0021b&fontFamily=Hind&borderRadius=10&widget_type=standard${ticketId ? `&tickets=${ticketId}&ticketId=${ticketId}%7C1` : ''}`;
 
   const handleIframeLoad = () => {
     setIsLoading(false);

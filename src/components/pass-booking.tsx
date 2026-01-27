@@ -67,6 +67,15 @@ export const PassBooking = memo(function PassBooking({
     tcet_student: "70910", // Thakur Student Pass
   };
 
+  // New KonfHub iframe URLs for each pass
+  const passIframeUrls: Record<string, string> = {
+    pixel: "https://konfhub.com/widget/final-tcet-esummit26?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=002E6E&fontFamily=Hind&borderRadius=10&widget_type=quick&screen=2&tickets=70906&ticketId=70906%7C1",
+    silicon: "https://konfhub.com/widget/final-tcet-esummit26?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=002E6E&fontFamily=Hind&borderRadius=10&widget_type=quick&screen=2&tickets=70907&ticketId=70907%7C1",
+    quantum: "https://konfhub.com/widget/final-tcet-esummit26?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=002E6E&fontFamily=Hind&borderRadius=10&widget_type=quick&screen=2&tickets=70908&ticketId=70908%7C1",
+    exhibitors: "https://konfhub.com/widget/final-tcet-esummit26?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=002E6E&fontFamily=Hind&borderRadius=10&widget_type=quick&screen=2&tickets=70909&ticketId=70909%7C1",
+    tcet_student: "https://konfhub.com/widget/final-tcet-esummit26?desc=false&secondaryBg=F7F7F7&ticketBg=F7F7F7&borderCl=F7F7F7&bg=FFFFFF&fontColor=1e1f24&ticketCl=1e1f24&btnColor=002E6E&fontFamily=Hind&borderRadius=10&widget_type=standard&tickets=70910&ticketId=70910%7C1",
+  };
+
   const passes = [
     {
       id: "pixel",
@@ -688,7 +697,7 @@ export const PassBooking = memo(function PassBooking({
             <div className="flex-1 h-full">
               <KonfHubWidget
                 mode="iframe"
-                ticketId={selectedPass ? passTicketIds[selectedPass] : undefined}
+                iframeUrl={selectedPass ? passIframeUrls[selectedPass] : undefined}
                 onSuccess={handleKonfHubSuccess}
                 onClose={() => {
                   setShowKonfHubWidget(false);
