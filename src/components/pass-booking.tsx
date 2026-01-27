@@ -210,6 +210,7 @@ export const PassBooking = memo(function PassBooking({
 
       const requestBody = {
         clerkUserId: clerkUserId,
+        email: user?.primaryEmailAddress?.emailAddress,
         passType: selectedPassData.name,
         price: 0, // Free pass
         hasMeals: false,
