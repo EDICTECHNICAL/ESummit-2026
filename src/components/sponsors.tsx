@@ -61,6 +61,12 @@ export function Sponsors() {
           logo: "/assets/sponsors/nissin.png",
           tier: "FOOD PARTNER",
           website: "https://www.indonissin.in/pages/cup-noodles"
+        },
+        {
+          name: "99 Pancakes",
+          logo: "/assets/sponsors/99pancakes.png",
+          tier: "FOOD PARTNER",
+          website: "https://99pancakes.in/"
         }
       ]
     }
