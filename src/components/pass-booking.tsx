@@ -374,17 +374,6 @@ export const PassBooking = memo(function PassBooking({
                     </Alert>
                   </a>
                 </div>
-                <div className="flex-1">
-                  <Alert className="border-orange-200 bg-gradient-to-r from-orange-50 to-red-50 dark:border-orange-800 dark:from-orange-950 dark:to-red-950 text-center h-full">
-                    <AlertCircle className="mx-auto h-4 w-4 text-orange-600 dark:text-orange-400" />
-                    <AlertDescription className="text-center text-orange-700 dark:text-orange-300">
-                      <p className="text-sm font-bold">⚠️ Important Notice</p>
-                      <p className="text-xs mt-1 font-medium">
-                        After pass purchase, your pass will be automatically added to your account
-                      </p>
-                    </AlertDescription>
-                  </Alert>
-                </div>
               </div>
             </div>
           </motion.div>
