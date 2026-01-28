@@ -29,5 +29,5 @@ export function PanelDiscussionPage() {
     }
   ];
 
-  return <EventPageTemplate event={event} eventId="d2-panel-discussion" registrationUrl="https://forms.google.com/panel-discussion-registration" panelTitle="Speakers & Judges" judges={judges} primaryContacts={primaryContacts} />;
+  return <EventPageTemplate event={event} eventId="d2-panel-discussion" registrationUrl="https://forms.gle/ASfrNGrCAV7CF9mo6" panelTitle="Speakers & Judges" judges={judges} primaryContacts={primaryContacts} />;
 }
