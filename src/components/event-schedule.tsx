@@ -107,7 +107,7 @@ const EventSchedule = () => {
         description: "Push the boundaries of AI. Tackle a real-world problem by designing and presenting an innovative, AI-driven solution. Showcase your technical skills and creativity to win the challenge.",
         duration: "3 hours",
         prize: "₹1,50,000",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
         prerequisite: "Laptop with development environment",
       },
       {
@@ -120,7 +120,7 @@ const EventSchedule = () => {
         description: "Master the art of the deal. In this high-energy bidding game, build your dream team with a limited budget. Test your strategic thinking and financial savvy to outbid rivals and create a winning roster.",
         duration: "7 hours",
         prize: "TBD",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d1-biz-arena",
@@ -132,7 +132,7 @@ const EventSchedule = () => {
         description: "Step into the founder's seat. Run a virtual startup in this fast-paced simulation. Make critical decisions on product, marketing, and funding to outmaneuver competitors and dominate the market.",
         duration: "3 hours",
         prize: "₹1,00,000",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
 
       {
@@ -179,7 +179,7 @@ const EventSchedule = () => {
         speaker: null,
         description: "Display Your First Prototype! Showcase your early-stage idea and prototype to the entire college community in our main lobby. A perfect chance to get your first users and feedback.",
         duration: "4 hours",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d1-internship-fair",
@@ -190,7 +190,7 @@ const EventSchedule = () => {
         speaker: null,
         description: "Build your founding team. Startups present their vision to recruit talented interns and full-time members, connecting ambitious talent with groundbreaking ideas.",
         duration: "7 hours",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d1-informals",
@@ -201,7 +201,7 @@ const EventSchedule = () => {
         speaker: null,
         description: "Connect beyond the stage. An informal session for founders to mingle with judges, speakers, and mentors over lunch, turning conversations into valuable connections.",
         duration: "30 min",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
 
     ],
@@ -260,7 +260,7 @@ const EventSchedule = () => {
         description: "Push the boundaries of AI. Tackle a real-world problem by designing and presenting an innovative, AI-driven solution. Showcase your technical skills and creativity to win the challenge.",
         duration: "3 hours",
         prize: "₹1,50,000",
-        eligibility: "All pass holders (participants only)",
+        eligibility: "All pass holders (participants only), including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d2-ipl-auction",
@@ -272,7 +272,7 @@ const EventSchedule = () => {
         description: "Master the art of the deal. In this high-energy bidding game, build your dream team with a limited budget. Test your strategic thinking and financial savvy to outbid rivals and create a winning roster.",
         duration: "4 hours",
         prize: "TBD",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d2-biz-arena",
@@ -284,7 +284,7 @@ const EventSchedule = () => {
         description: "Step into the founder's seat. Run a virtual startup in this fast-paced simulation. Make critical decisions on product, marketing, and funding to outmaneuver competitors and dominate the market.",
         duration: "3 hours",
         prize: "₹1,00,000",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d2-design-thinking",
@@ -329,7 +329,7 @@ const EventSchedule = () => {
         speaker: null,
         description: "Build your founding team. Startups present their vision to recruit talented interns and full-time members, connecting ambitious talent with groundbreaking ideas.",
         duration: "3 hours",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
 
       {
@@ -341,7 +341,7 @@ const EventSchedule = () => {
         speaker: "Organizing Committee",
         description: "Award ceremony, winner announcements, and closing remarks for E-Summit 2026",
         duration: "1 hr 30 min",
-        eligibility: "All pass holders",
+        eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
       },
       {
         id: "d2-startup-youth-conclave",

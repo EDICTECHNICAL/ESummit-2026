@@ -9,7 +9,7 @@ export function StartupExpoPage() {
     time: "1:00 PM – 5:00 PM",
     venue: "Main Lobby",
     prize: { first: "₹5,000", second: "₹3,000", total: "₹8,000" },
-    eligibility: "All pass holders",
+    eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
   };
   const primaryContacts = [
     { name: "Sankarshan Dwivedi", role: "OC Member", phone: "8208840697" },

@@ -9,7 +9,7 @@ export function IplAuctionPage() {
     time: "Day 1: 10:00 AM – 5:00 PM | Day 2: 9:30 AM – 1:30 PM",
     venue: "601 TIMSR",
     prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
-    eligibility: "All pass holders (Pixel, Silicon, Quantum)",
+    eligibility: "All pass holders (Pixel, Silicon, Quantum, Thakur Student Pass, Exhibitors Pass)",
   };
   const primaryContacts = [
     { name: "Hredey Chaand", role: "Core Member", phone: "9004724466" },

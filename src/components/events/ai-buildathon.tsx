@@ -9,7 +9,7 @@ export function AiBuildathonPage() {
     time: "02:00 PM – 5:00 PM",
     venue: "SH 3 (Seminar Hall 3)",
     prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
-    eligibility: "All pass holders (Pixel, Silicon, Quantum)",
+    eligibility: "All pass holders (Pixel, Silicon, Quantum, Thakur Student Pass, Exhibitors Pass)",
   };
 
   const primaryContacts = [

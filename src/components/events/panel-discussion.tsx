@@ -8,7 +8,7 @@ export function PanelDiscussionPage() {
     date: "February 3, 2026",
     time: "2:00 PM to 5:00 PM (Post Lunch)",
     venue: "Auditorium (D-2)",
-    eligibility: "All pass holders",
+    eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
     prize: undefined, // No prize for panel discussion
   };
   const primaryContacts = [

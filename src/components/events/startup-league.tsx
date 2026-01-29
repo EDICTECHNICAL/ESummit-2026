@@ -9,7 +9,7 @@ export function StartupLeaguePage() {
     time: "10:00 AM to 1:00 PM",
     venue: "301 TIMSR",
     prize: { first: "₹5,000", second: "₹3,000", third: "₹2,000", total: "₹10,000" },
-    eligibility: "All pass holders (Pixel, Silicon, Quantum)",
+    eligibility: "All pass holders (Pixel, Silicon, Quantum, Thakur Student Pass, Exhibitors Pass)",
   };
   const primaryContacts = [
     { name: "Aman Pandey", role: "Core Member", phone: "8108390154" },
