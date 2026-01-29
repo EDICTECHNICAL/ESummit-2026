@@ -17,5 +17,5 @@ export function StartupExpoPage() {
     { name: "Khushi Tyagi", role: "OC Member", phone: "8369998587" },
   ];
 
-  return <EventPageTemplate event={event} eventId="d1-startup-expo" registrationUrl="/" panelTitle="Guests" primaryContacts={primaryContacts} />;
+  return <EventPageTemplate event={event} eventId="d1-startup-expo" registrationUrl="https://forms.gle/82Rw1ZHVXuHWGNaz8" panelTitle="Guests" primaryContacts={primaryContacts} />;
 }
