@@ -194,9 +194,9 @@ export const eventSchedule = {
       eligibility: "AI Buildathon participants only",
     },
     {
-      id: "d2-startup-league",
+      id: "d2-biz-arena",
       time: "10:00 - 14:00",
-      title: "Startup League Game: Build Your Empire",
+      title: "BizArena Game: Build Your Empire",
       category: "competitions",
       venue: "Competition Arena B",
       speaker: "Startup Founders",
@@ -204,7 +204,7 @@ export const eventSchedule = {
       duration: "4 hours",
       prize: "₹75,000",
       eligibility: "Teams of 3-4 members",
-      registrationUrl: "https://forms.gle/dgGMs7rXbT5UpAH56",
+      registrationUrl: "https://docs.google.com/forms/d/e/1FAIpQLSceiNCR4J1Mh_tr6c2lwK-CkuPDcJt5VWPXO-C4sL2aGz-CAw/viewform",
     },
     // Workshops - Day 2
     {
@@ -281,7 +281,7 @@ export function getEligibleEvents(passType: string): Event[] {
   // Thakur Student Pass (TCET/TGBS/TIMSR) / Pixel Pass events (FREE pass)
   const pixelEvents = [
     "d1-startup-expo", "d1-panel-discussion", "d1-ipl-auction", 
-    "d1-ai-buildathon-start", "d2-startup-league",
+    "d1-ai-buildathon-start", "d2-biz-arena",
     // Pitching events - accessible as audience for pixel pass holders
     "d1-ten-minute-million", "d1-angel-roundtable", 
     "d2-pitch-arena", "d2-incubator-summit"

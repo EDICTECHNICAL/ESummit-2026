@@ -1,8 +1,8 @@
 import { EventPageTemplate } from "./event-template";
 
-export function StartupLeaguePage() {
+export function BizArenaPage() {
   const event = {
-    title: "Startup League Game: Build Your Empire",
+    title: "BizArena Game: Build Your Empire",
     description:
       "Step into the founder's seat. Run a virtual startup in this fast-paced simulation. Make critical decisions on product, marketing, and funding to outmaneuver competitors and dominate the market.",
     date: "February 2-3, 2026",
@@ -20,5 +20,5 @@ export function StartupLeaguePage() {
     { name: "Shiva Saraswati", role: "OC Member", phone: "9561914349" },
   ];
 
-  return <EventPageTemplate event={event} eventId="d1-biz-arena" registrationUrl="https://forms.gle/dgGMs7rXbT5UpAH56" panelTitle="Mentors & Judges" primaryContacts={primaryContacts} />;
+  return <EventPageTemplate event={event} eventId="d1-biz-arena" registrationUrl="https://docs.google.com/forms/d/e/1FAIpQLSceiNCR4J1Mh_tr6c2lwK-CkuPDcJt5VWPXO-C4sL2aGz-CAw/viewform" panelTitle="Mentors & Judges" primaryContacts={primaryContacts} />;
 }

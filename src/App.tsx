@@ -12,7 +12,7 @@ import {
   IncubatorSummitPage,
   IplAuctionPage,
   AiBuildathonPage,
-  StartupLeaguePage,
+  BizArenaPage,
   DesignThinkingPage,
   FinanceMarketingPage,
   DataAnalyticsBdmPage,
@@ -150,7 +150,7 @@ export default function App() {
       case "event-5":
         return <AiBuildathonPage />;
       case "event-6":
-        return <StartupLeaguePage />;
+        return <BizArenaPage />;
       case "event-7":
         return <DesignThinkingPage />;
       case "event-8":
@@ -177,7 +177,7 @@ export default function App() {
       case "event-d1-ai-buildathon-start":
         return <AiBuildathonPage />;
       case "event-d1-biz-arena":
-        return <StartupLeaguePage />;
+        return <BizArenaPage />;
       case "event-d1-design-thinking":
         return <DesignThinkingPage />;
       case "event-d1-finance-marketing":

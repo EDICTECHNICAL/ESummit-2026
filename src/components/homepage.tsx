@@ -101,7 +101,7 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
     },
     {
       title: "Competitions",
-      description: "Compete in IPL Auction: The Bid for Brilliance, Startup League Game: Build Your Empire, and AI Buildathon: The Innovation Challenge. Network at The Startup Expo, The Internship Fair, and Startup Youth Conclave with E-Cells from other colleges.",
+      description: "Compete in IPL Auction: The Bid for Brilliance, BizArena Game: Build Your Empire, and AI Buildathon: The Innovation Challenge. Network at The Startup Expo, The Internship Fair, and Startup Youth Conclave with E-Cells from other colleges.",
     },
   ];
 

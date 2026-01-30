@@ -3,7 +3,7 @@ export { PitchArenaPage } from './pitch-arena-page';
 export { IncubatorSummitPage } from './incubator-summit';
 export { IplAuctionPage } from './ipl-auction';
 export { AiBuildathonPage } from './ai-buildathon';
-export { StartupLeaguePage } from './startup-league';
+export { BizArenaPage } from './biz-arena';
 export { DesignThinkingPage } from './design-thinking';
 export { FinanceMarketingPage } from './finance-marketing';
 export { DataAnalyticsBdmPage } from './data-analytics-bdm';
