@@ -7,7 +7,7 @@ export function InternshipFairPage() {
       "Build your founding team. Startups present their vision to recruit talented interns and full-time members, connecting ambitious talent with groundbreaking ideas.",
     date: "February 2-3, 2026",
     time: "Day 1: 10:00 AM – 5:00 PM | Day 2: 10:00 AM – 1:00 PM",
-    venue: "Convocation Hall",
+    venue: "Lobby",
     eligibility: "Quantum & Thakur Student Pass holders",
   };
   const primaryContacts = [

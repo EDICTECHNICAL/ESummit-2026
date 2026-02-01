@@ -7,7 +7,7 @@ export function DesignThinkingPage() {
       "Hands-on workshop on design thinking and innovation for building successful ventures. 3-hour interactive sessions throughout the day.",
     date: "February 2-3, 2026",
     time: "02:00 PM – 5:00 PM",
-    venue: "Lab 522 / 523",
+    venue: "Lab 528 / 529",
     eligibility: "Silicon, Quantum & Thakur Student Pass holders",
   };
   const primaryContacts = [

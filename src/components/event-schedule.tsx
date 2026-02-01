@@ -57,7 +57,7 @@ const EventSchedule = () => {
         time: "09:30 - 10:30",
         title: "Inaugural Ceremony",
         category: "networking",
-        venue: "Main Auditorium",
+        venue: "Auditorium",
         speaker: "Chief Guest",
         description: "Official opening of E-Summit 2026",
         duration: "1 hour",
@@ -67,7 +67,7 @@ const EventSchedule = () => {
         time: "10:00 - 17:00",
         title: "The Ten Minute Deal: Pitch to Win",
         category: "pitching",
-        venue: "SH-1",
+        venue: "Convocation Hall",
         speaker: "5 Venture Capitalists",
         description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
         duration: "7 hours",
@@ -140,7 +140,7 @@ const EventSchedule = () => {
         time: "14:00 - 17:00",
         title: "Design Thinking & Innovation Strategy Workshop",
         category: "workshops",
-        venue: "Lab 522 & 523",
+        venue: "Lab 528 / 529",
         speaker: "Design Expert",
         description: "Unlock Your Creative Potential. Master the tools to solve complex problems and generate groundbreaking ideas. This hands-on workshop will equip you with a powerful framework for innovation.",
         duration: "3 hours",
@@ -186,7 +186,7 @@ const EventSchedule = () => {
         time: "10:00 - 17:00",
         title: "The Internship Fair: Build Your Founding Team (Day 1)",
         category: "networking",
-        venue: "Convocation Hall",
+        venue: "Lobby",
         speaker: null,
         description: "Build your founding team. Startups present their vision to recruit talented interns and full-time members, connecting ambitious talent with groundbreaking ideas.",
         duration: "7 hours",
@@ -197,7 +197,7 @@ const EventSchedule = () => {
         time: "17:00 - 17:30",
         title: "Informals",
         category: "networking",
-        venue: "Multipurpose Hall 2nd Floor and TSAP ground floor",
+        venue: "MH-2nd floor, MH- Ground Floor",
         speaker: null,
         description: "Connect beyond the stage. An informal session for founders to mingle with judges, speakers, and mentors over lunch, turning conversations into valuable connections.",
         duration: "30 min",
@@ -221,7 +221,7 @@ const EventSchedule = () => {
         time: "10:00 - 17:00",
         title: "The Ten Minute Deal: Pitch to Win (Day 2)",
         category: "pitching",
-        venue: "SH-1",
+        venue: "Convocation Hall",
         speaker: "5 Venture Capitalists",
         description: "A high-energy pitching event where founders get just 10 minutes to present their startup to investors and industry leaders, aiming to secure funding, partnerships, and validation on the spot.",
         duration: "7 hours",
@@ -291,7 +291,7 @@ const EventSchedule = () => {
         time: "10:00 - 17:00",
         title: "Design Thinking & Innovation Strategy Workshop (Day 2)",
         category: "workshops",
-        venue: "Lab 522 & 523",
+        venue: "Lab 528 / 529",
         speaker: "Design Expert",
         description: "Unlock Your Creative Potential. Master the tools to solve complex problems and generate groundbreaking ideas. This hands-on workshop will equip you with a powerful framework for innovation.",
         duration: "7 hours (3 Hour Sessions)",
@@ -325,7 +325,7 @@ const EventSchedule = () => {
         time: "10:00 - 13:00",
         title: "The Internship Fair: Build Your Founding Team (Day 2)",
         category: "networking",
-        venue: "Convocation Hall",
+        venue: "Lobby",
         speaker: null,
         description: "Build your founding team. Startups present their vision to recruit talented interns and full-time members, connecting ambitious talent with groundbreaking ideas.",
         duration: "3 hours",
@@ -337,7 +337,7 @@ const EventSchedule = () => {
         time: "Post 5:00 PM",
         title: "Closing Ceremony & Prize Distribution",
         category: "networking",
-        venue: "Auditorium (D-2)",
+        venue: "SSC TIMSR",
         speaker: "Organizing Committee",
         description: "Award ceremony, winner announcements, and closing remarks for E-Summit 2026",
         duration: "1 hr 30 min",
@@ -348,7 +348,7 @@ const EventSchedule = () => {
         time: "11:00 - 13:00",
         title: "Startup Youth Conclave: Connect with Top E-Cells",
         category: "networking",
-        venue: "Seminar Hall, 2nd floor, TSAP / Internal General Reading Room",
+        venue: "SH-1",
         speaker: "E-Cell Representatives",
         description: "Connect with Top E-Cells! Network with entrepreneurship cells from other colleges, share best practices, and build collaborations that go beyond your campus.",
         duration: "2 hours",
@@ -359,7 +359,7 @@ const EventSchedule = () => {
         time: "14:00 - 17:00",
         title: "The Panel Discussion: Get the Final Insights",
         category: "networking",
-        venue: "Auditorium (D-2)",
+        venue: "SSC TIMSR",
         speaker: "Industry Leaders",
         description: "Get the Final Insights. Hear from our expert judges and speakers in a final panel discussion, followed by the closing ceremony to celebrate the day's winners and achievements.",
         duration: "3 hours",
@@ -452,10 +452,13 @@ const EventSchedule = () => {
                 <SelectItem value="Lab 522 & 523">Lab 522 & 523</SelectItem>
                 <SelectItem value="Lab 524 & 525">Lab 524 & 525</SelectItem>
                 <SelectItem value="Lab 526 / 527 / 528 / 529">Lab 526 / 527 / 528 / 529</SelectItem>
+                <SelectItem value="Lab 528 / 529">Lab 528 / 529</SelectItem>
                 <SelectItem value="Lobby Area">Lobby Area</SelectItem>
+                <SelectItem value="Lobby">Lobby</SelectItem>
                 <SelectItem value="Convocation Hall">Convocation Hall</SelectItem>
                 <SelectItem value="Multipurpose Hall 2nd Floor and Multipurpose Hall Ground Floor">Multipurpose Hall 2nd Floor and Ground Floor</SelectItem>
                 <SelectItem value="Multipurpose Hall 2nd Floor and TSAP ground floor">Multipurpose Hall 2nd Floor and TSAP Ground Floor</SelectItem>
+                <SelectItem value="MH-2nd floor, MH- Ground Floor">MH-2nd floor, MH- Ground Floor</SelectItem>
                 <SelectItem value="General Reading Room (4th floor) / Seminar hall, 2nd floor, TSAP">General Reading Room / Seminar hall TSAP</SelectItem>
                 <SelectItem value="Seminar Hall, 2nd floor, TSAP / Internal General Reading Room">Seminar Hall TSAP / Internal Reading Room</SelectItem>
                 <SelectItem value="Auditorium (D-1)">Auditorium (D-1)</SelectItem>

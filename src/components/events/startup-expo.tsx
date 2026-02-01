@@ -7,7 +7,7 @@ export function StartupExpoPage() {
       "Display Your First Prototype! Showcase your early-stage idea and prototype to the entire college community in our main lobby. A perfect chance to get your first users and feedback.",
     date: "February 2, 2026",
     time: "1:00 PM – 5:00 PM",
-    venue: "Main Lobby",
+    venue: "Lobby",
     prize: { first: "₹5,000", second: "₹3,000", total: "₹8,000" },
     eligibility: "All pass holders, including Thakur Student Pass and Exhibitors Pass",
   };
