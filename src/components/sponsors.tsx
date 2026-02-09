@@ -27,12 +27,6 @@ export function Sponsors() {
           logo: "/assets/sponsors/ventureloop.png",
           tier: "CO-POWERED BY",
           website: "#"
-        },
-        {
-          name: "Red Bull",
-          logo: "/assets/sponsors/redbull-logo-svgrepo-com.svg",
-          tier: "CO-POWERED BY",
-          website: "https://www.redbull.com/in-en"
         }
       ]
     },
@@ -67,6 +61,17 @@ export function Sponsors() {
           logo: "/assets/sponsors/dripface.png",
           tier: "FOOD PARTNER",
           website: "https://dripface.coffee/"
+        }
+      ]
+    },
+    {
+      title: "Drinks Partner",
+      sponsors: [
+        {
+          name: "Red Bull",
+          logo: "/assets/sponsors/redbull-logo-svgrepo-com.svg",
+          tier: "DRINKS PARTNER",
+          website: "https://www.redbull.com/in-en"
         }
       ]
     }
