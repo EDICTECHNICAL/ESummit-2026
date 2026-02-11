@@ -83,7 +83,9 @@ export function Speakers() {
           venue: "SH-1",
         },
       ],
-      social: {},
+      social: {
+        linkedin: "https://www.linkedin.com/in/karanrajani/?originalSubdomain=in"
+      },
       image: "/assets/panel/Karn Rajani.jpg",
     },
     {
@@ -104,7 +106,7 @@ export function Speakers() {
         },
       ],
       social: {
-        linkedin: "https://www.linkedin.com/in/db-passsionforproducts",
+        linkedin: "https://www.linkedin.com/in/db-passsionforproducts/?originalSubdomain=ca",
       },
       image: "/assets/panel/Devang_Bhuta.jpg",
     },
@@ -125,7 +127,9 @@ export function Speakers() {
           venue: "314, 315, 316",
         },
       ],
-      social: {},
+      social: {
+        linkedin: "https://www.linkedin.com/in/dr-anita-sunil-diwakar-425447246/?originalSubdomain=in",
+      },
       image: "/assets/panel/drAnkita.jpg",
     },
     {
@@ -144,7 +148,9 @@ export function Speakers() {
           venue: "314, 315, 316",
         },
       ],
-      social: {},
+      social: {
+        linkedin: "https://www.linkedin.com/in/captain-amit-rai-710b8a10/?originalSubdomain=in",
+      },
       image: "/assets/panel/captAmitRai.jpg",
     },
     {
@@ -187,7 +193,7 @@ export function Speakers() {
         },
       ],
       social: {
-        linkedin: "https://www.linkedin.com/in/sachinladdha",
+        linkedin: "https://www.linkedin.com/in/sachinladdha/?originalSubdomain=in",
       },
       image: "/assets/panel/sachinLaddha.jpg",
     },
@@ -209,7 +215,7 @@ export function Speakers() {
         },
       ],
       social: {
-        linkedin: "https://www.linkedin.com/in/himani-jaiswal-189b25232",
+        linkedin: "https://www.linkedin.com/in/himani-jaiswal-189b25232/?originalSubdomain=in",
       },
       image: "/assets/panel/himani jaiswal.jpg",
     },
@@ -249,7 +255,7 @@ export function Speakers() {
                   <ImageWithFallback
                     src={speaker.image}
                     alt={speaker.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 text-white">

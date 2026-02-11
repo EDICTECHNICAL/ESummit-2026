@@ -63,13 +63,13 @@ export function TenMinuteMillionPage() {
       name: "Karn Rajani",
       role: "Finance Expert, Gitsol Finance",
       image: "/assets/panel/Karn Rajani.jpg",
-      linkedin: ""
+      linkedin: "https://www.linkedin.com/in/karanrajani/?originalSubdomain=in"
     },
     {
       name: "Devang Bhuta",
       role: "Parent Entrepreneur & Investor",
       image: "/assets/panel/Devang_Bhuta.jpg",
-      linkedin: "https://www.linkedin.com/in/db-passsionforproducts"
+      linkedin: "https://www.linkedin.com/in/db-passsionforproducts/?originalSubdomain=ca"
     }
   ];
 

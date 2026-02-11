@@ -79,11 +79,55 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
     },
     {
       name: "Karn Rajani",
-      title: "Panel Speaker",
-      topic: "Entrepreneurship & Innovation",
+      title: "Finance Expert, Gitsol Finance",
+      topic: "Financial Strategies for Startup Success",
       image: "/assets/panel/Karn Rajani.jpg",
     },
+    {
+      name: "Devang Bhuta",
+      title: "Parent Entrepreneur & Investor",
+      topic: "Product Development & Investment Insights",
+      image: "/assets/panel/Devang_Bhuta.jpg",
+    },
+    {
+      name: "Dr. Anita Divakar",
+      title: "Former CEO, VJTI Technology Business Incubator",
+      topic: "Technology Incubation & Startup Mentorship",
+      image: "/assets/panel/drAnkita.jpg",
+    },
+    {
+      name: "Capt. Amit Rai",
+      title: "Industry Mentor",
+      topic: "Leadership & Industry Best Practices",
+      image: "/assets/panel/captAmitRai.jpg",
+    },
+    {
+      name: "Abhishek Patil",
+      title: "Founder, 3D Design Studio",
+      topic: "Design Thinking & Creative Innovation",
+      image: "/assets/panel/default.png",
+    },
+    {
+      name: "Dr. Sachin Laddha",
+      title: "Incubation Expert, MU Incubation",
+      topic: "Startup Incubation & Business Development",
+      image: "/assets/panel/sachinLaddha.jpg",
+    },
+    {
+      name: "Himani Jaiswal",
+      title: "Incubation Expert, WISE SNDTWU",
+      topic: "Women Entrepreneurship & Inclusive Innovation",
+      image: "/assets/panel/himani jaiswal.jpg",
+    },
   ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSpeaker((prev) => (prev + 1) % speakers.length);
+    }, 4000); // Change speaker every 4 seconds
+
+    return () => clearInterval(timer);
+  }, [speakers.length]);
 
   const stats = [
     { label: "Events", value: "16+", icon: Trophy },
@@ -423,9 +467,9 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
       <section className="border-b py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="mb-4 text-3xl md:text-4xl font-bold text-foreground">Featured Speakers</h2>
+            <h2 className="mb-4 text-3xl md:text-4xl font-bold text-foreground">Our Speakers & Panelists</h2>
             <p className="text-lg md:text-xl text-foreground">
-              Learn from the best in the industry
+              Meet the industry leaders, investors, and mentors who made E-Summit 2026 unforgettable
             </p>
           </div>
 
@@ -434,9 +478,10 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
               <div className="flex flex-col md:flex-row">
                 <div className="relative h-64">
                   <ImageWithFallback
+                    key={currentSpeaker}
                     src={speakers[currentSpeaker].image}
                     alt={speakers[currentSpeaker].name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 </div>
                 <CardContent className="flex flex-col justify-center p-8 md:w-1/2">

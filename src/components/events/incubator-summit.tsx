@@ -26,13 +26,13 @@ export function IncubatorSummitPage() {
       name: "Dr. Sachin Laddha",
       role: "Incubation Expert, MU Incubation",
       image: "/assets/panel/sachinLaddha.jpg",
-      linkedin: "https://www.linkedin.com/in/sachinladdha"
+      linkedin: "https://www.linkedin.com/in/sachinladdha/?originalSubdomain=in"
     },
     {
       name: "Himani Jaiswal",
       role: "Incubation Expert, WISE SNDTWU",
       image: "/assets/panel/himani jaiswal.jpg",
-      linkedin: "https://www.linkedin.com/in/himani-jaiswal-189b25232"
+      linkedin: "https://www.linkedin.com/in/himani-jaiswal-189b25232/?originalSubdomain=in"
     }
   ];
 
