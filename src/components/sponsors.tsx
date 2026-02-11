@@ -64,7 +64,7 @@ export function Sponsors() {
         },
         {
           name: "4 More Hour",
-          logo: "/assets/sponsors/4_more_hour.png",
+          logo: "/assets/sponsors/4morehour.png",
           tier: "SUPPORT SPONSOR",
           website: "#"
         }
@@ -181,13 +181,74 @@ export function Sponsors() {
 
         {/* Sponsor Categories */}
         <div className="space-y-20">
-          {sponsorCategories.map((category, categoryIndex) => (
+          <div className="flex gap-8 justify-center">
+            {[0, 1, 4].map((idx, arrayIndex) => {
+              const category = sponsorCategories[idx];
+              return (
+                <motion.div
+                  key={category.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.6, delay: arrayIndex * 0.1 }}
+                  className="space-y-8 flex-1"
+                >
+                  <div className="relative mb-4 md:mb-6 py-4 text-center">
+                    <AuroraText 
+                      size="sm" 
+                      colors={["#a855f7", "#ec4899", "#3b82f6", "#8b5cf6", "#d946ef"]}
+                      className="tracking-[0.15em] md:tracking-[0.25em] uppercase font-light"
+                    >
+                      {category.title}
+                    </AuroraText>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center gap-8 mx-auto">
+                    {category.sponsors.map((sponsor, sponsorIndex) => (
+                      <motion.a
+                        key={sponsor.name}
+                        href={sponsor.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: sponsorIndex * 0.1 }}
+                        whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                        className="block group w-80"
+                      >
+                        <Card className="h-full border border-border/50 hover:border-border transition-all duration-300 hover:shadow-xl bg-card">
+                          <CardContent className="p-8 flex flex-col items-center justify-center text-center h-[320px]">
+                            <div className="mb-6 transition-transform duration-300 group-hover:scale-110">
+                              {sponsor.logo.endsWith('.png') || sponsor.logo.endsWith('.jpg') || sponsor.logo.endsWith('.svg') ? (
+                                <img 
+                                  src={sponsor.logo} 
+                                  alt={sponsor.name}
+                                  className="h-32 w-auto object-contain max-w-full"
+                                />
+                              ) : (
+                                <div className="text-7xl">{sponsor.logo}</div>
+                              )}
+                            </div>
+                            <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+                              {sponsor.name}
+                            </h3>
+                          </CardContent>
+                        </Card>
+                      </motion.a>
+                    ))}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+          {sponsorCategories.slice(2, 4).map((category, categoryIndex) => (
             <motion.div
               key={category.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: categoryIndex * 0.1 }}
+              transition={{ duration: 0.6, delay: (categoryIndex + 3) * 0.1 }}
               className="space-y-8"
             >
               <div className="relative mb-4 md:mb-6 py-4 text-center">
