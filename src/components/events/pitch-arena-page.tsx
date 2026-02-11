@@ -35,13 +35,13 @@ export function PitchArenaPage() {
     {
       name: "Dr. Anita Divakar",
       role: "Former CEO, VJTI Technology Business Incubator",
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/drAnkita.jpg",
       linkedin: ""
     },
     {
       name: "Capt. Amit Rai",
       role: "Industry Mentor",
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/captAmitRai.jpg",
       linkedin: ""
     },
     {

@@ -84,7 +84,7 @@ export function Speakers() {
         },
       ],
       social: {},
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/Karn Rajani.jpg",
     },
     {
       name: "Devang Bhuta",
@@ -106,7 +106,7 @@ export function Speakers() {
       social: {
         linkedin: "https://www.linkedin.com/in/db-passsionforproducts",
       },
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/Devang_Bhuta.jpg",
     },
     {
       name: "Dr. Anita Divakar",
@@ -126,7 +126,7 @@ export function Speakers() {
         },
       ],
       social: {},
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/drAnkita.jpg",
     },
     {
       name: "Capt. Amit Rai",
@@ -145,7 +145,7 @@ export function Speakers() {
         },
       ],
       social: {},
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/captAmitRai.jpg",
     },
     {
       name: "Abhishek Patil",
@@ -189,7 +189,7 @@ export function Speakers() {
       social: {
         linkedin: "https://www.linkedin.com/in/sachinladdha",
       },
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/sachinLaddha.jpg",
     },
     {
       name: "Himani Jaiswal",
@@ -211,7 +211,7 @@ export function Speakers() {
       social: {
         linkedin: "https://www.linkedin.com/in/himani-jaiswal-189b25232",
       },
-      image: "/assets/panel/default.png",
+      image: "/assets/panel/himani jaiswal.jpg",
     },
   ];
 

@@ -77,6 +77,12 @@ export function HomePage({ onNavigate, user }: HomePageProps) {
       topic: "Startup Leadership & Investment Strategy",
       image: "/assets/panel/nikhil_jadhav.jpg",
     },
+    {
+      name: "Karn Rajani",
+      title: "Panel Speaker",
+      topic: "Entrepreneurship & Innovation",
+      image: "/assets/panel/Karn Rajani.jpg",
+    },
   ];
 
   const stats = [
